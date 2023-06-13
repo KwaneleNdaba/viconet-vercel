@@ -33,9 +33,19 @@ router.get('/api/users/:id', (req, res) => __awaiter(void 0, void 0, void 0, fun
         return res.status(404).send("Cannot find user");
     }
 }));
+router.post('/api/users/email/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email } = req.body;
+    if (email) {
+        const user = yield (0, usersRepository_1.GetUserByEmail)(email);
+        return res.status(200).send(user);
+    }
+    else {
+        return res.status(404).send("Cannot find user");
+    }
+}));
 router.post('/api/users', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { title, firstName, surname, email, password } = req.body;
-    const dbUser = { title, firstName, surname, email, password };
+    const { title, firstName, surname, email, password, type } = req.body;
+    const dbUser = { title, firstName, surname, email, password, type };
     const user = yield (0, usersRepository_1.AddUser)(dbUser);
     return res.status(201).send(user);
 }));
