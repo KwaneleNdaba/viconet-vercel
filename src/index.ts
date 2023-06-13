@@ -28,6 +28,6 @@ mongoose.connect("mongodb+srv://suntecTMS:suntectms2022@cluster0.zm9cv.mongodb.n
   console.log('connected to database')
 })
 
-app.listen(8080, () => {
+app.listen(3000, () => {
   console.log('server is listening on port 3000')
 })
