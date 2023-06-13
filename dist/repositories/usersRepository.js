@@ -41,10 +41,14 @@ const AddUser = function (_user) {
         try {
             const user = user_1.User.build(_user);
             yield user.save();
+            console.log("USERDOC", user);
+            //TODO: NK remove passeword=> map response
+            const clean = Object.assign(Object.assign({}, user), { password: "" });
             return user;
         }
         catch (e) {
-            return e;
+            // return e as IMongoError;
+            return { code: 400, message: e };
         }
     });
 };

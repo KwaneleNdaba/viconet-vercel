@@ -1,5 +1,5 @@
 import { instanceOfTypeMongoError } from "../lib/typeCheck";
-import { IMongoError } from "../models/errors";
+import { ICustomError, IMongoError } from "../models/errors";
 import { IPersonnel, IPersonnelDoc, Personnel } from "../models/personnel";
 import { ICreatePersonnelUser, IUser } from "../models/user";
 import { GenerateSearchKeys } from "../services/searchService";
@@ -28,12 +28,12 @@ export const AddPersonnel = async function(_personnel:IPersonnel):Promise<IPerso
     }
 }
 
-export const AddPersonnelUser = async function(_personnel:ICreatePersonnelUser):Promise<IPersonnelDoc | IMongoError> {
+export const AddPersonnelUser = async function(_personnel:ICreatePersonnelUser):Promise<IPersonnelDoc | IMongoError| ICustomError> {
     try{
         _personnel.user.type="TALENT";
         const saveUser = await AddUser(_personnel.user);
         if(instanceOfTypeMongoError(saveUser)){
-            return saveUser as IMongoError;
+            return saveUser as ICustomError;
         }
         const searchKeys = GenerateSearchKeys(_personnel.personnel);
         const userId = saveUser as IUser;

@@ -20,7 +20,9 @@ const userSchema = new mongoose_1.default.Schema({
     },
     email: {
         type: String,
-        required: true
+        required: true,
+        unique: true,
+        dropDups: true
     },
     password: {
         type: String,
@@ -30,6 +32,10 @@ const userSchema = new mongoose_1.default.Schema({
         type: Number,
         required: true
     },
+    mobileNumber: {
+        type: String,
+        required: true
+    }
 });
 userSchema.statics.build = (attr) => {
     return new User(attr);

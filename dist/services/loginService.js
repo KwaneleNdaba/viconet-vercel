@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LoginUser = void 0;
+exports.HashPassword = exports.LoginUser = void 0;
 const typeCheck_1 = require("../lib/typeCheck");
 const usersRepository_1 = require("../repositories/usersRepository");
 const bcrypt = require('bcrypt');
@@ -36,4 +36,13 @@ const LoginUser = function (email, password) {
     });
 };
 exports.LoginUser = LoginUser;
+const HashPassword = function (password) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const saltRounds = 10;
+        const salt = "$2b$10$O.v22NpswdZqTkZt1oS/Ge";
+        const hash = yield bcrypt.hash(password, salt);
+        return hash;
+    });
+};
+exports.HashPassword = HashPassword;
 //# sourceMappingURL=loginService.js.map

@@ -9,6 +9,7 @@ export interface IUser {
   surname:string;
   email:string;
   password:string;
+  mobileNumber:string;
   type:string;
 }
 
@@ -22,6 +23,7 @@ export interface IUserDoc extends mongoose.Document {
   surname:string;
   email:string;
   password:string;
+  mobileNumber:string;
   type:string;
 }
 
@@ -40,7 +42,9 @@ const userSchema = new mongoose.Schema({
   },
   email: {
     type: String, 
-    required: true
+    required: true,
+    unique: true, 
+    dropDups: true 
   },
   password: {
     type: String, 
@@ -50,6 +54,10 @@ const userSchema = new mongoose.Schema({
     type: Number, 
     required: true
   },
+  mobileNumber:{
+    type:String,
+    required:true
+  }
 })
 
 userSchema.statics.build = (attr: IUser) => {

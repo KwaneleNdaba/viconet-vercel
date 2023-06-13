@@ -25,3 +25,12 @@ export const LoginUser= async function(email:string, password: string):Promise<I
     }
   
   }
+
+export const HashPassword = async function(password:string):Promise<string>{
+  const saltRounds = 10;
+  const salt ="$2b$10$O.v22NpswdZqTkZt1oS/Ge";
+ 
+ const hash = await  bcrypt.hash(password, salt);
+  return hash;
+
+}

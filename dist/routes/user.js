@@ -27,6 +27,7 @@ router.get('/api/users/:id', (req, res) => __awaiter(void 0, void 0, void 0, fun
     const id = req.params.id;
     if (id.match(/^[0-9a-fA-F]{24}$/)) { // valid ObjectId
         const user = yield (0, usersRepository_1.GetUserById)(id);
+        res.header("Access-Control-Allow-Origin", "*");
         return res.status(200).send(user);
     }
     else {
@@ -44,10 +45,25 @@ router.post('/api/users/email/', (req, res) => __awaiter(void 0, void 0, void 0,
     }
 }));
 router.post('/api/users', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { title, firstName, surname, email, password, type } = req.body;
-    const dbUser = { title, firstName, surname, email, password, type };
+    const { title, firstName, surname, email, password, type, mobileNumber } = req.body;
+    const hashedPassword = yield (0, loginService_1.HashPassword)(password);
+    const dbUser = { title: title,
+        firstName: firstName,
+        surname: surname,
+        email: email.toLowerCase(),
+        type: type,
+        mobileNumber: mobileNumber,
+        password: hashedPassword };
+    console.log(dbUser);
     const user = yield (0, usersRepository_1.AddUser)(dbUser);
-    return res.status(201).send(user);
+    console.log("yeses", user);
+    if ((0, typeCheck_1.instanceOfTypeIUser)(user)) {
+        return res.status(200).send(user);
+    }
+    else {
+        const error = user;
+        return res.status(400).send(error.message);
+    }
 }));
 router.post('/api/users/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { title, firstName, surname, email, password } = req.body;

@@ -1,8 +1,9 @@
 import express, { Request, Response } from 'express'
 import { User, IUser } from '../models/user'
 import { AddUser, GetAllUsers, GetUserByEmail, GetUserById, UpdateUser } from '../repositories/usersRepository';
-import { LoginUser } from '../services/loginService';
+import { HashPassword, LoginUser } from '../services/loginService';
 import { instanceOfTypeIUser } from '../lib/typeCheck';
+import { ICustomError } from '../models/errors';
 
 const router = express.Router()
 
@@ -10,12 +11,14 @@ router.get('/api/users', async (req: Request, res: Response) => {
   const user = await GetAllUsers();
   return res.status(200).send(user)
 })
-  router.get('/api/users/:id', async (req: Request, res: Response) => {
+
+router.get('/api/users/:id', async (req: Request, res: Response) => {
   
     const id = req.params.id;
     if (id.match(/^[0-9a-fA-F]{24}$/)) {// valid ObjectId
       
       const user = await GetUserById(id);
+      res.header("Access-Control-Allow-Origin", "*");
       return res.status(200).send(user)
     }else{
       return res.status(404).send("Cannot find user");
@@ -37,12 +40,29 @@ router.post('/api/users/email/', async (req: Request, res: Response) => {
 })
 
 router.post('/api/users', async (req: Request, res: Response) => {
-  const { title, firstName, surname, email, password, type } = req.body;
-  const dbUser = { title, firstName, surname, email, password, type } as IUser;
+  const { title, firstName, surname, email, password, type, mobileNumber } = req.body;
   
+  const hashedPassword = await HashPassword(password);
+  
+  const dbUser = { title:title,
+    firstName: firstName, 
+    surname: surname, 
+    email: email.toLowerCase(),
+    type: type, 
+    mobileNumber: mobileNumber,
+    password:hashedPassword } as IUser;
+
+  console.log(dbUser)
+
   const user = await AddUser(dbUser);
- 
-  return res.status(201).send(user)
+    console.log("yeses", user)
+  if(instanceOfTypeIUser(user)){
+
+    return res.status(200).send(user)
+  }else{
+    const error = user as ICustomError;
+    return  res.status(400).send(error.message);
+  }
 })
 
 router.post('/api/users/:id', async (req: Request, res: Response) => {

@@ -1,4 +1,4 @@
-import { IMongoError } from "../models/errors";
+import { ICustomError, IMongoError } from "../models/errors";
 import { IUser, IUserDoc, User  } from "../models/user";
 
 export const GetAllUsers= async function():Promise<IUser[] | IMongoError>{
@@ -21,13 +21,18 @@ export const GetAllUsers= async function():Promise<IUser[] | IMongoError>{
     }
   }
 
-  export const AddUser = async function(_user:IUser):Promise<IUserDoc | IMongoError> {
+  export const AddUser = async function(_user:IUser):Promise<IUser | ICustomError> {
     try{
         const user = User.build(_user);
-        await user.save()
+        await user.save();
+        console.log("USERDOC", user)
+        //TODO: NK remove passeword=> map response
+        const clean = {...user, password:""} as IUser
+      
         return user;
     }catch(e){
-        return e as IMongoError;
+        // return e as IMongoError;
+        return {code:400, message:e } as ICustomError
     }
   }
 
