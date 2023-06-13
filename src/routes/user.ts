@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express'
 import { User, IUser } from '../models/user'
-import { AddUser, GetAllUsers, GetUserById, UpdateUser } from '../repositories/usersRepository';
+import { AddUser, GetAllUsers, GetUserByEmail, GetUserById, UpdateUser } from '../repositories/usersRepository';
 import { LoginUser } from '../services/loginService';
 import { instanceOfTypeIUser } from '../lib/typeCheck';
 
@@ -23,9 +23,22 @@ router.get('/api/users', async (req: Request, res: Response) => {
 
 })
 
+router.post('/api/users/email/', async (req: Request, res: Response) => {
+  const {  email } = req.body;
+  if (email) {
+    
+    const user = await GetUserByEmail(email);
+    return res.status(200).send(user);
+
+  }else{
+    return res.status(404).send("Cannot find user");
+  }
+
+})
+
 router.post('/api/users', async (req: Request, res: Response) => {
-  const { title, firstName, surname, email, password } = req.body;
-  const dbUser = { title, firstName, surname, email, password } as IUser;
+  const { title, firstName, surname, email, password, type } = req.body;
+  const dbUser = { title, firstName, surname, email, password, type } as IUser;
   
   const user = await AddUser(dbUser);
  

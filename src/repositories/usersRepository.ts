@@ -41,6 +41,8 @@ export const GetAllUsers= async function():Promise<IUser[] | IMongoError>{
   
   }
 
+  
+
   export const GetUserByEmail = async function(email:string):Promise<IUser| IMongoError>{
     try{
     const users = await User.find({ email: email})
