@@ -10,7 +10,7 @@ const msg = {
   text: text,
   html:html,
 };
-
+console.log("message", msg)
 const res = await sgMail.send(msg);
 console.log("res", res)
 }

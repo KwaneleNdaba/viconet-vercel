@@ -29,7 +29,7 @@ export const GetAllUsers= async function():Promise<IUser[] | IMongoError>{
       const _dbUser = {..._user, otp:_otp.toString()} as IUser;
         const user = User.build(_dbUser);
         await user.save();
-        const email = await sendMail(_user.email, `Activate your VICO net profile`, `Your otp is ${_otp.toString()}`, `Activate your VICO net profile", "Your otp is <strong> ${_otp.toString()}</strong>` );
+        const email = await sendMail(_user.email, `Activate your VICO net profile`, `Your otp is ${_otp.toString()}`, `Activate your VICO net profile, Your otp is <strong> ${_otp.toString()}</strong>` );
         //TODO: NK remove passeword=> map response
         const clean = {...user, password:"", status:0} as IUser
       
