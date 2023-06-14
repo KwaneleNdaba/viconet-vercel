@@ -11,6 +11,8 @@ export interface IUser {
   password:string;
   mobileNumber:string;
   type:string;
+  status:number;
+  otp: string;
 }
 
 interface userModelInterface extends mongoose.Model<IUserDoc> {
@@ -25,6 +27,8 @@ export interface IUserDoc extends mongoose.Document {
   password:string;
   mobileNumber:string;
   type:string;
+  status:number;
+  otp:string;
 }
 
 const userSchema = new mongoose.Schema({
@@ -57,6 +61,13 @@ const userSchema = new mongoose.Schema({
   mobileNumber:{
     type:String,
     required:true
+  },
+  status:{
+    type:Number,
+    required:true
+  },
+  otp:{
+    type:String
   }
 })
 

@@ -35,6 +35,13 @@ const userSchema = new mongoose_1.default.Schema({
     mobileNumber: {
         type: String,
         required: true
+    },
+    status: {
+        type: Number,
+        required: true
+    },
+    otp: {
+        type: String
     }
 });
 userSchema.statics.build = (attr) => {

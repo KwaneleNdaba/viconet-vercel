@@ -1,16 +1,16 @@
 import express, { Request, Response } from 'express'
 import { User, IUser } from '../models/user'
-import { AddUser, GetAllUsers, GetUserByEmail, GetUserById, UpdateUser } from '../repositories/usersRepository';
+import { ActivateUser, AddUser, GetAllUsers, GetUserByEmail, GetUserById, UpdateUser } from '../repositories/usersRepository';
 import { HashPassword, LoginUser } from '../services/loginService';
-import { instanceOfTypeIUser } from '../lib/typeCheck';
+import { instanceOfTypeCustomError, instanceOfTypeIUser } from '../lib/typeCheck';
 import { ICustomError } from '../models/errors';
-
 const router = express.Router()
 
 router.get('/api/users', async (req: Request, res: Response) => {
   const user = await GetAllUsers();
   return res.status(200).send(user)
 })
+
 
 router.get('/api/users/:id', async (req: Request, res: Response) => {
   
@@ -39,6 +39,25 @@ router.post('/api/users/email/', async (req: Request, res: Response) => {
 
 })
 
+router.post('/api/users/verify/', async (req: Request, res: Response) => {
+  const {  email, otp } = req.body;
+  if (email) {
+    const user = await ActivateUser(otp, email);
+
+    if(instanceOfTypeCustomError(user)){
+      console.log("ERRERE")
+      const errorResponse = user as ICustomError;
+      return res.status(errorResponse.code).send(errorResponse);
+
+    }
+    return res.status(200).send(user);
+
+  }else{
+    return res.status(404).send("Cannot find user");
+  }
+
+})
+
 router.post('/api/users', async (req: Request, res: Response) => {
   const { title, firstName, surname, email, password, type, mobileNumber } = req.body;
   
@@ -50,12 +69,13 @@ router.post('/api/users', async (req: Request, res: Response) => {
     email: email.toLowerCase(),
     type: type, 
     mobileNumber: mobileNumber,
+    status:0,
     password:hashedPassword } as IUser;
 
   console.log(dbUser)
 
   const user = await AddUser(dbUser);
-    console.log("yeses", user)
+
   if(instanceOfTypeIUser(user)){
 
     return res.status(200).send(user)

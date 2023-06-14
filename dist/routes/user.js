@@ -44,6 +44,21 @@ router.post('/api/users/email/', (req, res) => __awaiter(void 0, void 0, void 0,
         return res.status(404).send("Cannot find user");
     }
 }));
+router.post('/api/users/verify/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email, otp } = req.body;
+    if (email) {
+        const user = yield (0, usersRepository_1.ActivateUser)(otp, email);
+        if ((0, typeCheck_1.instanceOfTypeCustomError)(user)) {
+            console.log("ERRERE");
+            const errorResponse = user;
+            return res.status(errorResponse.code).send(errorResponse);
+        }
+        return res.status(200).send(user);
+    }
+    else {
+        return res.status(404).send("Cannot find user");
+    }
+}));
 router.post('/api/users', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { title, firstName, surname, email, password, type, mobileNumber } = req.body;
     const hashedPassword = yield (0, loginService_1.HashPassword)(password);
@@ -53,10 +68,10 @@ router.post('/api/users', (req, res) => __awaiter(void 0, void 0, void 0, functi
         email: email.toLowerCase(),
         type: type,
         mobileNumber: mobileNumber,
+        status: 0,
         password: hashedPassword };
     console.log(dbUser);
     const user = yield (0, usersRepository_1.AddUser)(dbUser);
-    console.log("yeses", user);
     if ((0, typeCheck_1.instanceOfTypeIUser)(user)) {
         return res.status(200).send(user);
     }

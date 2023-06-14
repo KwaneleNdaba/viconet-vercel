@@ -47,6 +47,7 @@ export interface IPersonnel {
   cvUrl:string;
   personalInformation:IPersonalInformation;
   _user:string;
+  state:number;
   
 }
 
