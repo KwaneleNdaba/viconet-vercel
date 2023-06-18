@@ -50,14 +50,23 @@ router.post('/api/upload_cv/:id', (req, res) => __awaiter(void 0, void 0, void 0
     });
 }));
 router.post('/api/personnel', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { searchKeys, information, currentJob, previousWorkExperience, yearsOfExperience, education, keySkills, keyCourses, cvUrl, personalInformation } = req.body;
-    const dbUser = { searchKeys, information, currentJob, previousWorkExperience, yearsOfExperience, education, keySkills, keyCourses, cvUrl, personalInformation };
+    const { searchKeys, information, currentJob, previousWorkExperience, yearsOfExperience, education, keySkills, keyCourses, cvUrl, personalInformation, _user } = req.body;
+    const dbUser = { searchKeys, information, currentJob, previousWorkExperience, yearsOfExperience, education, keySkills, keyCourses, cvUrl, personalInformation, _user: _user, state: 0 };
     const user = yield (0, personnelRepository_1.AddPersonnel)(dbUser);
     return res.status(201).send(user);
 }));
+router.get('/api/personnel', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield (0, personnelRepository_1.GetAllPersonnel)();
+    return res.status(201).send(user);
+}));
+router.get('/api/personnel/:userId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const email = req.params.userId;
+    const user = yield (0, personnelRepository_1.GetPersonnelByUserId)(email);
+    return res.status(200).send(user);
+}));
 router.post('/api/personnel/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { searchKeys, information, currentJob, previousWorkExperience, yearsOfExperience, education, keySkills, keyCourses, cvUrl, personalInformation } = req.body;
-    const dbUser = { searchKeys, information, currentJob, previousWorkExperience, yearsOfExperience, education, keySkills, keyCourses, cvUrl, personalInformation };
+    const { searchKeys, information, currentJob, previousWorkExperience, yearsOfExperience, education, keySkills, keyCourses, cvUrl, personalInformation, userId } = req.body;
+    const dbUser = { searchKeys, information, currentJob, previousWorkExperience, yearsOfExperience, education, keySkills, keyCourses, cvUrl, personalInformation, _user: userId, state: 0 };
     const id = req.params.id;
     if (id.match(/^[0-9a-fA-F]{24}$/)) { // valid ObjectId
         const user = yield (0, personnelRepository_1.UpdatePersonnel)(dbUser);

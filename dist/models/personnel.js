@@ -10,10 +10,10 @@ const personnelSchema = new mongoose_1.default.Schema({
         type: String,
         required: true
     },
-    information: {
-        type: String,
-        required: true
-    },
+    // information:{
+    //   type: String,
+    //   required: true
+    // },
     currentJob: {
         type: Object,
         // required: true
@@ -31,23 +31,23 @@ const personnelSchema = new mongoose_1.default.Schema({
         // required: true
     },
     keySkills: {
-        type: String,
+        type: Array,
         required: true
     },
     keyCourses: {
-        type: String,
+        type: Array,
         required: true
     },
     cvUrl: {
         type: String,
-        required: true
+        // required: true
     },
     personalInformation: {
         type: Object,
         // required: true
     },
     _user: {
-        type: Object,
+        type: String,
         // required: true
     },
 });

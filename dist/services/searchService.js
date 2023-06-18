@@ -41,8 +41,8 @@ function ConvertToHashMap(array) {
     return result;
 }
 function GenerateSearchKeys(personnel) {
-    const skillsKey = personnel.keySkills.split(",").map(x => `s${x}`).join(",");
-    const coursesKey = personnel.keyCourses.split(",").map(x => `c${x}`).join(",");
+    const skillsKey = personnel.keySkills.map(x => `s${x}`).join(",");
+    const coursesKey = personnel.keyCourses.map(x => `c${x}`).join(",");
     const fullKey = `${skillsKey},${coursesKey},${personnel.personalInformation.name},${personnel.personalInformation.surname},${personnel.education.qualification},${personnel.yearsOfExperience}`;
     return fullKey;
 }

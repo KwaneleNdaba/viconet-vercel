@@ -28,6 +28,7 @@ export interface IEducationInformation{
   dateCompleted:string
 }
 export interface IPersonnel {
+  _id?:string;
   searchKeys?:string;
   // information?:string; // personal info->about
   currentJob?: IJobInformation;
