@@ -1,25 +1,17 @@
 import mongoose from 'mongoose'
 
-export interface IPersonalDetails{
-profile :string;
-name:string;
-surname:string;
-dateOfBirth	:string;
-cellPhone	:string;	
-address	:string;
-country:string;
-province:string;
-}
-
 export interface IPersonalInformation{
-  profile :string;
+  _id?:string;
+  about? :string;
   name:string;
-  surname:string;
-  dateOfBirth	:string;
-  cellPhone	:string;	
-  address	:string;
-  country:string;
-  province:string;
+  surname?:string;
+  dateOfBirth?	:string; //not sent
+  address?	:string; //not sent
+  country?:string; //not sent 
+  province?:string;
+}
+export interface IJobResponsibilities{
+  content:string
 }
 
 export interface IJobInformation{
@@ -27,6 +19,7 @@ export interface IJobInformation{
   jobTitle:string,
   startDate:string,
   endDate:string
+  responsibilities?:IJobResponsibilities[]
 }
 
 export interface IEducationInformation{
@@ -35,16 +28,15 @@ export interface IEducationInformation{
   dateCompleted:string
 }
 export interface IPersonnel {
-  _id?:string;
-  searchKeys:string;
-  information:string;
-  currentJob: IJobInformation;
-  previousWorkExperience:IJobInformation[];
-  yearsOfExperience:string,
-  education:IEducationInformation,
-  keySkills: string;
-  keyCourses:string;
-  cvUrl:string;
+  searchKeys?:string;
+  // information?:string; // personal info->about
+  currentJob?: IJobInformation;
+  previousWorkExperience?:IJobInformation[];
+  yearsOfExperience?:string,
+  education?:IEducationInformation,
+  keySkills?: string[];
+  keyCourses?:string[];
+  cvUrl?:string;
   personalInformation:IPersonalInformation;
   _user:string;
   state:number;
@@ -56,17 +48,18 @@ interface personnelDocInterface extends mongoose.Model<IPersonnelDoc> {
 }
 
 export interface IPersonnelDoc extends mongoose.Document {
-  searchKeys:string;
-  information:string;
-  currentJob: IJobInformation;
-  previousWorkExperience:IJobInformation[];
-  yearsOfExperience:string,
-  education:IEducationInformation,
-  keySkills: string;
-  keyCourses:string;
-  cvUrl:string;
+  searchKeys?:string;
+  // information?:string; // personal info->about
+  currentJob?: IJobInformation;
+  previousWorkExperience?:IJobInformation[];
+  yearsOfExperience?:string,
+  education?:IEducationInformation,
+  keySkills?: string[];
+  keyCourses?:string[];
+  cvUrl?:string;
   personalInformation:IPersonalInformation;
   _user:string;
+  state:number;
 }
 
 const personnelSchema = new mongoose.Schema({
@@ -74,10 +67,10 @@ const personnelSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  information:{
-    type: String,
-    required: true
-  },
+  // information:{
+  //   type: String,
+  //   required: true
+  // },
   currentJob:{
     type: Object,
     // required: true
@@ -95,23 +88,23 @@ const personnelSchema = new mongoose.Schema({
     // required: true
   },
   keySkills:{
-    type: String,
+    type: Array,
     required: true
   },
   keyCourses:{
-    type: String,
+    type: Array,
     required: true
   },
   cvUrl:{
     type: String,
-    required: true
+    // required: true
   },
   personalInformation: {
     type: Object,
     // required: true
   },
   _user: {
-    type: Object,
+    type: String,
     // required: true
   },
 })

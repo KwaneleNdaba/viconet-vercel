@@ -14,6 +14,18 @@ export const GetAllPersonnel= async function():Promise<IPersonnelDoc[] | IMongoE
         }
 }
 
+export const GetPersonnelByUserId= async function(id:string):Promise<IPersonnelDoc| IMongoError>{
+    try{
+        console.log("userid", id)
+        const personnel = await Personnel.find({_user:id})
+        const match = personnel[0];
+        return match as IPersonnelDoc;
+        }catch(e){
+            return e as IMongoError;
+        }
+}
+
+
 export const AddPersonnel = async function(_personnel:IPersonnel):Promise<IPersonnelDoc | IMongoError> {
     try{
         const searchKeys = GenerateSearchKeys(_personnel);

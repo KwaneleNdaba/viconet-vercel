@@ -3,8 +3,8 @@ const { Upload } = require("@aws-sdk/lib-storage");
 const { S3Client, S3 } = require("@aws-sdk/client-s3");
 const Transform = require('stream').Transform;
 
-const accessKeyId = "AKIAWZJISUVZFECDPLFX";
-const secretAccessKey = "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";
+const accessKeyId = process.env.AWS_KEY;
+const secretAccessKey = process.env.AWS_SECRET;
 const region = "af-south-1";
 const Bucket = "param-hr-resources";
 
