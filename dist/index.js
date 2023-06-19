@@ -10,6 +10,7 @@ const body_parser_1 = require("body-parser");
 const user_1 = require("./routes/user");
 const personnel_1 = require("./routes/personnel");
 const formData = require("express-form-data");
+require('dotenv').config();
 const os = require("os");
 const app = (0, express_1.default)();
 const options = {
