@@ -5,6 +5,8 @@ import { json, urlencoded } from 'body-parser';
 import { userRouter } from './routes/user'
 import { personnelRouter } from './routes/personnel';
 const formData = require("express-form-data");
+require('dotenv').config()
+
 const os = require("os");
  const app = express()
 const options = {
