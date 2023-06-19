@@ -69,7 +69,6 @@ const ActivateUser = function (otp, email) {
                 return updated;
             }
             else {
-                console.log("ERERER1");
                 return { code: 400, message: "Incorrect OTP" };
             }
         }

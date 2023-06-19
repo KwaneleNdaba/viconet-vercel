@@ -27,7 +27,7 @@ app.use(user_1.userRouter, personnel_1.personnelRouter);
 // const app = express()
 const port = process.env.PORT || 8080;
 app.get('/', (_req, res) => {
-    return res.send('Express Typescript on Njinu222');
+    return res.send('Viconet V1');
 });
 app.get('/ping', (_req, res) => {
     return res.send('pong 🏓');
