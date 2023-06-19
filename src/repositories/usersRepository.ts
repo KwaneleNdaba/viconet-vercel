@@ -52,7 +52,6 @@ export const GetAllUsers= async function():Promise<IUser[] | IMongoError>{
           const updated = await UpdateUser(activatedPerson);
           return updated;
         }else{
-          console.log("ERERER1")
           return {code:400, message:"Incorrect OTP"} as ICustomError
         }
 

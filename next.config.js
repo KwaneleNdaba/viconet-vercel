@@ -1,0 +1,1 @@
+env: {  AWS_SECRET: process.env.AWS_SECRET; AWS_KEY: process.env.AWS_KEY  }
