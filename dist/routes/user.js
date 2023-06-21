@@ -17,6 +17,8 @@ const express_1 = __importDefault(require("express"));
 const usersRepository_1 = require("../repositories/usersRepository");
 const loginService_1 = require("../services/loginService");
 const typeCheck_1 = require("../lib/typeCheck");
+const staffRepository_1 = require("../repositories/staffRepository");
+const organisationRepository_1 = require("../repositories/organisationRepository");
 const router = express_1.default.Router();
 exports.userRouter = router;
 router.get('/api/users', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -79,6 +81,31 @@ router.post('/api/users', (req, res) => __awaiter(void 0, void 0, void 0, functi
         const error = user;
         return res.status(400).send(error.message);
     }
+}));
+router.post('/api/users/staff', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { title, firstName, surname, email, password, mobileNumber, position, profilePicture, _organisation } = req.body;
+    const hashedPassword = yield (0, loginService_1.HashPassword)(password);
+    const dbUser = { title: title,
+        firstName: firstName,
+        surname: surname,
+        email: email.toLowerCase(),
+        type: "2",
+        mobileNumber: mobileNumber,
+        status: 0,
+        password: hashedPassword };
+    const user = yield (0, usersRepository_1.AddUser)(dbUser);
+    const staff = {
+        profilePicture: profilePicture,
+        position: position,
+        _organisation: _organisation,
+    };
+    const staffUser = {
+        staff: staff,
+        user: user
+    };
+    const _staffUser = yield (0, staffRepository_1.AddStaff)(staffUser);
+    const organisation = yield (0, organisationRepository_1.AddStaffToOrganisation)(_organisation, _staffUser);
+    return res.status(200).send(_staffUser);
 }));
 router.post('/api/users/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { title, firstName, surname, email, password } = req.body;

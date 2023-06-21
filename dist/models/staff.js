@@ -8,32 +8,20 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const staffSchema = new mongoose_1.default.Schema({
     profilePicture: {
         type: String,
-        required: true
+        required: false
     },
-    fullName: {
-        type: String,
-        required: true
-    },
-    title: {
-        type: String,
-        required: true
-    },
-    phoneNumber: {
-        type: String,
-        required: true
-    },
-    emailAddress: {
+    position: {
         type: String,
         required: true
     },
     _organisation: {
         type: String,
-        required: true
+        // required: true
     },
     _user: {
         type: String,
         required: true
-    }
+    },
 });
 staffSchema.statics.build = (attr) => {
     return new Staff(attr);

@@ -4,6 +4,9 @@ import mongoose from 'mongoose'
 import { json, urlencoded } from 'body-parser';
 import { userRouter } from './routes/user'
 import { personnelRouter } from './routes/personnel';
+import { projectRouter } from './routes/project';
+import { organiwsationRouter } from './routes/organisation';
+import { staffRouter } from './routes/staff';
 const formData = require("express-form-data");
 require('dotenv').config()
 
@@ -23,7 +26,7 @@ res.header("Access-Control-Request-Headers",
 
 	next();
   });
-app.use(userRouter, personnelRouter)
+app.use(userRouter, personnelRouter, projectRouter, organiwsationRouter, staffRouter)
 // const app = express()
 const port = process.env.PORT || 8080
 

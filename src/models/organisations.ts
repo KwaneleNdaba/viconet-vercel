@@ -1,6 +1,22 @@
 import mongoose from 'mongoose'
 
 
+export interface ICompanyRegisterModel{
+  email: string;
+  password: string;
+  userName:string;
+  userSurname: string;
+  // mobileNumber: z.string(),  
+  userNumber: string;
+  companyNumber: string;
+  companyReg: string;
+  companyName:string;
+  companyAdrress: string;
+  position:string;
+  title?:string;
+  userEmail:string;  
+  
+}
 
 export interface IOrganisation {
   _id?:string;
@@ -12,6 +28,7 @@ export interface IOrganisation {
   renewalDate	:string;	
   mobilePhone:string;	
   _staff:string;
+  _projects:string;
   _adminStaff:string;
   
 }
@@ -30,6 +47,7 @@ export interface IOrganisationDoc extends mongoose.Document {
   mobilePhone:string;	
   _staff:string;
   _adminStaff:string;
+  _projects:string;
 }
 
 const organisationSchema = new mongoose.Schema({
@@ -39,7 +57,7 @@ const organisationSchema = new mongoose.Schema({
   },
   description: {
     type: String,
-    required: true
+    // required: true
   },
   status: {
     type: String,
@@ -47,11 +65,11 @@ const organisationSchema = new mongoose.Schema({
   },
   currentPackage: {
     type: String,
-    required: true
+    // required: true
   },
   renewalDate: {
     type: String,
-    required: true
+    // required: true
   },
   mobilePhone: {
     type: String,
@@ -64,6 +82,10 @@ const organisationSchema = new mongoose.Schema({
   _adminStaff:{
     type: String,
     required: true
+  },
+  _projects:{
+    type: String,
+    // required: true
   }
 })
 
@@ -71,7 +93,7 @@ organisationSchema.statics.build = (attr: IOrganisation) => {
   return new Organisation(attr)
 }
 
-const Organisation = mongoose.model<IOrganisationDoc, organisationDocInterface>('organisation', organisationSchema, "organisation")
+const Organisation = mongoose.model<IOrganisationDoc, organisationDocInterface>('organisations', organisationSchema, "organisations")
 
 
 export { Organisation }

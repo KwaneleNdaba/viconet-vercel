@@ -1,8 +1,17 @@
+import { IOrganisation } from "../models/organisations";
 import { ICustomError, IMongoError } from "../models/errors";
 import { IPersonnel } from "../models/personnel";
 import { IUser } from "../models/user";
+import { IStaff } from "../models/staff";
 
 export function instanceOfTypeIUser(object: any): object is IUser {
+    return object._id
+}
+export function instanceOfTypeIStaff(object: any): object is IStaff {
+    return object._id
+}
+
+export function instanceOfTypeIOrganisation(object: any): object is IOrganisation {
     return object._id
 }
 

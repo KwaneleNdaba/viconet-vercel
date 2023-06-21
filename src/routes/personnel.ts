@@ -45,8 +45,8 @@ router.post('/api/upload_cv/:id', async (req: Request, res: Response) => {
 });
 
 router.post('/api/personnel', async (req: Request, res: Response) => {
-  const { searchKeys, information, currentJob, previousWorkExperience, yearsOfExperience, education, keySkills, keyCourses, cvUrl, personalInformation, _user } = req.body;
-  const dbUser = {  searchKeys, information, currentJob, previousWorkExperience, yearsOfExperience, education, keySkills, keyCourses, cvUrl, personalInformation, _user:_user, state:0 } as IPersonnel;
+  const { information, currentJob, previousWorkExperience, yearsOfExperience, education, keySkills, keyCourses, cvUrl, personalInformation, _user } = req.body;
+  const dbUser = {  information, currentJob, previousWorkExperience, yearsOfExperience, education, keySkills, keyCourses, cvUrl, personalInformation, _user:_user, state:0 } as IPersonnel;
   
   const user = await AddPersonnel(dbUser);
  

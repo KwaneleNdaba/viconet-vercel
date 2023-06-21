@@ -59,20 +59,25 @@ exports.GetStaffInOrganisation = GetStaffInOrganisation;
 const AddStaff = function (_staff) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const userReq = Object.assign(Object.assign({}, _staff.user), { type: "STAFFUSER_UNREGISTERED" });
+            const userReq = Object.assign({}, _staff.user);
             const user = user_1.User.build(userReq);
             const userResp = yield user.save();
-            if ((0, typeCheck_1.instanceOfTypeMongoError)(userResp)) {
-                return userResp;
+            console.log("asas", !(0, typeCheck_1.instanceOfTypeIUser)(userResp));
+            if (!(0, typeCheck_1.instanceOfTypeIUser)(userResp)) {
+                return { code: 500, message: "Failed to add user", object: userResp };
             }
             const _userResp = userResp;
-            const staffReq = Object.assign(Object.assign({}, _staff.staff), { _user: _userResp._id });
+            const staffReq = Object.assign(Object.assign({}, _staff.staff), { _user: _userResp._id, _organisation: "rtesat" });
             const staff = staff_1.Staff.build(staffReq);
             const staffResp = yield staff.save();
+            if (!(0, typeCheck_1.instanceOfTypeIStaff)(staffResp)) {
+                return { code: 500, message: "Failed to add staff", object: staffResp };
+            }
             return staffResp;
         }
         catch (e) {
-            return e;
+            return { code: 500, message: "Fail;ed to add staff user", object: e };
+            // return e as IMongoError;
         }
     });
 };

@@ -12,7 +12,7 @@ const organisationSchema = new mongoose_1.default.Schema({
     },
     description: {
         type: String,
-        required: true
+        // required: true
     },
     status: {
         type: String,
@@ -20,11 +20,11 @@ const organisationSchema = new mongoose_1.default.Schema({
     },
     currentPackage: {
         type: String,
-        required: true
+        // required: true
     },
     renewalDate: {
         type: String,
-        required: true
+        // required: true
     },
     mobilePhone: {
         type: String,
@@ -37,11 +37,15 @@ const organisationSchema = new mongoose_1.default.Schema({
     _adminStaff: {
         type: String,
         required: true
+    },
+    _projects: {
+        type: String,
+        // required: true
     }
 });
 organisationSchema.statics.build = (attr) => {
     return new Organisation(attr);
 };
-const Organisation = mongoose_1.default.model('organisation', organisationSchema, "organisation");
+const Organisation = mongoose_1.default.model('organisations', organisationSchema, "organisations");
 exports.Organisation = Organisation;
 //# sourceMappingURL=organisations.js.map

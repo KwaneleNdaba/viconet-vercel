@@ -19,26 +19,21 @@ const projectSchema = new mongoose_1.default.Schema({
         required: true
     },
     uninvited: {
-        type: String,
-        required: true
+        type: String
     },
     pending: {
-        type: String,
-        required: true
+        type: String
     },
     accepted: {
-        type: String,
-        required: true
+        type: String
     },
     declined: {
-        type: String,
-        required: true
+        type: String
     },
     name: {
-        type: String,
-        required: true
+        type: String
     },
-    cvUrl: {
+    status: {
         type: String,
         required: true
     }
@@ -46,6 +41,6 @@ const projectSchema = new mongoose_1.default.Schema({
 projectSchema.statics.build = (attr) => {
     return new Project(attr);
 };
-const Project = mongoose_1.default.model('project', projectSchema, "project");
+const Project = mongoose_1.default.model('projects', projectSchema, "projects");
 exports.Project = Project;
 //# sourceMappingURL=project.js.map

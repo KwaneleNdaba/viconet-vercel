@@ -1,28 +1,31 @@
 import mongoose from 'mongoose'
+import { IUserRegisterModel } from './user';
 
 
 export interface IStaff {
   _id?:string;
-  profilePicture:string;
-  fullName:string;
-  title:string;			
-  phoneNumber:string;			
-  emailAddress:string;	
-  _organisation:string;
+  profilePicture?:string;
+  position?:string;		
+  _organisation?:string;
   _user:string;
 }
+
+export interface ICreateStaffModel extends IUserRegisterModel{
+  position:string;
+  profilePicture?: string;
+  _organisation?:string;
+}
+
 
 interface staffInterface extends mongoose.Model<IStaffDoc> {
   build(attr: IStaff): IStaffDoc
 }
 
 export interface IStaffDoc extends mongoose.Document {
-  profilePicture:string;
-  fullName:string;
-  title:string;			
-  phoneNumber:string;			
-  emailAddress:string;	
-  _organisation:string;
+  _id?:string;
+  profilePicture?:string;
+  position?:string;		
+  _organisation?:string;
   _user:string;
 }
 
@@ -30,32 +33,20 @@ const staffSchema = new mongoose.Schema({
 
   profilePicture:{
     type: String,
-    required: true
+    required: false
   },
-  fullName:{
-    type: String,
-    required: true
-  },
-  title:{
-    type: String,
-    required: true
-  },
-  phoneNumber:{
-    type: String,
-    required: true
-  },
-  emailAddress:{
+  position:{
     type: String,
     required: true
   },
   _organisation:{
     type: String,
-    required: true
+    // required: true
   },
   _user:{
     type: String,
     required: true
-  }
+  },
 })
 
 staffSchema.statics.build = (attr: IStaff) => {

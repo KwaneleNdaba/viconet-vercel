@@ -8,12 +8,30 @@ export interface IProjectView extends IProject {
   _accepted:IPersonnel[];
 }
 
+export interface ICreateProject{
+  _organisation:string;
+  _creatingUser:string;
+  name:string;
+  description:string;  
+}
+
+
+
+export interface IUpdateProject{
+  name:string;
+  description:string;  
+  status:string;
+}
+
+
 export interface IProject {
   _id?:string;
   _organisation:string;
   _creatingUser:string;
   name:string;
-  description:string;
+  status:string;
+  description:string;  
+  //list of personnel id
   uninvited:string;
   pending:string;
   declined:string;
@@ -34,6 +52,7 @@ export interface IProjectDoc extends mongoose.Document {
   pending:string;
   declined:string;
   accepted:string;
+  status:string;
 }
 
 const projectSchema = new mongoose.Schema({
@@ -50,26 +69,21 @@ const projectSchema = new mongoose.Schema({
     required: true
   },
   uninvited:{
-    type: String,
-    required: true
+    type: String
   },  
   pending:{
-    type: String,
-    required: true
+    type: String
   },
   accepted:{
-    type: String,
-    required: true
+    type: String
   },
   declined:{
-    type: String,
-    required: true
+    type: String
   },
   name:{
-    type: String,
-    required: true
+    type: String
   },
-  cvUrl:{
+  status:{
     type: String,
     required: true
   }
@@ -79,7 +93,7 @@ projectSchema.statics.build = (attr: IProject) => {
   return new Project(attr)
 }
 
-const Project = mongoose.model<IProjectDoc, projectInterface>('project', projectSchema, "project")
+const Project = mongoose.model<IProjectDoc, projectInterface>('projects', projectSchema, "projects")
 
 
 export { Project }

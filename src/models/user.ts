@@ -15,6 +15,15 @@ export interface IUser {
   otp: string;
 }
 
+export interface IUserRegisterModel{
+  firstName: string;
+  surname:string;
+  email:string;
+  mobileNumber:string;
+  password:string;
+  type:number;
+}
+
 interface userModelInterface extends mongoose.Model<IUserDoc> {
   build(attr: IUser): IUserDoc
 }
@@ -34,7 +43,6 @@ export interface IUserDoc extends mongoose.Document {
 const userSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true
   },
   firstName: {
     type: String, 
