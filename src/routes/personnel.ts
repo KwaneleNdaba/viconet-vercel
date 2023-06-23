@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express'
 import { instanceOfTypeCustomError } from '../lib/typeCheck';
 import { SearchByKey } from '../services/searchService';
-import { AddPersonnel, GetAllPersonnel, GetPersonnelByUserId, UpdatePersonnel } from '../repositories/personnelRepository';
+import { AddPersonnel, GetAllPersonnel, GetPersonnelById, GetPersonnelByUserId, UpdatePersonnel } from '../repositories/personnelRepository';
 import { IPersonnel, IPersonnelDoc } from '../models/personnel';
 import {parsefile} from '../services/documentService'
 
@@ -63,8 +63,8 @@ router.get('/api/personnel', async (req: Request, res: Response) => {
 
 router.get('/api/personnel/:userId', async (req: Request, res: Response) => {
   const email = req.params.userId;
-  const user = await GetPersonnelByUserId(email);
- 
+  const user = await GetPersonnelById(email);
+ console.log("RES",user)
   return res.status(200).send(user)
 })
 

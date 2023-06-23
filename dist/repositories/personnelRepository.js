@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdatePersonnel = exports.AddPersonnelUser = exports.AddPersonnel = exports.GetPersonnelByUserId = exports.GetAllPersonnel = void 0;
+exports.UpdatePersonnel = exports.AddPersonnelUser = exports.AddPersonnel = exports.GetPersonnelById = exports.GetPersonnelByUserId = exports.GetAllPersonnel = void 0;
 const typeCheck_1 = require("../lib/typeCheck");
 const personnel_1 = require("../models/personnel");
 const searchService_1 = require("../services/searchService");
@@ -40,6 +40,20 @@ const GetPersonnelByUserId = function (id) {
     });
 };
 exports.GetPersonnelByUserId = GetPersonnelByUserId;
+const GetPersonnelById = function (id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            console.log("userid", id);
+            const personnel = yield personnel_1.Personnel.find({ _id: id });
+            const match = personnel[0];
+            return match;
+        }
+        catch (e) {
+            return e;
+        }
+    });
+};
+exports.GetPersonnelById = GetPersonnelById;
 const AddPersonnel = function (_personnel) {
     return __awaiter(this, void 0, void 0, function* () {
         try {

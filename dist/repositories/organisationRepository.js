@@ -14,6 +14,7 @@ const organisations_1 = require("../models/organisations");
 const staff_1 = require("../models/staff");
 const user_1 = require("../models/user");
 const typeCheck_1 = require("../lib/typeCheck");
+const emailService_1 = require("../services/emailService");
 const GetAllOrganisations = function () {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -53,6 +54,7 @@ exports.AddOrganisation = AddOrganisation;
 const AddOrganisationAndStaff = function (_organisation) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            const _otp = Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000;
             const _user = {
                 title: "",
                 firstName: _organisation.userName,
@@ -61,13 +63,15 @@ const AddOrganisationAndStaff = function (_organisation) {
                 password: _organisation.password,
                 mobileNumber: _organisation.userNumber,
                 type: "2",
-                status: 0
+                status: 0,
+                otp: _otp.toString()
             };
             const _staff = {
                 position: _organisation.position
             };
             const userReq = Object.assign({}, _user);
             const user = user_1.User.build(userReq);
+            const email = yield (0, emailService_1.sendMail)(_user.email, `Activate your VICO net profile`, `Your otp is ${_otp.toString()}`, `Activate your VICO net profile, Your otp is <strong> ${_otp.toString()}</strong>`);
             const userResp = yield user.save();
             if (!(0, typeCheck_1.instanceOfTypeIUser)(userResp)) {
                 return { code: 500, message: "Failed to add user", object: userResp };

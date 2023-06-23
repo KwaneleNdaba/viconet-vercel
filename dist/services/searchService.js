@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GenerateSearchKeys = exports.SearchByKey = void 0;
 const SearchByKey = function (searchKey, personnel) {
     return __awaiter(this, void 0, void 0, function* () {
-        const searchKeySet = new Set(searchKey.split(","));
+        const searchKeySet = new Set(searchKey !== null && searchKey !== void 0 ? searchKey : "".split(","));
         const matches = personnel
             .map((x) => {
             return { matchCount: CompareHash(Array.from(searchKeySet), x), personnel: x };
@@ -24,7 +24,8 @@ const SearchByKey = function (searchKey, personnel) {
 };
 exports.SearchByKey = SearchByKey;
 function CompareHash(searchTerms, personnel) {
-    const res = ConvertToHashMap(personnel.searchKeys.split(","));
+    var _a;
+    const res = ConvertToHashMap((_a = personnel.searchKeys) === null || _a === void 0 ? void 0 : _a.split(","));
     const matchCount = searchTerms.reduce((count, term) => {
         if (res[term] === true) {
             return count + 1;

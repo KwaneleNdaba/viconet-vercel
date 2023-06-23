@@ -2,7 +2,7 @@
 import { IPersonnel, IPersonnelDoc } from "../models/personnel";
 
 export const SearchByKey = async function(searchKey: string, personnel: IPersonnelDoc[]): Promise<IPersonnelDoc[]> {
-  const searchKeySet = new Set(searchKey.split(","));
+  const searchKeySet = new Set(searchKey??"".split(","));
 
   const matches = personnel
     .map((x) => {
@@ -16,7 +16,7 @@ export const SearchByKey = async function(searchKey: string, personnel: IPersonn
 }
 
 function CompareHash(searchTerms: string[], personnel: IPersonnelDoc): number {
-  const res = ConvertToHashMap(personnel.searchKeys.split(","));
+  const res = ConvertToHashMap(personnel.searchKeys?.split(","));
   const matchCount = searchTerms.reduce((count, term) => {
   
     if (res[term] === true) {

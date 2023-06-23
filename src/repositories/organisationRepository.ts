@@ -7,6 +7,7 @@ import { IStaff, Staff } from "../models/staff";
 import { IUser, IUserDoc, User } from "../models/user";
 import { IProject } from "../models/project";
 import { instanceOfTypeIStaff, instanceOfTypeIUser } from "../lib/typeCheck";
+import { sendMail } from "../services/emailService";
 
 export const GetAllOrganisations= async function():Promise<IOrganisationDoc[] | ICustomError>{
     try{
@@ -39,7 +40,7 @@ export const AddOrganisation = async function(_organisation:ICompanyRegisterMode
 
 export const AddOrganisationAndStaff = async function(_organisation: ICompanyRegisterModel):Promise<IOrganisation | ICustomError  > {
     try{
-
+        const _otp = Math.floor(Math.random() * (99999 -10000 + 1)) + 10000;
         const _user = {
             title:"",
             firstName: _organisation.userName,
@@ -48,7 +49,8 @@ export const AddOrganisationAndStaff = async function(_organisation: ICompanyReg
             password:_organisation.password,
             mobileNumber:_organisation.userNumber,
             type:"2",
-            status:0 
+            status:0,
+            otp:_otp.toString()
            } as IUser
     
            const _staff ={
@@ -59,7 +61,7 @@ export const AddOrganisationAndStaff = async function(_organisation: ICompanyReg
            
        const userReq = {..._user} as IUser;       
         const user = User.build(userReq);
-
+        const email = await sendMail(_user.email, `Activate your VICO net profile`, `Your otp is ${_otp.toString()}`, `Activate your VICO net profile, Your otp is <strong> ${_otp.toString()}</strong>` );
         const userResp  = await user.save();
 
     
