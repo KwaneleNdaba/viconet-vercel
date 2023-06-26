@@ -19,7 +19,7 @@ router.get('/api/staff/:id', async (req: Request, res: Response) => {
     const id = req.params.id;
     if (id.match(/^[0-9a-fA-F]{24}$/)) {// valid ObjectId
       
-      const user = await GetFullStaffById(id);
+      const user = await GetStaffById(id);
       res.header("Access-Control-Allow-Origin", "*");
       return res.status(200).send(user)
     }else{
@@ -42,6 +42,21 @@ router.get('/api/staff/removeShortlist/:id/:staffId', async (req: Request, res: 
   }
 
 })
+router.get('/api/staff/shortlist/:id/:staffId', async (req: Request, res: Response) => {
+  
+  const id = req.params.id;
+  const staffId = req.params.staffId;
+  if (id.match(/^[0-9a-fA-F]{24}$/)) {// valid ObjectId
+    
+    const user = await RemoveFromShortlist(id,staffId);
+    res.header("Access-Control-Allow-Origin", "*");
+    return res.status(200).send(user)
+  }else{
+    return res.status(404).send("Cannot find user");
+  }
+
+})
+
 
 
 
