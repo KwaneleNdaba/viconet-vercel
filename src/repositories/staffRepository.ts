@@ -22,12 +22,14 @@ export const GetFullStaffById= async function(id:string):Promise<IStaffViewModel
     try{
         const staff = await Staff.find({_user:id});
         const _staff = staff[0] as IStaff;
-      
+        const user = await User.findById(id);
+
         const personnel = await GetShortListed(_staff._shortlist);
        
         const response = {
             staff: _staff,
-            shortlisted: personnel
+            shortlisted: personnel,
+            user:user
 
         } as IStaffViewModel
         return response;

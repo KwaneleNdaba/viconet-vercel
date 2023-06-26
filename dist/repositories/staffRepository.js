@@ -31,10 +31,12 @@ const GetFullStaffById = function (id) {
         try {
             const staff = yield staff_1.Staff.find({ _user: id });
             const _staff = staff[0];
+            const user = yield user_1.User.findById(id);
             const personnel = yield GetShortListed(_staff._shortlist);
             const response = {
                 staff: _staff,
-                shortlisted: personnel
+                shortlisted: personnel,
+                user: user
             };
             return response;
         }
