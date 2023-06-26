@@ -21,6 +21,42 @@ router.get('/api/project', (req, res) => __awaiter(void 0, void 0, void 0, funct
     const user = yield (0, projectRepository_1.GetAllProjects)();
     return res.status(200).send(user);
 }));
+router.get('/api/acceptinvite/:personnelId/:projectId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const personnelId = req.params.personnelId;
+    const projectId = req.params.projectId;
+    if (personnelId.match(/^[0-9a-fA-F]{24}$/) && projectId.match(/^[0-9a-fA-F]{24}$/)) { // valid ObjectId
+        const payload = {
+            projectId: projectId,
+            personnelId: personnelId,
+            staffId: "",
+            status: "1"
+        };
+        const user = yield (0, projectRepository_1.UpdatePersonnelOnProject)(payload);
+        res.header("Access-Control-Allow-Origin", "*");
+        return res.status(200).send(user);
+    }
+    else {
+        return res.status(404).send("Cannot find project");
+    }
+}));
+router.get('/api/declineinvite/:personnelId/:projectId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const personnelId = req.params.personnelId;
+    const projectId = req.params.projectId;
+    if (personnelId.match(/^[0-9a-fA-F]{24}$/) && projectId.match(/^[0-9a-fA-F]{24}$/)) { // valid ObjectId
+        const payload = {
+            projectId: projectId,
+            personnelId: personnelId,
+            staffId: "",
+            status: "2"
+        };
+        const user = yield (0, projectRepository_1.UpdatePersonnelOnProject)(payload);
+        res.header("Access-Control-Allow-Origin", "*");
+        return res.status(200).send(user);
+    }
+    else {
+        return res.status(404).send("Cannot find project");
+    }
+}));
 router.get('/api/project/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.params.id;
     if (id.match(/^[0-9a-fA-F]{24}$/)) { // valid ObjectId
@@ -77,5 +113,16 @@ router.post('/api/project/:id', (req, res) => __awaiter(void 0, void 0, void 0, 
         const _project = yield (0, projectRepository_1.UpdateProject)(project, id);
         return res.status(200).send(_project);
     }
+}));
+router.post('/api/updateProjectPersonnel/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { projectId, personnelId, status, staffId } = req.body;
+    const project = {
+        projectId: projectId,
+        personnelId: personnelId,
+        status: status,
+        staffId
+    };
+    const _project = yield (0, projectRepository_1.UpdatePersonnelOnProject)(project);
+    return res.status(200).send(_project);
 }));
 //# sourceMappingURL=project.js.map

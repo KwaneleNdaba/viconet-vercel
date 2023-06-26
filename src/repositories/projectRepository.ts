@@ -1,9 +1,12 @@
+import { INotification } from "../models/notifications";
 import { instanceOfTypeIPersonnelArray } from "../lib/typeCheck";
 import { ICustomError, IMongoError } from "../models/errors";
 import { IPersonnel, IPersonnelDoc, Personnel } from "../models/personnel";
 import { ICreateProject, IProject, IProjectDoc, IProjectView, IUpdateProject, IUpdateProjectPersonnel, Project } from "../models/project";
+import { AddNotification, GetNotificationById, GetNotificationByTargetAndReference, UpdateNotification } from "./notificatonsRepository";
 import { AddProjectToOrganisation } from "./organisationRepository";
 import { GetAllPersonnel } from "./personnelRepository";
+import { RemoveFromShortlist } from "./staffRepository";
 
 export const GetAllProjects= async function():Promise<IProjectDoc[] | IMongoError>{
     try{
@@ -57,8 +60,8 @@ export const GetProjectById= async function(id:string):Promise<IProjectView | IM
         const personnel = await GetAllPersonnel();
 
         if(instanceOfTypeIPersonnelArray(personnel)){
-          
-            const view = MapProjectPersonnel(project[0], personnel);
+          const doc = project[0] as any;
+            const view = MapProjectPersonnel(doc._doc, personnel);
            
             return view;
         }
@@ -112,47 +115,84 @@ export const AddProject = async function(_project:ICreateProject):Promise<IProje
   
   export const UpdatePersonnelOnProject = async function(_project:IUpdateProjectPersonnel):Promise<IProjectView | IMongoError> {
     
-    const currentProject = await GetProjectById(_project.projectId) as IProject;
+    const currentProject = await GetProjectById(_project.projectId) as any;
+    // const currentProject = _currentProject._doc as IProject;
     const allPersonnel = await GetAllPersonnel() as IPersonnel[];
+  
     try{
-
+        
         switch(_project.status){
             //invited
             case"0":
-                const newProject = {...currentProject, pending:`${currentProject.pending},${_project.personnelId}`};
+                const currentPending = currentProject.pending.split(",");
+                const pending = currentPending.length>0?[...currentPending,_project.personnelId].join(","): _project.personnelId;
+                const pendingClean = pending.charAt(0) === ','? pending.slice(1): pending;
+               
+                const newProject = {...currentProject, pending:pendingClean} as IProject;
                 const project = Project.build(newProject);
+        
                 const newProjectDb = await project.updateOne(project);
-                const allPersonnel = await GetAllPersonnel() as IPersonnel[];
-                const response = MapProjectPersonnel(newProjectDb,allPersonnel);
+                //remove from shortlist
+              
+                await RemoveFromShortlist(_project.personnelId, _project.staffId);
+            
+                //send notification
+                const notification = {
+                    targetUser: _project.personnelId,
+                    reference:_project.projectId,
+                    message: "Invited to a new project",
+                    status:"0",
+                    type:"0"
+                } as INotification
+                const resp = AddNotification(notification);
+
+                const response = MapProjectPersonnel(newProject,allPersonnel);
                 return response;
         //accepted
             case "1":
                 
-                const removed = currentProject.pending.split(",").filter(x=>x == _project.personnelId).join(",");
+                const newPending = currentProject.pending.split(",").filter((x:any)=>x != _project.personnelId).join(",");
+                const currentAccepted =  currentProject.accepted.split(",");
 
-                const _newProject = {...currentProject, pending:removed, accepted:`${currentProject.pending},${_project.personnelId}`} as IProject;
-
-                // currentProject.pending
-
+                const accepted = currentAccepted.length>0?[...currentAccepted,_project.personnelId].join(","): _project.personnelId;
+                const acceptedClean = accepted.charAt(0) === ','? accepted.slice(1): pending;
+               
+                const _newProject = {...currentProject, pending:newPending, accepted:acceptedClean} as IProject;
+           
                 const __project = Project.build(_newProject);
-                const _newProjectDb = await project.updateOne(__project);
-                const _response = MapProjectPersonnel(_newProjectDb,allPersonnel);
+                const _newProjectDb = await __project.updateOne(__project);
+                
+                const _notification = await GetNotificationByTargetAndReference(_project.personnelId, _project.projectId) as INotification;
+                const newNotification = {..._notification, status:"1"} as INotification;
+                const updatedNotification = await UpdateNotification(newNotification);
+
+                const _response = MapProjectPersonnel(_newProject,allPersonnel);
                 return _response;
         //declined
             case "2":
-                const _removed = currentProject.pending.split(",").filter(x=>x == _project.personnelId).join(",");
+                const _newPending = currentProject.pending.split(",").filter((x:any)=>x != _project.personnelId).join(",");
+                const currentDeclined =  currentProject.declined.split(",");
 
-                const __newProject = {...currentProject, pending:_removed, declined:`${currentProject.pending},${_project.personnelId}`} as IProject;
+                const declined = currentDeclined.length>0?[...currentDeclined,_project.personnelId].join(","): _project.personnelId;
+                const declinedClean = declined.charAt(0) === ','? declined.slice(1): declined;
 
+                const __newProject = {...currentProject, pending: _newPending, declined:declinedClean} as IProject;
+               
                 const ___project = Project.build(__newProject);
-                const __newProjectDb = await project.updateOne(___project);
-                const __response = MapProjectPersonnel(__newProjectDb,allPersonnel);
+              
+                const __newProjectDb = await ___project.updateOne(___project);
+                
+                const __notification = await GetNotificationByTargetAndReference(_project.personnelId, _project.projectId) as INotification;
+                const _newNotification = {...__notification, status:"1"} as INotification;
+                const _updatedNotification = await UpdateNotification(_newNotification);
+
+                const __response = MapProjectPersonnel(__newProject,allPersonnel);
                 return __response;
         //removed
             case "3":
-                const __removedInvited = currentProject.pending.split(",").filter(x=>x == _project.personnelId).join(",");
-                const __removeAccepted = currentProject.accepted.split(",").filter(x=>x == _project.personnelId).join(",");
-                const __removeRejected = currentProject.declined.split(",").filter(x=>x == _project.personnelId).join(",");
+                const __removedInvited = currentProject.pending.split(",").filter((x:any)=>x == _project.personnelId).join(",");
+                const __removeAccepted = currentProject.accepted.split(",").filter((x:any)=>x == _project.personnelId).join(",");
+                const __removeRejected = currentProject.declined.split(",").filter((x:any)=>x == _project.personnelId).join(",");
 
                 const ___newProject = {...currentProject,
                     accepted:__removeAccepted,
@@ -162,7 +202,7 @@ export const AddProject = async function(_project:ICreateProject):Promise<IProje
                 } as IProject;
 
                 const ____project = Project.build(___newProject);
-                const ___newProjectDb = await project.updateOne(____project);
+                const ___newProjectDb = await ____project.updateOne(____project);
                 const ___response = MapProjectPersonnel(___newProjectDb,allPersonnel);
                 return ___response;
         }
@@ -176,17 +216,20 @@ export const AddProject = async function(_project:ICreateProject):Promise<IProje
 
 
 
- function MapProjectPersonnel(project:IProjectDoc,  personnel: IPersonnel[]):IProjectView{
+ function MapProjectPersonnel(project:IProject,  personnel: IPersonnel[]):IProjectView{
 
 
-    const p = project as any;
-        const uninvited = project.uninvited.split(",").map(proj=> personnel.filter(pers=>pers._id== proj)[0]);
-        const pending = project.pending.split(",").map(proj=> personnel.filter(pers=>pers._id== proj)[0]);
-        const accepted = project.accepted.split(",").map(proj=> personnel.filter(pers=>pers._id== proj)[0]);
-        const declined = project.declined.split(",").map(proj=> personnel.filter(pers=>pers._id== proj)[0]);
-
+    // const p = _project as any;
+    // const project = p._doc as IProject;
+    
+        const uninvited = project.uninvited.split(",").map(proj=> personnel.filter(pers=>pers._id.toString()== proj)[0]);
+        const pending = project.pending.split(",").map(proj=> personnel.filter(pers=>pers._id.toString()== proj)[0]);
+        const accepted = project.accepted.split(",").map(proj=> personnel.filter(pers=>pers._id.toString()== proj)[0]);
+        const declined = project.declined.split(",").map(proj=> personnel.filter(pers=>pers._id.toString()== proj)[0]);
+     
+        // console.log("{ALL",    personnel.map(x=> x._id.toString()));
         const result ={
-            ...p._doc, 
+          ...project, 
             _uninvited:uninvited,
             _pending: pending,
             _accepted:accepted,

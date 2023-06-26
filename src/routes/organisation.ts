@@ -16,7 +16,7 @@ router.get('/api/organisation/:id', async (req: Request, res: Response) => {
   
     const id = req.params.id;
     if (id.match(/^[0-9a-fA-F]{24}$/)) {// valid ObjectId
-      console.log("PRGASA")
+
       const user = await GetOrganisationById(id);
       res.header("Access-Control-Allow-Origin", "*");
       return res.status(200).send(user)

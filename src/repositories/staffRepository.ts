@@ -20,11 +20,11 @@ export const GetAllStaff= async function():Promise<IStaffDoc[] | IMongoError>{
 
 export const GetFullStaffById= async function(id:string):Promise<IStaffViewModel | IMongoError>{
     try{
-        const staff = await Staff.find({_id:id});
+        const staff = await Staff.find({_user:id});
         const _staff = staff[0] as IStaff;
-
+      
         const personnel = await GetShortListed(_staff._shortlist);
-        
+       
         const response = {
             staff: _staff,
             shortlisted: personnel
@@ -50,32 +50,53 @@ export const GetStaffById= async function(id:string):Promise<IStaff | IMongoErro
 export const AddToShortlist = async function(personnel: string, staffId: string):Promise<IStaffViewModel | IMongoError>{
 
     try{
-        const currentStaff = await GetStaffById(staffId) as IStaff;
-        const newPersonnel = `${currentStaff._shortlist},${personnel}`;
-        const newStaff = {...currentStaff, _shortlist:newPersonnel}
-        const savedStaff = await UpdateStaff(newStaff) as IStaff;
-        const newShortlist = await GetShortListed(newPersonnel);
-        const response = {
-            staff: savedStaff,
-            shortlisted: newShortlist
+        const staffDoc = await GetStaffById(staffId) as any;
+        const currentStaff = staffDoc._doc as IStaff;
 
-        } as IStaffViewModel
+        const currentStaffArray = currentStaff._shortlist.split(",");
 
-        return response;
-
+        if(currentStaffArray.includes(personnel)){
+            //already shortlisted 
+            console.log("already shortlisted");
+            const response = {
+                staff: currentStaff,
+                shortlisted: await GetShortListed(currentStaff._shortlist)
+    
+            } as IStaffViewModel
+    
+            return response;
+        }else{
+           
+            const newPersonnel = `${currentStaff._shortlist.trim()}${currentStaff._shortlist.trim()==""?'':","}${personnel.trim()}`;
+            const newStaff = {...currentStaff, _shortlist:newPersonnel} as IStaff
+            const savedStaff = await UpdateStaff(newStaff) as IStaff;
+            const newShortlist = await GetShortListed(newPersonnel);
+            const response = {
+                staff: savedStaff,
+                shortlisted: newShortlist
+    
+            } as IStaffViewModel
+    
+            return response;
+    
+         
+        }
     }catch(e){
         return e as IMongoError;
     }
 }
 
 export const RemoveFromShortlist = async function(personnel: string, staffId: string):Promise<IStaffViewModel | IMongoError>{
-
+    console.log("person", personnel);
+    console.log("staff", staffId);
     try{
-        const currentStaff = await GetStaffById(staffId) as IStaff;
-        const currentPersonnel = currentStaff._shortlist.split(",");
+        const staffDoc = await GetStaffById(staffId) as any;
+        const currentStaff = staffDoc._doc as IStaff;
+        const currentPersonnel = currentStaff._shortlist.trim().split(",");
         const _newShortlist = currentPersonnel.filter(x=>x!=personnel).join(",");
         
         const newStaff = {...currentStaff, _shortlist:_newShortlist}
+      
         const savedStaff = await UpdateStaff(newStaff) as IStaff;
 
         const newShortlistPersonnel = await GetShortListed(_newShortlist);
@@ -95,8 +116,7 @@ export const RemoveFromShortlist = async function(personnel: string, staffId: st
 const GetShortListed = async function(shortlisted:string):Promise<IPersonnel[]> {
     const allPersonnel = await GetAllPersonnel() as IPersonnel[];
     const allShortListed = shortlisted.split(",");
-
-    const list = allPersonnel.filter(x=> allShortListed.includes(x._id));
+    const list = allShortListed.length>0? allPersonnel.filter(x=> allShortListed.includes(x?._id.toString())):[];
     return list;
 
 
@@ -156,7 +176,7 @@ export const UpdateStaff = async function(_staff:IStaff):Promise<IStaff | IMongo
          
         const staff = Staff.build(_staff);
         await staff.updateOne(staff);
-    
+        console.log("newshort", _staff)
         return staff;
     }catch(e){
         return e as IMongoError;

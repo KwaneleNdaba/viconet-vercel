@@ -35,13 +35,48 @@ router.get('/api/staff/:id', (req, res) => __awaiter(void 0, void 0, void 0, fun
         return res.status(404).send("Cannot find user");
     }
 }));
+router.get('/api/staffuser/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = req.params.id;
+    if (id.match(/^[0-9a-fA-F]{24}$/)) { // valid ObjectId
+        const user = yield (0, staffRepository_1.GetFullStaffById)(id);
+        res.header("Access-Control-Allow-Origin", "*");
+        return res.status(200).send(user);
+    }
+    else {
+        return res.status(404).send("Cannot find user");
+    }
+}));
+router.get('/api/staff/removeShortlist/:personnelId/:staffId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = req.params.personnelId;
+    const staffId = req.params.staffId;
+    if (id.match(/^[0-9a-fA-F]{24}$/)) { // valid ObjectId
+        const user = yield (0, staffRepository_1.RemoveFromShortlist)(id, staffId);
+        res.header("Access-Control-Allow-Origin", "*");
+        return res.status(200).send(user);
+    }
+    else {
+        return res.status(404).send("Cannot find user");
+    }
+}));
+router.get('/api/staff/shortlist/:personnelId/:staffId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = req.params.personnelId;
+    const staffId = req.params.staffId;
+    if (id.match(/^[0-9a-fA-F]{24}$/)) { // valid ObjectId
+        const user = yield (0, staffRepository_1.AddToShortlist)(id, staffId);
+        res.header("Access-Control-Allow-Origin", "*");
+        return res.status(200).send(user);
+    }
+    else {
+        return res.status(404).send("Cannot find user");
+    }
+}));
 router.post('/api/staff', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { title, firstName, surname, email, password, mobileNumber, position, profilePicture, _organisation } = req.body;
     const hashedPassword = yield (0, loginService_1.HashPassword)(password);
     const dbUser = { title: title,
         firstName: firstName,
         surname: surname,
-        email: email.toLowerCase(),
+        email: email === null || email === void 0 ? void 0 : email.toLowerCase(),
         type: "2",
         mobileNumber: mobileNumber,
         status: 0,

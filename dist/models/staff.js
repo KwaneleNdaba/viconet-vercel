@@ -22,6 +22,10 @@ const staffSchema = new mongoose_1.default.Schema({
         type: String,
         required: true
     },
+    _shortlist: {
+        type: String,
+        //  required: true
+    },
 });
 staffSchema.statics.build = (attr) => {
     return new Staff(attr);

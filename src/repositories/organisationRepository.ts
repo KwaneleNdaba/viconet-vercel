@@ -75,7 +75,8 @@ export const AddOrganisationAndStaff = async function(_organisation: ICompanyReg
            } as IUser
     
            const _staff ={
-            position:_organisation.position
+            position:_organisation.position,
+            _shortlist:""
            } as IStaff;
     
 

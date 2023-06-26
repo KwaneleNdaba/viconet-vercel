@@ -9,16 +9,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AddProjectToOrganisation = exports.AddStaffToOrganisation = exports.UpdateOrganisation = exports.AddOrganisationAndStaff = exports.AddOrganisation = exports.GetOrganisationById = exports.GetAllOrganisations = void 0;
+exports.AddProjectToOrganisation = exports.AddStaffToOrganisation = exports.UpdateOrganisation = exports.AddOrganisationAndStaff = exports.AddOrganisation = exports.GetOrganisationProjects = exports.GetOrganisationById = exports.GetAllOrganisations = void 0;
 const organisations_1 = require("../models/organisations");
 const staff_1 = require("../models/staff");
 const user_1 = require("../models/user");
+const project_1 = require("../models/project");
 const typeCheck_1 = require("../lib/typeCheck");
 const emailService_1 = require("../services/emailService");
 const GetAllOrganisations = function () {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const organisation = yield organisations_1.Organisation.find({});
+            const projects = yield project_1.Project.find({});
             return organisation;
         }
         catch (e) {
@@ -31,7 +33,13 @@ const GetOrganisationById = function (id) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const organisation = yield organisations_1.Organisation.find({ _id: id });
-            return organisation[0];
+            const org = organisation[0];
+            const projects = yield project_1.Project.find({});
+            const viewModel = {
+                organisation: org,
+                projects: projects
+            };
+            return viewModel;
         }
         catch (e) {
             return { code: 500, message: "error", object: e };
@@ -39,6 +47,12 @@ const GetOrganisationById = function (id) {
     });
 };
 exports.GetOrganisationById = GetOrganisationById;
+const GetOrganisationProjects = function (projectIds, allProjects) {
+    const projectIdArray = projectIds.split(",");
+    const projects = allProjects.filter(x => projectIdArray.includes(x._id));
+    return projects;
+};
+exports.GetOrganisationProjects = GetOrganisationProjects;
 const AddOrganisation = function (_organisation) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -67,7 +81,8 @@ const AddOrganisationAndStaff = function (_organisation) {
                 otp: _otp.toString()
             };
             const _staff = {
-                position: _organisation.position
+                position: _organisation.position,
+                _shortlist: ""
             };
             const userReq = Object.assign({}, _user);
             const user = user_1.User.build(userReq);
@@ -135,12 +150,12 @@ const AddStaffToOrganisation = function (_organisation, staff) {
     });
 };
 exports.AddStaffToOrganisation = AddStaffToOrganisation;
-const AddProjectToOrganisation = function (_organisation, project) {
+const AddProjectToOrganisation = function (_organisation, projectId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const currentOrg = yield (0, exports.GetOrganisationById)(_organisation);
             const currentProjects = currentOrg._projects;
-            const newProjects = `${currentProjects},${project._id}`;
+            const newProjects = `${currentProjects},${projectId}`;
             const newOrg = Object.assign(Object.assign({}, currentOrg), { _projects: newProjects });
             const organisation = organisations_1.Organisation.build(newOrg);
             yield organisation.updateOne(organisation);

@@ -29,6 +29,7 @@ export interface IUpdateProjectPersonnel{
   projectId:string;
   personnelId:string;  
   status:string;
+  staffId:string;
 }
 
 

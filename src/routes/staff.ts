@@ -3,7 +3,7 @@ import { User, IUser, ICreateStaffUser } from '../models/user'
 import { AddUser } from '../repositories/usersRepository';
 import { HashPassword } from '../services/loginService';
 import { IStaff } from '../models/staff';
-import { AddStaff, GetAllStaff, GetFullStaffById, GetStaffById, RemoveFromShortlist } from '../repositories/staffRepository';
+import { AddStaff, AddToShortlist, GetAllStaff, GetFullStaffById, GetStaffById, RemoveFromShortlist } from '../repositories/staffRepository';
 import { AddStaffToOrganisation, GetOrganisationById } from '../repositories/organisationRepository';
 
 const router = express.Router()
@@ -13,24 +13,37 @@ router.get('/api/staff', async (req: Request, res: Response) => {
   return res.status(200).send(user)
 })
 
-
 router.get('/api/staff/:id', async (req: Request, res: Response) => {
   
-    const id = req.params.id;
-    if (id.match(/^[0-9a-fA-F]{24}$/)) {// valid ObjectId
-      
-      const user = await GetStaffById(id);
-      res.header("Access-Control-Allow-Origin", "*");
-      return res.status(200).send(user)
-    }else{
-      return res.status(404).send("Cannot find user");
-    }
-
+  const id = req.params.id;
+  if (id.match(/^[0-9a-fA-F]{24}$/)) {// valid ObjectId
+    
+    const user = await GetStaffById(id);
+    res.header("Access-Control-Allow-Origin", "*");
+    return res.status(200).send(user)
+  }else{
+    return res.status(404).send("Cannot find user");
+  }
 })
 
-router.get('/api/staff/removeShortlist/:id/:staffId', async (req: Request, res: Response) => {
+router.get('/api/staffuser/:id', async (req: Request, res: Response) => {
   
   const id = req.params.id;
+  if (id.match(/^[0-9a-fA-F]{24}$/)) {// valid ObjectId
+    
+    const user = await GetFullStaffById(id);
+    res.header("Access-Control-Allow-Origin", "*");
+    return res.status(200).send(user)
+  }else{
+    return res.status(404).send("Cannot find user");
+  }
+})
+
+
+
+router.get('/api/staff/removeShortlist/:personnelId/:staffId', async (req: Request, res: Response) => {
+  
+  const id = req.params.personnelId;
   const staffId = req.params.staffId;
   if (id.match(/^[0-9a-fA-F]{24}$/)) {// valid ObjectId
     
@@ -42,13 +55,14 @@ router.get('/api/staff/removeShortlist/:id/:staffId', async (req: Request, res: 
   }
 
 })
-router.get('/api/staff/shortlist/:id/:staffId', async (req: Request, res: Response) => {
+
+router.get('/api/staff/shortlist/:personnelId/:staffId', async (req: Request, res: Response) => {
   
-  const id = req.params.id;
+  const id = req.params.personnelId;
   const staffId = req.params.staffId;
   if (id.match(/^[0-9a-fA-F]{24}$/)) {// valid ObjectId
     
-    const user = await RemoveFromShortlist(id,staffId);
+    const user = await AddToShortlist(id,staffId);
     res.header("Access-Control-Allow-Origin", "*");
     return res.status(200).send(user)
   }else{

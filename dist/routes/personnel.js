@@ -61,6 +61,7 @@ router.get('/api/personnel', (req, res) => __awaiter(void 0, void 0, void 0, fun
 }));
 router.get('/api/personnel/:userId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const email = req.params.userId;
+    console.log("RES", email);
     const user = yield (0, personnelRepository_1.GetPersonnelById)(email);
     console.log("RES", user);
     return res.status(200).send(user);
