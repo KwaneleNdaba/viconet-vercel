@@ -8,6 +8,7 @@ import { AddUser } from "./usersRepository";
 export const GetAllPersonnel= async function():Promise<IPersonnelDoc[] | IMongoError>{
     try{
         const personnel = await Personnel.find({})
+        console.log("PRGASA",personnel )
         return personnel as IPersonnelDoc[];
         }catch(e){
             return e as IMongoError;
@@ -27,8 +28,9 @@ export const GetPersonnelByUserId= async function(id:string):Promise<IPersonnelD
 
 export const GetPersonnelById= async function(id:string):Promise<IPersonnelDoc| IMongoError>{
     try{
-        console.log("userid", id)
+      
         const personnel = await Personnel.find({_id:id})
+        console.log("personnel", personnel)
         const match = personnel[0];
         return match as IPersonnelDoc;
         }catch(e){

@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import { IProject } from './project';
 
 
 export interface ICompanyRegisterModel{
@@ -16,6 +17,11 @@ export interface ICompanyRegisterModel{
   title?:string;
   userEmail:string;  
   
+}
+
+export interface IOrganisationViewModel extends IOrganisation{
+  projects: IProject[],
+  organisation: IOrganisation
 }
 
 export interface IOrganisation {

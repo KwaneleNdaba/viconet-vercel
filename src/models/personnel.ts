@@ -61,6 +61,7 @@ export interface IPersonnelDoc extends mongoose.Document {
   personalInformation:IPersonalInformation;
   _user:string;
   state:number;
+  projectState:string;
 }
 
 const personnelSchema = new mongoose.Schema({
@@ -105,6 +106,14 @@ const personnelSchema = new mongoose.Schema({
     // required: true
   },
   _user: {
+    type: String,
+    // required: true
+  },
+  state: {
+    type: String,
+    // required: true
+  },
+  projectState: {
     type: String,
     // required: true
   },

@@ -1,30 +1,51 @@
 
 import { ICustomError, IMongoError } from "../models/errors";
-import { ICompanyRegisterModel, IOrganisation, IOrganisationDoc, Organisation } from "../models/organisations";
+import { ICompanyRegisterModel, IOrganisation, IOrganisationDoc, IOrganisationViewModel, Organisation } from "../models/organisations";
 import { IPersonnel, IPersonnelDoc, Personnel } from "../models/personnel";
 import { IStaff, Staff } from "../models/staff";
 
 import { IUser, IUserDoc, User } from "../models/user";
-import { IProject } from "../models/project";
+import { IProject, Project } from "../models/project";
 import { instanceOfTypeIStaff, instanceOfTypeIUser } from "../lib/typeCheck";
 import { sendMail } from "../services/emailService";
+import { GetAllProjects } from "./projectRepository";
 
 export const GetAllOrganisations= async function():Promise<IOrganisationDoc[] | ICustomError>{
     try{
         const organisation = await Organisation.find({})
+        const projects = await Project.find({}) as IProject[];
+        
         return organisation as IOrganisationDoc[];
         }catch(e){
             return {code:500, message:"error", object:e} as ICustomError;
         }
 }
 
-export const GetOrganisationById= async function(id:string):Promise<IOrganisationDoc | ICustomError>{
+export const GetOrganisationById= async function(id:string):Promise<IOrganisationViewModel | ICustomError>{
     try{
         const organisation = await Organisation.find({_id:id})
-        return organisation[0] as IOrganisationDoc;
+        const org =  organisation[0] as IOrganisation;
+
+        const projects = await Project.find({}) as IProject[];
+        
+        const viewModel = {
+            organisation:org,
+            projects: projects
+        } as IOrganisationViewModel;
+
+
+        return viewModel;
         }catch(e){
             return {code:500, message:"error", object:e} as ICustomError;
         }
+}
+
+export const GetOrganisationProjects = function(projectIds:string, allProjects: IProject[]):IProject[]{
+    
+    const projectIdArray = projectIds.split(",");
+    const projects = allProjects.filter(x=> projectIdArray.includes(x._id));
+    return projects;
+
 }
 
 
@@ -138,11 +159,11 @@ export const AddStaffToOrganisation = async function(_organisation:string, staff
 
 
 
-export const AddProjectToOrganisation = async function(_organisation:string, project :IProject):Promise<IOrganisation | IMongoError> {
+export const AddProjectToOrganisation = async function(_organisation:string, projectId :string):Promise<IOrganisation | IMongoError> {
     try{
         const currentOrg = await GetOrganisationById(_organisation) as IOrganisation;
         const currentProjects = currentOrg._projects;
-        const newProjects = `${currentProjects},${project._id}`;
+        const newProjects = `${currentProjects},${projectId}`;
 
         const newOrg = {...currentOrg, _projects: newProjects} as IOrganisation;
         const organisation = Organisation.build(newOrg);

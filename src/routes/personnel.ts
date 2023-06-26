@@ -63,6 +63,7 @@ router.get('/api/personnel', async (req: Request, res: Response) => {
 
 router.get('/api/personnel/:userId', async (req: Request, res: Response) => {
   const email = req.params.userId;
+  console.log("RES",email)
   const user = await GetPersonnelById(email);
  console.log("RES",user)
   return res.status(200).send(user)

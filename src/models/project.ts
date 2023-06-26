@@ -24,6 +24,15 @@ export interface IUpdateProject{
 }
 
 
+
+export interface IUpdateProjectPersonnel{
+  projectId:string;
+  personnelId:string;  
+  status:string;
+}
+
+
+
 export interface IProject {
   _id?:string;
   _organisation:string;

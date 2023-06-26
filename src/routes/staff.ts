@@ -3,7 +3,7 @@ import { User, IUser, ICreateStaffUser } from '../models/user'
 import { AddUser } from '../repositories/usersRepository';
 import { HashPassword } from '../services/loginService';
 import { IStaff } from '../models/staff';
-import { AddStaff, GetAllStaff, GetStaffById } from '../repositories/staffRepository';
+import { AddStaff, GetAllStaff, GetFullStaffById, GetStaffById, RemoveFromShortlist } from '../repositories/staffRepository';
 import { AddStaffToOrganisation, GetOrganisationById } from '../repositories/organisationRepository';
 
 const router = express.Router()
@@ -19,7 +19,7 @@ router.get('/api/staff/:id', async (req: Request, res: Response) => {
     const id = req.params.id;
     if (id.match(/^[0-9a-fA-F]{24}$/)) {// valid ObjectId
       
-      const user = await GetStaffById(id);
+      const user = await GetFullStaffById(id);
       res.header("Access-Control-Allow-Origin", "*");
       return res.status(200).send(user)
     }else{
@@ -27,6 +27,22 @@ router.get('/api/staff/:id', async (req: Request, res: Response) => {
     }
 
 })
+
+router.get('/api/staff/removeShortlist/:id/:staffId', async (req: Request, res: Response) => {
+  
+  const id = req.params.id;
+  const staffId = req.params.staffId;
+  if (id.match(/^[0-9a-fA-F]{24}$/)) {// valid ObjectId
+    
+    const user = await RemoveFromShortlist(id,staffId);
+    res.header("Access-Control-Allow-Origin", "*");
+    return res.status(200).send(user)
+  }else{
+    return res.status(404).send("Cannot find user");
+  }
+
+})
+
 
 
 router.post('/api/staff', async (req: Request, res: Response) => {
@@ -37,7 +53,7 @@ router.post('/api/staff', async (req: Request, res: Response) => {
   const dbUser = { title:title,
     firstName: firstName, 
     surname: surname, 
-    email: email.toLowerCase(),
+    email: email?.toLowerCase(),
     type: "2", 
     mobileNumber: mobileNumber,
     status:0,

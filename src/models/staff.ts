@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import { IUserRegisterModel } from './user';
+import { IPersonnel } from './personnel';
 
 
 export interface IStaff {
@@ -8,6 +9,12 @@ export interface IStaff {
   position?:string;		
   _organisation?:string;
   _user:string;
+  _shortlist:string;
+}
+
+export interface IStaffViewModel {
+  staff:IStaff,
+  shortlisted: IPersonnel[]
 }
 
 export interface ICreateStaffModel extends IUserRegisterModel{
@@ -27,7 +34,9 @@ export interface IStaffDoc extends mongoose.Document {
   position?:string;		
   _organisation?:string;
   _user:string;
+  _shortlist:string;
 }
+
 
 const staffSchema = new mongoose.Schema({
 
@@ -46,6 +55,10 @@ const staffSchema = new mongoose.Schema({
   _user:{
     type: String,
     required: true
+  },
+  _shortlist:{
+    type: String,
+  //  required: true
   },
 })
 
