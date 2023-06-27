@@ -26,6 +26,7 @@ export interface INotificationDoc extends mongoose.Document {
   type:string;
   email:string;
   phone?:string;
+  date?:string;
 }
 
 const notificationSchema = new mongoose.Schema({
@@ -54,6 +55,10 @@ const notificationSchema = new mongoose.Schema({
     required:true
   },
   phone:{
+    type: String,
+    required:true
+  },
+  date:{
     type: String,
     required:true
   },

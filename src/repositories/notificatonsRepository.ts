@@ -36,12 +36,29 @@ export const GetNotificationByTargetAndReference= async function(userId:string, 
 }
 
 
-export const GetNotificationByTargetUser= async function(id:string):Promise<INotificationDoc | ICustomError>{
+export const GetNotificationByTargetUser= async function(id:string):Promise<INotificationDoc[] | ICustomError>{
     try{
-        const organisation = await Notification.find({targetUser:id})
-        const notification =  organisation[0] as INotificationDoc;
+        const notifications = await Notification.find({targetUser:id})
+        const notification =  notifications as INotificationDoc[];
 
         return notification;
+        }catch(e){
+            return {code:500, message:"error", object:e} as ICustomError;
+        }
+}
+
+
+export const CloseNotification= async function(id:string):Promise<INotificationDoc | ICustomError>{
+    try{
+        const _notification = await Notification.find({id:id});
+        const notification =  _notification[0] as any;
+        const not = notification._doc as INotification;
+        const newNotification = {...notification, status:"1"} as INotification
+        
+        const noti = Notification.build(newNotification);
+        await noti.updateOne(noti);
+
+        return noti;
         }catch(e){
             return {code:500, message:"error", object:e} as ICustomError;
         }
@@ -68,7 +85,8 @@ export const AddNotification = async function(notification:INotification):Promis
 
 
         const noti = Notification.build(notification);
-        await noti.save();
+        const res = await noti.save();
+        console.log("noti",res )
         return noti;
 
     }catch(e){

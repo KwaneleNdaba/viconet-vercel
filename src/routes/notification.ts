@@ -3,7 +3,7 @@ import { HashPassword } from '../services/loginService';
 import { AddOrganisation, GetAllOrganisations, GetOrganisationById } from '../repositories/organisationRepository';
 import { ICompanyRegisterModel } from '../models/organisations';
 import { instanceOfTypeCustomError, instanceOfTypeIOrganisation } from '../lib/typeCheck';
-import { AddNotification, GetAllNotifications, GetNotificationById, GetNotificationByTargetUser } from '../repositories/notificatonsRepository';
+import { AddNotification, CloseNotification, GetAllNotifications, GetNotificationById, GetNotificationByTargetUser } from '../repositories/notificatonsRepository';
 import { INotification } from '../models/notifications';
 
 const router = express.Router()
@@ -34,6 +34,21 @@ router.get('/api/notificationByUser/:userId', async (req: Request, res: Response
   if (id.match(/^[0-9a-fA-F]{24}$/)) {// valid ObjectId
 
     const user = await GetNotificationByTargetUser(id);
+    res.header("Access-Control-Allow-Origin", "*");
+    return res.status(200).send(user)
+  }else{
+    return res.status(404).send("Cannot find user");
+  }
+
+})
+
+
+router.get('/api/closeNotification/:notificationId', async (req: Request, res: Response) => {
+  
+  const id = req.params.notificationId;
+  if (id.match(/^[0-9a-fA-F]{24}$/)) {// valid ObjectId
+
+    const user = await CloseNotification(id);
     res.header("Access-Control-Allow-Origin", "*");
     return res.status(200).send(user)
   }else{

@@ -5,8 +5,10 @@ import { IPersonnel, IPersonnelDoc, Personnel } from "../models/personnel";
 import { ICreateProject, IProject, IProjectDoc, IProjectView, IUpdateProject, IUpdateProjectPersonnel, Project } from "../models/project";
 import { AddNotification, GetNotificationById, GetNotificationByTargetAndReference, UpdateNotification } from "./notificatonsRepository";
 import { AddProjectToOrganisation } from "./organisationRepository";
-import { GetAllPersonnel } from "./personnelRepository";
+import { GetAllPersonnel, GetPersonnelByUserId } from "./personnelRepository";
 import { RemoveFromShortlist } from "./staffRepository";
+import { GetUserByEmail, GetUserById } from "./usersRepository";
+import { IUser } from "../models/user";
 
 export const GetAllProjects= async function():Promise<IProjectDoc[] | IMongoError>{
     try{
@@ -118,7 +120,8 @@ export const AddProject = async function(_project:ICreateProject):Promise<IProje
     const currentProject = await GetProjectById(_project.projectId) as any;
     // const currentProject = _currentProject._doc as IProject;
     const allPersonnel = await GetAllPersonnel() as IPersonnel[];
-  
+    const personnelUser = allPersonnel.filter(x=>x._id == _project.personnelId)[0] as IPersonnel;
+    const user = await GetUserById(personnelUser._user) as IUser;
     try{
         
         switch(_project.status){
@@ -135,15 +138,21 @@ export const AddProject = async function(_project:ICreateProject):Promise<IProje
                 //remove from shortlist
               
                 await RemoveFromShortlist(_project.personnelId, _project.staffId);
-            
+
+           
                 //send notification
                 const notification = {
                     targetUser: _project.personnelId,
                     reference:_project.projectId,
                     message: "Invited to a new project",
                     status:"0",
-                    type:"0"
+                    type:"0",
+                    email:user.email,
+                    phone:user.mobileNumber,
+                    date:new Date().toString()
                 } as INotification
+                
+     
                 const resp = AddNotification(notification);
 
                 const response = MapProjectPersonnel(newProject,allPersonnel);

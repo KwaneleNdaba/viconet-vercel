@@ -26,7 +26,7 @@ export const GetOrganisationById= async function(id:string):Promise<IOrganisatio
         const organisation = await Organisation.find({_id:id})
         const org =  organisation[0] as IOrganisation;
 
-        const projects = await Project.find({}) as IProject[];
+        const projects = await Project.find({_organisation:id}) as IProject[];
         
         const viewModel = {
             organisation:org,
