@@ -25,15 +25,19 @@ router.post('/api/searchPersonnel', (req, res) => __awaiter(void 0, void 0, void
     const personnel = yield (0, personnelRepository_1.GetAllPersonnel)();
     if (!(0, typeCheck_1.instanceOfTypeCustomError)(personnel)) {
         const _personnel = personnel;
+        if (searchKey == undefined || searchKey == "")
+            return res.status(200).send(_personnel);
         const result = yield (0, searchService_1.SearchByKey)(searchKey, _personnel);
         return res.status(200).send(result);
+    }
+    else {
+        return res.status(500).send({ message: "an error occured", data: personnel });
     }
 }));
 router.post('/api/upload_cv/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.params.id;
     yield (0, documentService_1.parsefile)(req)
         .then((data) => {
-        console.log("data", data);
         // res.header("Access-Control-Allow-Origin", "*");
         res.status(200).json({
             message: "Success",
@@ -41,7 +45,6 @@ router.post('/api/upload_cv/:id', (req, res) => __awaiter(void 0, void 0, void 0
         });
     })
         .catch((error) => {
-        console.log("data", error);
         res.header("Access-Control-Allow-Origin", "*");
         res.status(400).json({
             message: "An error occurred.",
@@ -50,8 +53,8 @@ router.post('/api/upload_cv/:id', (req, res) => __awaiter(void 0, void 0, void 0
     });
 }));
 router.post('/api/personnel', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { information, currentJob, previousWorkExperience, yearsOfExperience, education, keySkills, keyCourses, cvUrl, personalInformation, _user } = req.body;
-    const dbUser = { information, currentJob, previousWorkExperience, yearsOfExperience, education, keySkills, keyCourses, cvUrl, personalInformation, _user: _user, state: 0 };
+    const { information, currentJob, previousWorkExperience, yearsOfExperience, education, keySkills, keyCourses, cvUrl, personalInformation, _user, preferedWorkMethod } = req.body;
+    const dbUser = { information, currentJob, previousWorkExperience, yearsOfExperience, education, keySkills, keyCourses, cvUrl, personalInformation, _user: _user, state: 0, preferedWorkMethod: preferedWorkMethod };
     const user = yield (0, personnelRepository_1.AddPersonnel)(dbUser);
     return res.status(201).send(user);
 }));
@@ -61,15 +64,30 @@ router.get('/api/personnel', (req, res) => __awaiter(void 0, void 0, void 0, fun
 }));
 router.get('/api/personnel/:userId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const email = req.params.userId;
-    console.log("RES", email);
     const user = yield (0, personnelRepository_1.GetPersonnelById)(email);
-    console.log("RES", user);
+    return res.status(200).send(user);
+}));
+router.get('/api/personnelByUserId/:userId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const email = req.params.userId;
+    const user = yield (0, personnelRepository_1.GetPersonnelByUserId)(email);
     return res.status(200).send(user);
 }));
 router.post('/api/personnel/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { searchKeys, information, currentJob, previousWorkExperience, yearsOfExperience, education, keySkills, keyCourses, cvUrl, personalInformation, userId } = req.body;
-    const dbUser = { searchKeys, information, currentJob, previousWorkExperience, yearsOfExperience, education, keySkills, keyCourses, cvUrl, personalInformation, _user: userId, state: 0 };
     const id = req.params.id;
+    const { searchKeys, currentJob, previousWorkExperience, yearsOfExperience, education, keySkills, keyCourses, cvUrl, personalInformation, _user, preferedWorkMethod } = req.body;
+    const dbUser = { searchKeys,
+        currentJob,
+        previousWorkExperience,
+        yearsOfExperience,
+        education,
+        keySkills,
+        keyCourses,
+        cvUrl,
+        personalInformation,
+        _user: _user,
+        state: 0,
+        _id: id,
+        preferedWorkMethod: preferedWorkMethod };
     if (id.match(/^[0-9a-fA-F]{24}$/)) { // valid ObjectId
         const user = yield (0, personnelRepository_1.UpdatePersonnel)(dbUser);
         return res.status(201).send(user);

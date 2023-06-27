@@ -17,7 +17,7 @@ export const GetAllPersonnel= async function():Promise<IPersonnelDoc[] | IMongoE
 
 export const GetPersonnelByUserId= async function(id:string):Promise<IPersonnelDoc| IMongoError>{
     try{
-        console.log("userid", id)
+
         const personnel = await Personnel.find({_user:id})
         const match = personnel[0];
         return match as IPersonnelDoc;
@@ -30,7 +30,7 @@ export const GetPersonnelById= async function(id:string):Promise<IPersonnelDoc| 
     try{
       
         const personnel = await Personnel.find({_id:id})
-        console.log("personnel", personnel)
+   
         const match = personnel[0];
         return match as IPersonnelDoc;
         }catch(e){
@@ -41,6 +41,7 @@ export const GetPersonnelById= async function(id:string):Promise<IPersonnelDoc| 
 
 export const AddPersonnel = async function(_personnel:IPersonnel):Promise<IPersonnelDoc | IMongoError> {
     try{
+
         const searchKeys = GenerateSearchKeys(_personnel);
         const populated = {..._personnel, searchKeys:searchKeys};
 
@@ -76,6 +77,7 @@ export const UpdatePersonnel = async function(_personnel:IPersonnel):Promise<IPe
     try{
         const searchKeys = GenerateSearchKeys(_personnel);
         const populated = {..._personnel, searchKeys:searchKeys} as IPersonnel;
+   
         const personnel = Personnel.build(populated);
         await personnel.updateOne(personnel);
         return personnel;

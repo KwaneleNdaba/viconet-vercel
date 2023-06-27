@@ -86,7 +86,7 @@ export const AddNotification = async function(notification:INotification):Promis
 
         const noti = Notification.build(notification);
         const res = await noti.save();
-        console.log("noti",res )
+
         return noti;
 
     }catch(e){

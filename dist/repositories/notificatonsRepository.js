@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdateNotification = exports.AddNotification = exports.GetNotificationByTargetUser = exports.GetNotificationByTargetAndReference = exports.GetNotificationById = exports.GetAllNotifications = void 0;
+exports.UpdateNotification = exports.AddNotification = exports.CloseNotification = exports.GetNotificationByTargetUser = exports.GetNotificationByTargetAndReference = exports.GetNotificationById = exports.GetAllNotifications = void 0;
 const notifications_1 = require("../models/notifications");
 const emailService_1 = require("../services/emailService");
 const GetAllNotifications = function () {
@@ -53,8 +53,8 @@ exports.GetNotificationByTargetAndReference = GetNotificationByTargetAndReferenc
 const GetNotificationByTargetUser = function (id) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const organisation = yield notifications_1.Notification.find({ targetUser: id });
-            const notification = organisation[0];
+            const notifications = yield notifications_1.Notification.find({ targetUser: id });
+            const notification = notifications;
             return notification;
         }
         catch (e) {
@@ -63,6 +63,23 @@ const GetNotificationByTargetUser = function (id) {
     });
 };
 exports.GetNotificationByTargetUser = GetNotificationByTargetUser;
+const CloseNotification = function (id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const _notification = yield notifications_1.Notification.find({ id: id });
+            const notification = _notification[0];
+            const not = notification._doc;
+            const newNotification = Object.assign(Object.assign({}, notification), { status: "1" });
+            const noti = notifications_1.Notification.build(newNotification);
+            yield noti.updateOne(noti);
+            return noti;
+        }
+        catch (e) {
+            return { code: 500, message: "error", object: e };
+        }
+    });
+};
+exports.CloseNotification = CloseNotification;
 const AddNotification = function (notification) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -77,7 +94,7 @@ const AddNotification = function (notification) {
             `);
             }
             const noti = notifications_1.Notification.build(notification);
-            yield noti.save();
+            const res = yield noti.save();
             return noti;
         }
         catch (e) {

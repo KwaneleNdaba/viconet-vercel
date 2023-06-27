@@ -17,8 +17,6 @@ require('dotenv').config();
 const Transform = require('stream').Transform;
 const accessKeyId = process.env.AWS_KEY;
 const secretAccessKey = process.env.AWS_SECRET;
-console.log("ACCESS", accessKeyId);
-console.log("KEY", secretAccessKey);
 const region = "af-south-1";
 const Bucket = "param-hr-resources";
 const parsefile = (req) => __awaiter(void 0, void 0, void 0, function* () {

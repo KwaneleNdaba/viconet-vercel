@@ -32,6 +32,14 @@ export interface IUpdateProjectPersonnel{
   staffId:string;
 }
 
+export interface IAddPersonnelToProject{
+  projectId:string;
+  personnelIds:string[];  
+  status:string;
+  staffId:string;
+}
+
+
 
 
 export interface IProject {

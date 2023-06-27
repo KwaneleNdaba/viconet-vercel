@@ -16,10 +16,13 @@ router.post('/api/searchPersonnel', async (req: Request, res: Response) => {
 
   if(!instanceOfTypeCustomError(personnel)){
     const _personnel = personnel as IPersonnelDoc[];
+    if(searchKey ==undefined || searchKey=="") return res.status(200).send(_personnel)
 
     const result = await SearchByKey(searchKey,_personnel)
 
     return res.status(200).send(result);
+  }else{
+    return res.status(500).send({message:"an error occured", data:personnel})
   }
 })
 
@@ -27,7 +30,7 @@ router.post('/api/upload_cv/:id', async (req: Request, res: Response) => {
   const id = req.params.id;
   await parsefile(req)
   .then((data:any) => {
-    console.log("data",data)
+
     // res.header("Access-Control-Allow-Origin", "*");
     res.status(200).json({
       message: "Success",
@@ -35,7 +38,7 @@ router.post('/api/upload_cv/:id', async (req: Request, res: Response) => {
     })
   })
   .catch((error:any) => {
-    console.log("data",error)
+
     res.header("Access-Control-Allow-Origin", "*");
     res.status(400).json({
       message: "An error occurred.",
@@ -45,9 +48,9 @@ router.post('/api/upload_cv/:id', async (req: Request, res: Response) => {
 });
 
 router.post('/api/personnel', async (req: Request, res: Response) => {
-  const { information, currentJob, previousWorkExperience, yearsOfExperience, education, keySkills, keyCourses, cvUrl, personalInformation, _user } = req.body;
-  const dbUser = {  information, currentJob, previousWorkExperience, yearsOfExperience, education, keySkills, keyCourses, cvUrl, personalInformation, _user:_user, state:0 } as IPersonnel;
-  
+  const { information, currentJob, previousWorkExperience, yearsOfExperience, education, keySkills, keyCourses, cvUrl, personalInformation, _user, preferedWorkMethod } = req.body;
+  const dbUser = {  information, currentJob, previousWorkExperience, yearsOfExperience, education, keySkills, keyCourses, cvUrl, personalInformation, _user:_user, state:0, preferedWorkMethod:preferedWorkMethod } as IPersonnel;
+
   const user = await AddPersonnel(dbUser);
  
   return res.status(201).send(user)
@@ -63,19 +66,39 @@ router.get('/api/personnel', async (req: Request, res: Response) => {
 
 router.get('/api/personnel/:userId', async (req: Request, res: Response) => {
   const email = req.params.userId;
-  console.log("RES",email)
   const user = await GetPersonnelById(email);
- console.log("RES",user)
+
+  return res.status(200).send(user)
+})
+
+router.get('/api/personnelByUserId/:userId', async (req: Request, res: Response) => {
+  const email = req.params.userId;
+ 
+  const user = await GetPersonnelByUserId(email);
+
   return res.status(200).send(user)
 })
 
 
 
 router.post('/api/personnel/:id', async (req: Request, res: Response) => {
-  const { searchKeys, information, currentJob, previousWorkExperience, yearsOfExperience, education, keySkills, keyCourses, cvUrl, personalInformation, userId } = req.body;
-  const dbUser = {  searchKeys, information, currentJob, previousWorkExperience, yearsOfExperience, education, keySkills, keyCourses, cvUrl, personalInformation, _user:userId, state:0  } as IPersonnel;
-  
   const id = req.params.id;
+  const { searchKeys, currentJob, previousWorkExperience, yearsOfExperience, education, keySkills, keyCourses, cvUrl, personalInformation, _user,preferedWorkMethod } = req.body;
+  const dbUser = {  searchKeys,
+    currentJob,
+    previousWorkExperience,
+    yearsOfExperience,
+    education,
+    keySkills,
+    keyCourses,
+    cvUrl,
+    personalInformation,
+    _user:_user, 
+    state:0, 
+    _id:id,
+    preferedWorkMethod:preferedWorkMethod  } as IPersonnel;
+
+
   if (id.match(/^[0-9a-fA-F]{24}$/)) {// valid ObjectId
     
     const user = await UpdatePersonnel(dbUser);    

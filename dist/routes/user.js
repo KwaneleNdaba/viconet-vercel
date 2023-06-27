@@ -51,7 +51,6 @@ router.post('/api/users/verify/', (req, res) => __awaiter(void 0, void 0, void 0
     if (email) {
         const user = yield (0, usersRepository_1.ActivateUser)(otp, email);
         if ((0, typeCheck_1.instanceOfTypeCustomError)(user)) {
-            console.log("ERRERE");
             const errorResponse = user;
             return res.status(errorResponse.code).send(errorResponse);
         }
@@ -72,7 +71,6 @@ router.post('/api/users', (req, res) => __awaiter(void 0, void 0, void 0, functi
         mobileNumber: mobileNumber,
         status: 0,
         password: hashedPassword };
-    console.log(dbUser);
     const user = yield (0, usersRepository_1.AddUser)(dbUser);
     if ((0, typeCheck_1.instanceOfTypeIUser)(user)) {
         return res.status(200).send(user);
@@ -112,7 +110,6 @@ router.post('/api/users/:id', (req, res) => __awaiter(void 0, void 0, void 0, fu
     const id = req.params.id;
     if (id.match(/^[0-9a-fA-F]{24}$/)) { // valid ObjectId
         const dbUser = { title, firstName, surname, email, password, ["_id"]: id };
-        console.log("user", dbUser);
         const user = yield (0, usersRepository_1.UpdateUser)(dbUser);
         return res.status(201).send(user);
     }

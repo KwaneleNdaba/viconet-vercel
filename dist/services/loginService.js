@@ -21,7 +21,6 @@ const LoginUser = function (email, password) {
             const saltRounds = 10;
             const salt = "$2b$10$O.v22NpswdZqTkZt1oS/Ge";
             const result = yield bcrypt.compare(password, user.password);
-            console.log("res", result);
             if (result == true) {
                 const responseUser = Object.assign(Object.assign({}, user), { password: "" });
                 return responseUser;

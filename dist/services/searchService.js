@@ -12,7 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GenerateSearchKeys = exports.SearchByKey = void 0;
 const SearchByKey = function (searchKey, personnel) {
     return __awaiter(this, void 0, void 0, function* () {
-        const searchKeySet = new Set(searchKey !== null && searchKey !== void 0 ? searchKey : "".split(","));
+        const searchKeySet = new Set(searchKey.split(","));
+        console.log("SER", searchKey.split(","));
         const matches = personnel
             .map((x) => {
             return { matchCount: CompareHash(Array.from(searchKeySet), x), personnel: x };
@@ -38,14 +39,17 @@ function ConvertToHashMap(array) {
     const result = array.reduce(function (res, obj) {
         return Object.assign(Object.assign({}, res), { [obj]: true });
     }, {});
-    console.log("conv", result);
     return result;
 }
 function GenerateSearchKeys(personnel) {
+    var _a;
     const skillsKey = personnel.keySkills.map(x => `${x}`).join(",");
     const coursesKey = personnel.keyCourses.map(x => `${x}`).join(",");
-    console.log("personnel", personnel);
-    const fullKey = `${skillsKey},${coursesKey},${personnel.personalInformation.name},${personnel.personalInformation.surname},${personnel.education.qualification},${personnel.yearsOfExperience}`;
+    const education = personnel.education.map(x => `${x.qualification}`).join(",");
+    const roles = (_a = personnel.currentJob) === null || _a === void 0 ? void 0 : _a.responsibilities.map(x => `${x}`).join(",");
+    const province = personnel === null || personnel === void 0 ? void 0 : personnel.personalInformation.province;
+    const workMethod = personnel === null || personnel === void 0 ? void 0 : personnel.preferedWorkMethod;
+    const fullKey = `${skillsKey},${coursesKey},${personnel.personalInformation.name},${personnel.personalInformation.surname},${education},${province},${roles},${'pwm' + workMethod}`;
     return fullKey;
 }
 exports.GenerateSearchKeys = GenerateSearchKeys;

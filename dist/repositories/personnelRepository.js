@@ -29,7 +29,6 @@ exports.GetAllPersonnel = GetAllPersonnel;
 const GetPersonnelByUserId = function (id) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            console.log("userid", id);
             const personnel = yield personnel_1.Personnel.find({ _user: id });
             const match = personnel[0];
             return match;
@@ -44,7 +43,6 @@ const GetPersonnelById = function (id) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const personnel = yield personnel_1.Personnel.find({ _id: id });
-            console.log("personnel", personnel);
             const match = personnel[0];
             return match;
         }

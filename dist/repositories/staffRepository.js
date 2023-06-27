@@ -67,7 +67,6 @@ const AddToShortlist = function (personnel, staffId) {
             const currentStaffArray = currentStaff._shortlist.split(",");
             if (currentStaffArray.includes(personnel)) {
                 //already shortlisted 
-                console.log("already shortlisted");
                 const response = {
                     staff: currentStaff,
                     shortlisted: yield GetShortListed(currentStaff._shortlist)
@@ -94,8 +93,6 @@ const AddToShortlist = function (personnel, staffId) {
 exports.AddToShortlist = AddToShortlist;
 const RemoveFromShortlist = function (personnel, staffId) {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log("person", personnel);
-        console.log("staff", staffId);
         try {
             const staffDoc = yield (0, exports.GetStaffById)(staffId);
             const currentStaff = staffDoc._doc;
@@ -149,7 +146,6 @@ const AddStaff = function (_staff) {
             const userReq = Object.assign({}, _staff.user);
             const user = user_1.User.build(userReq);
             const userResp = yield user.save();
-            console.log("asas", !(0, typeCheck_1.instanceOfTypeIUser)(userResp));
             if (!(0, typeCheck_1.instanceOfTypeIUser)(userResp)) {
                 return { code: 500, message: "Failed to add user", object: userResp };
             }
@@ -174,7 +170,6 @@ const UpdateStaff = function (_staff) {
         try {
             const staff = staff_1.Staff.build(_staff);
             yield staff.updateOne(staff);
-            console.log("newshort", _staff);
             return staff;
         }
         catch (e) {

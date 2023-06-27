@@ -58,6 +58,10 @@ const personnelSchema = new mongoose_1.default.Schema({
         type: String,
         // required: true
     },
+    preferedWorkMethod: {
+        type: Number,
+        // required: true
+    },
 });
 personnelSchema.statics.build = (attr) => {
     return new Personnel(attr);

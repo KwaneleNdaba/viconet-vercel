@@ -12,7 +12,7 @@ export const LoginUser= async function(email:string, password: string):Promise<I
       const saltRounds = 10;
       const salt ="$2b$10$O.v22NpswdZqTkZt1oS/Ge";
       const result = await bcrypt.compare(password, user.password);
-      console.log("res",result);
+  
       if(result==true){
         const responseUser = {...user, password:""}
         return responseUser as IUser

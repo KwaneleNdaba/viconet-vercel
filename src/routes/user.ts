@@ -49,7 +49,7 @@ router.post('/api/users/verify/', async (req: Request, res: Response) => {
     const user = await ActivateUser(otp, email);
 
     if(instanceOfTypeCustomError(user)){
-      console.log("ERRERE")
+   
       const errorResponse = user as ICustomError;
       return res.status(errorResponse.code).send(errorResponse);
 
@@ -75,8 +75,6 @@ router.post('/api/users', async (req: Request, res: Response) => {
     mobileNumber: mobileNumber,
     status:0,
     password:hashedPassword } as IUser;
-
-  console.log(dbUser)
 
   const user = await AddUser(dbUser);
 
@@ -133,7 +131,7 @@ router.post('/api/users/:id', async (req: Request, res: Response) => {
   if (id.match(/^[0-9a-fA-F]{24}$/)) {// valid ObjectId
     
     const dbUser = { title, firstName, surname, email, password, ["_id"]:id } as IUser;
-    console.log("user", dbUser)
+   
     const user = await UpdateUser(dbUser);
  
     return res.status(201).send(user)

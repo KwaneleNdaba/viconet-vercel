@@ -21,9 +21,7 @@ function sendMail(to, subject, text, html) {
             text: text,
             html: html,
         };
-        console.log("message", msg);
         const res = yield sgMail.send(msg);
-        console.log("res", res);
     });
 }
 exports.sendMail = sendMail;

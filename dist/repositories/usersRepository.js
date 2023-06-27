@@ -59,9 +59,7 @@ exports.AddUser = AddUser;
 const ActivateUser = function (otp, email) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            console.log("user", email);
             const person = yield (0, exports.GetUserByEmail)(email);
-            console.log("user", person);
             const _otp = person.otp;
             if (otp == _otp) {
                 const activatedPerson = Object.assign(Object.assign({}, person), { status: 1 });
@@ -96,7 +94,6 @@ const GetUserByEmail = function (email) {
         try {
             const users = yield user_1.User.find({ email: email });
             const data = users[0];
-            console.log("data", data);
             return data._doc;
         }
         catch (e) {

@@ -42,9 +42,9 @@ export const GetAllUsers= async function():Promise<IUser[] | IMongoError>{
 
   export const ActivateUser = async function(otp:string, email:string):Promise<IUser | ICustomError | IMongoError> {
     try{
-      console.log("user", email)
+
         const person = await GetUserByEmail(email) as IUser;
-        console.log("user", person)
+
         const _otp = person.otp;
         if(otp == _otp){
           
@@ -77,7 +77,7 @@ export const GetAllUsers= async function():Promise<IUser[] | IMongoError>{
     try{
     const users = await User.find({ email: email})
     const data = users[0] as any;
-    console.log("data", data)
+
     return data._doc as IUser;
     }catch(e){
         return e as IMongoError;

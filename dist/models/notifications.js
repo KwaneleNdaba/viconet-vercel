@@ -34,6 +34,10 @@ const notificationSchema = new mongoose_1.default.Schema({
         type: String,
         required: true
     },
+    date: {
+        type: String,
+        required: true
+    },
 });
 notificationSchema.statics.build = (attr) => {
     return new Notification(attr);

@@ -2,7 +2,7 @@ import { INotification } from "../models/notifications";
 import { instanceOfTypeIPersonnelArray } from "../lib/typeCheck";
 import { ICustomError, IMongoError } from "../models/errors";
 import { IPersonnel, IPersonnelDoc, Personnel } from "../models/personnel";
-import { ICreateProject, IProject, IProjectDoc, IProjectView, IUpdateProject, IUpdateProjectPersonnel, Project } from "../models/project";
+import { IAddPersonnelToProject, ICreateProject, IProject, IProjectDoc, IProjectView, IUpdateProject, IUpdateProjectPersonnel, Project } from "../models/project";
 import { AddNotification, GetNotificationById, GetNotificationByTargetAndReference, UpdateNotification } from "./notificatonsRepository";
 import { AddProjectToOrganisation } from "./organisationRepository";
 import { GetAllPersonnel, GetPersonnelByUserId } from "./personnelRepository";
@@ -222,6 +222,60 @@ export const AddProject = async function(_project:ICreateProject):Promise<IProje
   }
 
 
+    
+//   export const AddMultiplePersonnelToProject = async function(_project:IAddPersonnelToProject):Promise<IProjectView[]> {
+            
+//             const currentProject = await GetProjectById(_project.projectId) as any;
+
+//             const allPersonnel = await GetAllPersonnel() as IPersonnel[];
+
+//             const personnelUsers = allPersonnel.filter(x=>_project.personnelIds??[].includes(x._id))as IPersonnel[];
+
+//             const results = await personnelUsers.map((personnel)=>{
+               
+//                 const perUserRes = GetUserById(personnel._user).then((user:any)=>{
+
+//                         try{
+
+//                             const currentPending = currentProject.pending.split(",");
+//                             const pending = currentPending.length>0?[...currentPending,personnel._id].join(","): personnel._id;
+//                             const pendingClean = pending.charAt(0) === ','? pending.slice(1): pending;
+                        
+//                             const newProject = {...currentProject, pending:pendingClean} as IProject;
+//                             const project = Project.build(newProject);
+
+//                             const newProjectDb = project.updateOne(project)
+//                             .then((project)=>{
+
+//                                 //send notification
+//                                 const notification = {
+//                                     targetUser: personnel._id,
+//                                     reference:_project.projectId,
+//                                     message: "Invited to a new project",
+//                                     status:"0",
+//                                     type:"0",
+//                                     email:user.email,
+//                                     phone:user.mobileNumber,
+//                                     date:new Date().toString()
+//                                 } as INotification
+
+//                                 const resp = AddNotification(notification);
+//                             });
+
+//                             const response = MapProjectPersonnel(newProject,allPersonnel);
+//                             return response;
+
+//                         } catch(E){
+//                             console.log("Inner", E)
+//                         }
+//                 });
+
+//                 return perUserRes;
+//             })
+//         return results;
+//   }
+
+
 
 
 
@@ -235,8 +289,7 @@ export const AddProject = async function(_project:ICreateProject):Promise<IProje
         const pending = project.pending.split(",").map(proj=> personnel.filter(pers=>pers._id.toString()== proj)[0]);
         const accepted = project.accepted.split(",").map(proj=> personnel.filter(pers=>pers._id.toString()== proj)[0]);
         const declined = project.declined.split(",").map(proj=> personnel.filter(pers=>pers._id.toString()== proj)[0]);
-     
-        // console.log("{ALL",    personnel.map(x=> x._id.toString()));
+
         const result ={
           ...project, 
             _uninvited:uninvited,

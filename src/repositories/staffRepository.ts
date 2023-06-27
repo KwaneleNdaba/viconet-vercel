@@ -59,7 +59,7 @@ export const AddToShortlist = async function(personnel: string, staffId: string)
 
         if(currentStaffArray.includes(personnel)){
             //already shortlisted 
-            console.log("already shortlisted");
+
             const response = {
                 staff: currentStaff,
                 shortlisted: await GetShortListed(currentStaff._shortlist)
@@ -89,8 +89,7 @@ export const AddToShortlist = async function(personnel: string, staffId: string)
 }
 
 export const RemoveFromShortlist = async function(personnel: string, staffId: string):Promise<IStaffViewModel | IMongoError>{
-    console.log("person", personnel);
-    console.log("staff", staffId);
+
     try{
         const staffDoc = await GetStaffById(staffId) as any;
         const currentStaff = staffDoc._doc as IStaff;
@@ -148,7 +147,6 @@ export const AddStaff = async function(_staff:ICreateStaffUser):Promise<IStaffDo
        
         const user = User.build(userReq);
         const userResp  = await user.save();
-        console.log("asas", !instanceOfTypeIUser(userResp))
         if(!instanceOfTypeIUser(userResp)){
             return {code:500, message:"Failed to add user", object:userResp} as ICustomError
         
@@ -178,7 +176,7 @@ export const UpdateStaff = async function(_staff:IStaff):Promise<IStaff | IMongo
          
         const staff = Staff.build(_staff);
         await staff.updateOne(staff);
-        console.log("newshort", _staff)
+
         return staff;
     }catch(e){
         return e as IMongoError;

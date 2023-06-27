@@ -34,13 +34,14 @@ export interface IPersonnel {
   currentJob?: IJobInformation;
   previousWorkExperience?:IJobInformation[];
   yearsOfExperience?:string,
-  education?:IEducationInformation,
+  education?:IEducationInformation[],
   keySkills?: string[];
   keyCourses?:string[];
   cvUrl?:string;
   personalInformation:IPersonalInformation;
   _user:string;
   state:number;
+  preferedWorkMethod:number;
   
 }
 
@@ -54,7 +55,7 @@ export interface IPersonnelDoc extends mongoose.Document {
   currentJob?: IJobInformation;
   previousWorkExperience?:IJobInformation[];
   yearsOfExperience?:string,
-  education?:IEducationInformation,
+  education?:IEducationInformation[],
   keySkills?: string[];
   keyCourses?:string[];
   cvUrl?:string;
@@ -62,6 +63,7 @@ export interface IPersonnelDoc extends mongoose.Document {
   _user:string;
   state:number;
   projectState:string;
+  preferedWorkMethod:number;
 }
 
 const personnelSchema = new mongoose.Schema({
@@ -115,6 +117,10 @@ const personnelSchema = new mongoose.Schema({
   },
   projectState: {
     type: String,
+    // required: true
+  },
+  preferedWorkMethod: {
+    type: Number,
     // required: true
   },
 })

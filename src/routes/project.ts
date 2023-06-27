@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express'
 
 import { AddProject, GetAllProjects, GetProjectById, GetProjectsByOrgId, UpdatePersonnelOnProject, UpdateProject } from '../repositories/projectRepository';
-import { IProject, IUpdateProject, IUpdateProjectPersonnel } from '../models/project';
+import { IAddPersonnelToProject, IProject, IUpdateProject, IUpdateProjectPersonnel } from '../models/project';
 import { ICreateProject } from '../models/project';
 
 const router = express.Router()
@@ -159,6 +159,25 @@ router.post('/api/updateProjectPersonnel/', async (req: Request, res: Response) 
  
 
 });
+
+// router.post('/api/addPersonnelToProject/', async (req: Request, res: Response) => {
+//   const { projectId, personnelIds, status,staffId } = req.body;
+  
+//       const project = {
+//         projectId:projectId,
+//         personnelIds:personnelIds, 
+//         status:status,
+//         staffId
+//       } as IAddPersonnelToProject;
+  
+//       const _project = await AddMultiplePersonnelToProject(project) as IProject;
+  
+  
+//       return res.status(200).send(_project);
+    
+ 
+
+// });
 
 
 

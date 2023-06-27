@@ -43,6 +43,17 @@ router.get('/api/notificationByUser/:userId', (req, res) => __awaiter(void 0, vo
         return res.status(404).send("Cannot find user");
     }
 }));
+router.get('/api/closeNotification/:notificationId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = req.params.notificationId;
+    if (id.match(/^[0-9a-fA-F]{24}$/)) { // valid ObjectId
+        const user = yield (0, notificatonsRepository_1.CloseNotification)(id);
+        res.header("Access-Control-Allow-Origin", "*");
+        return res.status(200).send(user);
+    }
+    else {
+        return res.status(404).send("Cannot find user");
+    }
+}));
 router.post('/api/notification', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { targetUser, reference, message, status, type, email, phone } = req.body;
     const notification = {

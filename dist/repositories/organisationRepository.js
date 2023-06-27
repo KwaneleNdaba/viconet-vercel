@@ -34,7 +34,7 @@ const GetOrganisationById = function (id) {
         try {
             const organisation = yield organisations_1.Organisation.find({ _id: id });
             const org = organisation[0];
-            const projects = yield project_1.Project.find({});
+            const projects = yield project_1.Project.find({ _organisation: id });
             const viewModel = {
                 organisation: org,
                 projects: projects
