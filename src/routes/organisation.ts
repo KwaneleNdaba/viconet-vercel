@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express'
 import { HashPassword } from '../services/loginService';
-import { AddOrganisation, GetAllOrganisations, GetOrganisationById } from '../repositories/organisationRepository';
+import { AddOrganisation, GetAllOrganisations, GetFullOganisationById, GetOrganisationById } from '../repositories/organisationRepository';
 import { ICompanyRegisterModel } from '../models/organisations';
 import { instanceOfTypeCustomError, instanceOfTypeIOrganisation } from '../lib/typeCheck';
 
@@ -23,6 +23,21 @@ router.get('/api/organisation/:id', async (req: Request, res: Response) => {
     }else{
       return res.status(404).send("Cannot find user");
     }
+
+})
+
+
+router.get('/api/organisationStaff/:id', async (req: Request, res: Response) => {
+  
+  const id = req.params.id;
+  if (id.match(/^[0-9a-fA-F]{24}$/)) {// valid ObjectId
+
+    const user = await GetFullOganisationById(id);
+    res.header("Access-Control-Allow-Origin", "*");
+    return res.status(200).send(user)
+  }else{
+    return res.status(404).send("Cannot find user");
+  }
 
 })
 

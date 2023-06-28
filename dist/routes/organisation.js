@@ -34,6 +34,17 @@ router.get('/api/organisation/:id', (req, res) => __awaiter(void 0, void 0, void
         return res.status(404).send("Cannot find user");
     }
 }));
+router.get('/api/organisationStaff/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = req.params.id;
+    if (id.match(/^[0-9a-fA-F]{24}$/)) { // valid ObjectId
+        const user = yield (0, organisationRepository_1.GetFullOganisationById)(id);
+        res.header("Access-Control-Allow-Origin", "*");
+        return res.status(200).send(user);
+    }
+    else {
+        return res.status(404).send("Cannot find user");
+    }
+}));
 router.post('/api/organisation', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password, userName, userSurname, userNumber, companyNumber, companyReg, companyName, companyAdrress, position, title, userEmail } = req.body;
     const hashedPassword = yield (0, loginService_1.HashPassword)(password);

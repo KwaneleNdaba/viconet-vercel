@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import { IUserRegisterModel } from './user';
+import { IUser, IUserRegisterModel } from './user';
 import { IPersonnel } from './personnel';
 
 
@@ -15,6 +15,7 @@ export interface IStaff {
 export interface IStaffViewModel {
   staff:IStaff,
   shortlisted: IPersonnel[]
+  user?:IUser
 }
 
 export interface ICreateStaffModel extends IUserRegisterModel{

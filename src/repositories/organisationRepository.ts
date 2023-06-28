@@ -2,7 +2,7 @@
 import { ICustomError, IMongoError } from "../models/errors";
 import { ICompanyRegisterModel, IOrganisation, IOrganisationDoc, IOrganisationViewModel, Organisation } from "../models/organisations";
 import { IPersonnel, IPersonnelDoc, Personnel } from "../models/personnel";
-import { IStaff, Staff } from "../models/staff";
+import { IStaff, IStaffViewModel, Staff } from "../models/staff";
 
 import { IUser, IUserDoc, User } from "../models/user";
 import { IProject, Project } from "../models/project";
@@ -31,6 +31,42 @@ export const GetOrganisationById= async function(id:string):Promise<IOrganisatio
         const viewModel = {
             organisation:org,
             projects: projects
+        } as IOrganisationViewModel;
+
+
+        return viewModel;
+        }catch(e){
+            return {code:500, message:"error", object:e} as ICustomError;
+        }
+}
+
+
+export const GetFullOganisationById= async function(id:string):Promise<IOrganisationViewModel | ICustomError>{
+    try{
+        const organisation = await Organisation.find({_id:id})
+        const org =  organisation[0] as IOrganisation;
+
+        const projects = await Project.find({_organisation:id}) as IProject[];
+        const staff = await Staff.find({_organisation:id}) as IStaff[];
+        const userIds = staff.map(x=>x._user);
+
+        const users = await User.find({_id:userIds}) as IUser[];
+
+        const staffView = staff.map(x=> {
+            return {
+                staff:x,
+                shortlisted: [],
+                user:users.filter(y=>y._id == x._user)[0]
+
+            } as IStaffViewModel
+        });
+        
+
+        console.log("SDADA",users)
+        const viewModel = {
+            organisation:org,
+            projects: projects,
+            staff:staffView
         } as IOrganisationViewModel;
 
 

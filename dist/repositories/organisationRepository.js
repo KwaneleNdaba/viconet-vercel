@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AddProjectToOrganisation = exports.AddStaffToOrganisation = exports.UpdateOrganisation = exports.AddOrganisationAndStaff = exports.AddOrganisation = exports.GetOrganisationProjects = exports.GetOrganisationById = exports.GetAllOrganisations = void 0;
+exports.AddProjectToOrganisation = exports.AddStaffToOrganisation = exports.UpdateOrganisation = exports.AddOrganisationAndStaff = exports.AddOrganisation = exports.GetOrganisationProjects = exports.GetFullOganisationById = exports.GetOrganisationById = exports.GetAllOrganisations = void 0;
 const organisations_1 = require("../models/organisations");
 const staff_1 = require("../models/staff");
 const user_1 = require("../models/user");
@@ -47,6 +47,36 @@ const GetOrganisationById = function (id) {
     });
 };
 exports.GetOrganisationById = GetOrganisationById;
+const GetFullOganisationById = function (id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const organisation = yield organisations_1.Organisation.find({ _id: id });
+            const org = organisation[0];
+            const projects = yield project_1.Project.find({ _organisation: id });
+            const staff = yield staff_1.Staff.find({ _organisation: id });
+            const userIds = staff.map(x => x._user);
+            const users = yield user_1.User.find({ _id: userIds });
+            const staffView = staff.map(x => {
+                return {
+                    staff: x,
+                    shortlisted: [],
+                    user: users.filter(y => y._id == x._user)[0]
+                };
+            });
+            console.log("SDADA", users);
+            const viewModel = {
+                organisation: org,
+                projects: projects,
+                staff: staffView
+            };
+            return viewModel;
+        }
+        catch (e) {
+            return { code: 500, message: "error", object: e };
+        }
+    });
+};
+exports.GetFullOganisationById = GetFullOganisationById;
 const GetOrganisationProjects = function (projectIds, allProjects) {
     const projectIdArray = projectIds.split(",");
     const projects = allProjects.filter(x => projectIdArray.includes(x._id));

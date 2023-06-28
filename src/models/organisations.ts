@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import { IProject } from './project';
+import { IStaff, IStaffViewModel } from './staff';
 
 
 export interface ICompanyRegisterModel{
@@ -21,7 +22,8 @@ export interface ICompanyRegisterModel{
 
 export interface IOrganisationViewModel extends IOrganisation{
   projects: IProject[],
-  organisation: IOrganisation
+  organisation: IOrganisation,
+  staff?:IStaffViewModel[]
 }
 
 export interface IOrganisation {
@@ -36,7 +38,6 @@ export interface IOrganisation {
   _staff:string;
   _projects:string;
   _adminStaff:string;
-  
 }
 
 interface organisationDocInterface extends mongoose.Model<IOrganisationDoc> {

@@ -15,6 +15,7 @@ export interface IUser {
   otp: string;
 }
 
+
 export interface IUserRegisterModel{
   firstName: string;
   surname:string;
