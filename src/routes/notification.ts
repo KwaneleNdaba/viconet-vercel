@@ -1,7 +1,6 @@
 import express, { Request, Response } from 'express'
 import { HashPassword } from '../services/loginService';
 import { AddOrganisation, GetAllOrganisations, GetOrganisationById } from '../repositories/organisationRepository';
-import { ICompanyRegisterModel } from '../models/organisations';
 import { instanceOfTypeCustomError, instanceOfTypeIOrganisation } from '../lib/typeCheck';
 import { AddNotification, CloseNotification, GetAllNotifications, GetNotificationById, GetNotificationByTargetUser } from '../repositories/notificatonsRepository';
 import { INotification } from '../models/notifications';
