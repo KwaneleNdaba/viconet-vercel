@@ -6,6 +6,7 @@ import { IPersonnel, IPersonnelDoc } from '../models/personnel';
 import {parsefile} from '../services/documentService'
 
 
+
 const router = express.Router()
 
 
@@ -30,7 +31,8 @@ router.post('/api/upload_cv/:id', async (req: Request, res: Response) => {
   const id = req.params.id;
   await parsefile(req)
   .then((data:any) => {
-
+    
+  console.log("FILE",data )
     // res.header("Access-Control-Allow-Origin", "*");
     res.status(200).json({
       message: "Success",
@@ -46,6 +48,7 @@ router.post('/api/upload_cv/:id', async (req: Request, res: Response) => {
     })
   })
 });
+
 
 router.post('/api/personnel', async (req: Request, res: Response) => {
   const { information, currentJob, previousWorkExperience, yearsOfExperience, education, keySkills, keyCourses, cvUrl, personalInformation, _user, preferedWorkMethod } = req.body;

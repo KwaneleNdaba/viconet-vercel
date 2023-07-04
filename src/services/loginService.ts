@@ -7,10 +7,12 @@ const bcrypt = require('bcrypt');
 export const LoginUser= async function(email:string, password: string):Promise<IUser | ICustomError>{
   
     const user = await GetUserByEmail(email)
+    
     if(instanceOfTypeIUser(user)){
-      const _user = user as IUser;
-      const saltRounds = 10;
-      const salt ="$2b$10$O.v22NpswdZqTkZt1oS/Ge";
+      if(user.status==2){
+        return {code:401, message:"User has been deleted"} as ICustomError;
+      }
+
       const result = await bcrypt.compare(password, user.password);
   
       if(result==true){

@@ -61,10 +61,32 @@ export const GetAllUsers= async function():Promise<IUser[] | IMongoError>{
     }
   }
 
+  export const OnboardUser = async function(otp:string, email:string, password:string):Promise<IUser | ICustomError | IMongoError> {
+    try{
+
+        const person = await GetUserByEmail(email) as IUser;
+
+        const _otp = person.otp;
+        if(otp == _otp){
+          
+          const activatedPerson = {...person, status:1, password:password};
+          const updated = await UpdateUser(activatedPerson);
+          return updated;
+        }else{
+          return {code:400, message:"Incorrect Link"} as ICustomError
+        }
+
+    }catch(e){
+        // return e as IMongoError;
+        return {code:400, message:e } as ICustomError
+    }
+  }
+
   export const GetUserById = async function(id:string):Promise<IUser| IMongoError>{
     try{
     const users = await User.find({ _id: id})
-    return users[0] as IUser;
+    const data = users[0] as any;
+    return data._doc as IUser;
     }catch(e){
         return e as IMongoError;
     }

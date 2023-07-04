@@ -2,8 +2,8 @@ import express, { Request, Response } from 'express'
 import { User, IUser, ICreateStaffUser } from '../models/user'
 import { AddUser } from '../repositories/usersRepository';
 import { HashPassword } from '../services/loginService';
-import { IStaff } from '../models/staff';
-import { AddStaff, AddToShortlist, GetAllStaff, GetFullStaffById, GetStaffById, RemoveFromShortlist } from '../repositories/staffRepository';
+import { ICreateStaffModel, IStaff } from '../models/staff';
+import { AddStaff, AddStaffToOrganisaion, AddToShortlist, GetAllStaff, GetFullStaffById, GetStaffById, RemoveFromShortlist } from '../repositories/staffRepository';
 import { AddStaffToOrganisation, GetOrganisationById } from '../repositories/organisationRepository';
 
 const router = express.Router()
@@ -72,8 +72,6 @@ router.get('/api/staff/shortlist/:personnelId/:staffId', async (req: Request, re
 })
 
 
-
-
 router.post('/api/staff', async (req: Request, res: Response) => {
   const { title, firstName, surname, email, password, mobileNumber,position,profilePicture , _organisation} = req.body;
   
@@ -111,5 +109,23 @@ router.post('/api/staff', async (req: Request, res: Response) => {
 
 });
 
+router.post('/api/addStaffToOrganisation', async (req: Request, res: Response) => {
+  const { firstName, surname, email,mobileNumber, password,position,profilePicture , _organisation} = req.body ;
+ 
+const request = {
+  firstName,
+  surname,
+  email,
+  mobileNumber,
+  password,
+  position,
+  profilePicture ,
+  _organisation,
+  
+} as ICreateStaffModel;
+  const staff = await AddStaffToOrganisaion(request);
 
+  return res.status(200).send(staff);
+
+});
 export { router as staffRouter }

@@ -2,9 +2,9 @@
 import { ICustomError, IMongoError } from "../models/errors";
 import { ICompanyRegisterModel, IOrganisation, IOrganisationDoc, IOrganisationViewModel, Organisation } from "../models/organisations";
 import { IPersonnel, IPersonnelDoc, Personnel } from "../models/personnel";
-import { IStaff, IStaffViewModel, Staff } from "../models/staff";
+import { ICreateStaffModel, IStaff, IStaffViewModel, Staff } from "../models/staff";
 
-import { IUser, IUserDoc, User } from "../models/user";
+import { IUser, IUserDoc, User, UserState, UserType } from "../models/user";
 import { IProject, Project } from "../models/project";
 import { instanceOfTypeIStaff, instanceOfTypeIUser } from "../lib/typeCheck";
 import { sendMail } from "../services/emailService";
@@ -164,6 +164,9 @@ export const AddOrganisationAndStaff = async function(_organisation: ICompanyReg
         // return e as IMongoError;
     }
 }
+
+
+
 
 
 export const UpdateOrganisation = async function(_organisation:IOrganisation):Promise<IOrganisation | ICustomError> {

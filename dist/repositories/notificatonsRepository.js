@@ -86,11 +86,9 @@ const AddNotification = function (notification) {
             if (notification.type == "0") {
                 const sendEmail = yield (0, emailService_1.sendMail)(notification.email, "New Invite", `You have been invited to join a group, view more here`, `You have been invited to join a group, view more here. 
             <br/>
-            <a href="personnel/notifications/"> View Notifications</a>
+            <a href="https://viconet-dev.netlify.app/personnel/notifications/"> View Notifications</a>
             <br/>
-            <a href="/api/acceptinvite/${notification.targetUser}/${notification.reference}"> Accept</a>
-            <br/>
-            <a href="/api/declineinvite/${notification.targetUser}/${notification.reference}"> Decline</a>
+         
             `);
             }
             const noti = notifications_1.Notification.build(notification);

@@ -38,6 +38,7 @@ router.post('/api/upload_cv/:id', (req, res) => __awaiter(void 0, void 0, void 0
     const id = req.params.id;
     yield (0, documentService_1.parsefile)(req)
         .then((data) => {
+        console.log("FILE", data);
         // res.header("Access-Control-Allow-Origin", "*");
         res.status(200).json({
             message: "Success",

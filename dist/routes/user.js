@@ -19,6 +19,8 @@ const loginService_1 = require("../services/loginService");
 const typeCheck_1 = require("../lib/typeCheck");
 const staffRepository_1 = require("../repositories/staffRepository");
 const organisationRepository_1 = require("../repositories/organisationRepository");
+const documentService_1 = require("../services/documentService");
+// import { uploadProfilePic } from '../services/documentService';
 const router = express_1.default.Router();
 exports.userRouter = router;
 router.get('/api/users', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -60,6 +62,27 @@ router.post('/api/users/verify/', (req, res) => __awaiter(void 0, void 0, void 0
         return res.status(404).send("Cannot find user");
     }
 }));
+router.post('/api/upload_profilepicture/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = req.params.id;
+    yield (0, documentService_1.uploadProfilePic)(req, id)
+        .then((data) => {
+        console.log("imageData", data.Location);
+        console.log("personnelId", id);
+        // res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Origin", "*");
+        res.status(200).json({
+            message: "Success",
+            data
+        });
+    })
+        .catch((error) => {
+        res.header("Access-Control-Allow-Origin", "*");
+        res.status(400).json({
+            message: "An error occurred.",
+            error
+        });
+    });
+}));
 router.post('/api/users', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { title, firstName, surname, email, password, type, mobileNumber } = req.body;
     const hashedPassword = yield (0, loginService_1.HashPassword)(password);
@@ -79,6 +102,41 @@ router.post('/api/users', (req, res) => __awaiter(void 0, void 0, void 0, functi
         const error = user;
         return res.status(400).send(error.message);
     }
+}));
+router.post('/api/user/deleteUser', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email, oldPassword, password } = req.body;
+    const user = yield (0, usersRepository_1.GetUserByEmail)(email);
+    const currPass = yield (0, loginService_1.HashPassword)(oldPassword);
+    if (user.password == currPass) {
+        const hashedPassword = yield (0, loginService_1.HashPassword)(password);
+        const newUser = Object.assign(Object.assign({}, user), { password: hashedPassword });
+        const dbUser = yield (0, usersRepository_1.UpdateUser)(newUser);
+        if ((0, typeCheck_1.instanceOfTypeIUser)(dbUser)) {
+            return res.status(200).send(user);
+        }
+        else {
+            const error = user;
+            return res.status(400).send(error.message);
+        }
+    }
+}));
+router.post('/api/user/deleteUser', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { userId, password } = req.body;
+    const user = (0, usersRepository_1.GetUserById)(userId);
+    const _userPass = user.password;
+    const hashedPassword = yield (0, loginService_1.HashPassword)(password);
+    if (_userPass == hashedPassword) {
+        const newUser = Object.assign(Object.assign({}, user._doc), { status: "3" });
+        const dbUser = yield (0, usersRepository_1.UpdateUser)(newUser);
+        if ((0, typeCheck_1.instanceOfTypeIUser)(dbUser)) {
+            return res.status(200).send(user);
+        }
+        else {
+            const error = user;
+            return res.status(400).send(error.message);
+        }
+    }
+    return res.status(400).send("User not deleted");
 }));
 router.post('/api/users/staff', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { title, firstName, surname, email, password, mobileNumber, position, profilePicture, _organisation } = req.body;

@@ -95,4 +95,19 @@ router.post('/api/staff', (req, res) => __awaiter(void 0, void 0, void 0, functi
     const organisation = yield (0, organisationRepository_1.AddStaffToOrganisation)(_organisation, _staffUser);
     return res.status(200).send(_staffUser);
 }));
+router.post('/api/addStaffToOrganisation', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { firstName, surname, email, mobileNumber, password, position, profilePicture, _organisation } = req.body;
+    const request = {
+        firstName,
+        surname,
+        email,
+        mobileNumber,
+        password,
+        position,
+        profilePicture,
+        _organisation,
+    };
+    const staff = yield (0, staffRepository_1.AddStaffToOrganisaion)(request);
+    return res.status(200).send(staff);
+}));
 //# sourceMappingURL=staff.js.map

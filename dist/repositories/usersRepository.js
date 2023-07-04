@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GetUserByEmail = exports.GetUserById = exports.ActivateUser = exports.AddUser = exports.UpdateUser = exports.GetAllUsers = void 0;
+exports.GetUserByEmail = exports.GetUserById = exports.OnboardUser = exports.ActivateUser = exports.AddUser = exports.UpdateUser = exports.GetAllUsers = void 0;
 const user_1 = require("../models/user");
 const emailService_1 = require("../services/emailService");
 const GetAllUsers = function () {
@@ -77,11 +77,33 @@ const ActivateUser = function (otp, email) {
     });
 };
 exports.ActivateUser = ActivateUser;
+const OnboardUser = function (otp, email, password) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const person = yield (0, exports.GetUserByEmail)(email);
+            const _otp = person.otp;
+            if (otp == _otp) {
+                const activatedPerson = Object.assign(Object.assign({}, person), { status: 1, password: password });
+                const updated = yield (0, exports.UpdateUser)(activatedPerson);
+                return updated;
+            }
+            else {
+                return { code: 400, message: "Incorrect Link" };
+            }
+        }
+        catch (e) {
+            // return e as IMongoError;
+            return { code: 400, message: e };
+        }
+    });
+};
+exports.OnboardUser = OnboardUser;
 const GetUserById = function (id) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const users = yield user_1.User.find({ _id: id });
-            return users[0];
+            const data = users[0];
+            return data._doc;
         }
         catch (e) {
             return e;

@@ -10,9 +10,32 @@ export interface IUser {
   email:string;
   password:string;
   mobileNumber:string;
+  //userstate: 
+  //0 = otp unverified
+  //1 = otp verified
+  //2 = deleted
+  //3 = onboarded - reset password
   type:string;
+  //type
+  //0: personnel
+  //2: staff
   status:number;
   otp: string;
+  profilePicture?:string
+}
+
+export const UserState = {
+  "Unverified":0,
+   "Verified":1,
+  "Deleted":2,
+  "Onboarded":3
+}
+
+
+export const UserType = {
+  "Personnel":"1",
+  "Staff":"2",
+  "Admin":"3"
 }
 
 
@@ -39,6 +62,8 @@ export interface IUserDoc extends mongoose.Document {
   type:string;
   status:number;
   otp:string;
+  profilePicture:string
+
 }
 
 const userSchema = new mongoose.Schema({
@@ -76,6 +101,9 @@ const userSchema = new mongoose.Schema({
     required:true
   },
   otp:{
+    type:String
+  },
+  profilePicture:{
     type:String
   }
 })

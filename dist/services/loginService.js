@@ -17,9 +17,9 @@ const LoginUser = function (email, password) {
     return __awaiter(this, void 0, void 0, function* () {
         const user = yield (0, usersRepository_1.GetUserByEmail)(email);
         if ((0, typeCheck_1.instanceOfTypeIUser)(user)) {
-            const _user = user;
-            const saltRounds = 10;
-            const salt = "$2b$10$O.v22NpswdZqTkZt1oS/Ge";
+            if (user.status == 2) {
+                return { code: 401, message: "User has been deleted" };
+            }
             const result = yield bcrypt.compare(password, user.password);
             if (result == true) {
                 const responseUser = Object.assign(Object.assign({}, user), { password: "" });

@@ -7,6 +7,8 @@ import { ICustomError } from '../models/errors';
 import { IStaff } from '../models/staff';
 import { AddStaff } from '../repositories/staffRepository';
 import { AddStaffToOrganisation, GetOrganisationById } from '../repositories/organisationRepository';
+import { parsefile, uploadProfilePic } from '../services/documentService';
+// import { uploadProfilePic } from '../services/documentService';
 
 const router = express.Router()
 
@@ -29,6 +31,7 @@ router.get('/api/users/:id', async (req: Request, res: Response) => {
     }
 
 })
+
 
 router.post('/api/users/email/', async (req: Request, res: Response) => {
   const {  email } = req.body;
@@ -62,6 +65,32 @@ router.post('/api/users/verify/', async (req: Request, res: Response) => {
 
 })
 
+router.post('/api/upload_profilepicture/:id', async (req: Request, res: Response) => {
+  const id = req.params.id;
+  await uploadProfilePic(req, id)
+  .then((data:any) => {
+
+    console.log("imageData", data.Location);
+    console.log("personnelId",id);
+    // res.header("Access-Control-Allow-Origin", "*");
+
+        res.header("Access-Control-Allow-Origin", "*");
+        res.status(200).json({
+        message: "Success",
+        data
+      })   
+   
+  })
+  .catch((error:any) => {
+
+    res.header("Access-Control-Allow-Origin", "*");
+    res.status(400).json({
+      message: "An error occurred.",
+      error
+    })
+  })
+});
+
 router.post('/api/users', async (req: Request, res: Response) => {
   const { title, firstName, surname, email, password, type, mobileNumber } = req.body;
   
@@ -86,6 +115,60 @@ router.post('/api/users', async (req: Request, res: Response) => {
     return  res.status(400).send(error.message);
   }
 })
+
+router.post('/api/user/deleteUser', async (req: Request, res: Response) => {
+  const { email, oldPassword, password } = req.body;
+  
+  const user = await GetUserByEmail(email) as IUser;
+  const currPass = await HashPassword(oldPassword);
+  if(user.password == currPass){
+
+    const hashedPassword = await HashPassword(password);
+    const newUser = {
+      ...user,
+      password:hashedPassword
+    }
+   
+    const dbUser = await UpdateUser(newUser);
+  
+    if(instanceOfTypeIUser(dbUser)){
+  
+      return res.status(200).send(user)
+    }else{
+      const error = user as any;
+      return  res.status(400).send(error.message);
+    }
+  }
+
+})
+
+router.post('/api/user/deleteUser', async (req: Request, res: Response) => {
+  const { userId, password } = req.body;
+  
+  const user = GetUserById(userId) as any;
+  const _userPass = user.password;
+  const hashedPassword = await HashPassword(password);
+
+  if(_userPass == hashedPassword){
+    const newUser = {
+      ...user._doc,
+      status: "3"
+    }
+   
+    const dbUser = await UpdateUser(newUser);
+    if(instanceOfTypeIUser(dbUser)){
+
+      return res.status(200).send(user)
+    }else{
+      const error = user as ICustomError;
+      return  res.status(400).send(error.message);
+    }
+  }
+ 
+    return  res.status(400).send("User not deleted");
+})
+
+
 
 router.post('/api/users/staff', async (req: Request, res: Response) => {
   const { title, firstName, surname, email, password, mobileNumber,position,profilePicture , _organisation} = req.body;

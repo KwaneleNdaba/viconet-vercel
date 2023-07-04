@@ -9,7 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.parsefile = void 0;
+exports.uploadProfilePic = exports.parsefile = void 0;
+const usersRepository_1 = require("../repositories/usersRepository");
+const user_1 = require("../models/user");
 const formidable = require('formidable');
 const { Upload } = require("@aws-sdk/lib-storage");
 const { S3Client, S3 } = require("@aws-sdk/client-s3");
@@ -70,6 +72,9 @@ const parsefile = (req) => __awaiter(void 0, void 0, void 0, function* () {
                     })
                         .done()
                         .then((data) => {
+                        // GetUserById("649d5221adc8d05c4b7d3c34").then((user:any)=>{
+                        //     console.log("DSDASDUSER", user);
+                        // })
                         form.emit('data', { name: "complete", value: data });
                     }).catch((err) => {
                         form.emit('error', err);
@@ -87,4 +92,81 @@ const parsefile = (req) => __awaiter(void 0, void 0, void 0, function* () {
     });
 });
 exports.parsefile = parsefile;
+const uploadProfilePic = (req, userId) => __awaiter(void 0, void 0, void 0, function* () {
+    return new Promise((resolve, reject) => {
+        let options = {
+            maxFileSize: 100 * 1024 * 1024,
+            allowEmptyFiles: false
+        };
+        const form = formidable(options);
+        // method accepts the request and a callback.
+        form.parse(req, (err, fields, files) => {
+        });
+        form.on('error', (error) => {
+            reject(error.message);
+        });
+        form.on('data', (data) => {
+            if (data.name === "complete") {
+                resolve(data.value);
+            }
+        });
+        form.on('fileBegin', (formName, file) => {
+            file.open = function () {
+                return __awaiter(this, void 0, void 0, function* () {
+                    this._writeStream = new Transform({
+                        transform(chunk, encoding, callback) {
+                            callback(null, chunk);
+                        }
+                    });
+                    this._writeStream.on('error', (e) => {
+                        form.emit('error', e);
+                    });
+                    // upload to S3
+                    new Upload({
+                        client: new S3Client({
+                            credentials: {
+                                accessKeyId,
+                                secretAccessKey
+                            },
+                            region
+                        }),
+                        params: {
+                            ACL: 'public-read',
+                            Bucket,
+                            Key: `${Date.now().toString()}-${this.originalFilename}`,
+                            Body: this._writeStream
+                        },
+                        tags: [],
+                        queueSize: 4,
+                        partSize: 1024 * 1024 * 5,
+                        leavePartsOnError: false, // optional manually handle dropped parts
+                    })
+                        .done()
+                        .then((data) => {
+                        console.log("ID", userId);
+                        (0, usersRepository_1.GetUserById)(userId).then((user) => {
+                            console.log("DSDASDATA", data);
+                            const newUser = Object.assign(Object.assign({}, user), { profilePicture: data.Location });
+                            const _user = user_1.User.build(newUser);
+                            _user.updateOne(_user).then(x => {
+                                console.log("DSDASDUSER", x);
+                            });
+                        });
+                        form.emit('data', { name: "complete", value: data });
+                    }).catch((err) => {
+                        form.emit('error', err);
+                    });
+                });
+            };
+            file.end = function (cb) {
+                this._writeStream.on('finish', () => {
+                    this.emit('end');
+                    cb();
+                });
+                this._writeStream.end();
+            };
+        });
+    });
+});
+exports.uploadProfilePic = uploadProfilePic;
 //# sourceMappingURL=documentService.js.map
