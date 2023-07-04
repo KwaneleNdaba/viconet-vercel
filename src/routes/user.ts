@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express'
 import { User, IUser, ICreateStaffUser } from '../models/user'
-import { ActivateUser, AddUser, GetAllUsers, GetUserByEmail, GetUserById, UpdateUser } from '../repositories/usersRepository';
+import { ActivateUser, AddUser, ChangePassword, ChangePasswordAndActivate, GetAllUsers, GetUserByEmail, GetUserById, SendOTP, UpdateUser, VerifyOTPAndResetPassword } from '../repositories/usersRepository';
 import { HashPassword, LoginUser } from '../services/loginService';
 import { instanceOfTypeCustomError, instanceOfTypeIUser } from '../lib/typeCheck';
 import { ICustomError } from '../models/errors';
@@ -141,6 +141,64 @@ router.post('/api/user/deleteUser', async (req: Request, res: Response) => {
   }
 
 })
+
+
+router.post('/api/user/changePassword', async (req: Request, res: Response) => {
+  const { email, oldPassword, password } = req.body;
+  
+  const user = await ChangePassword(email, password);
+  
+    if(instanceOfTypeIUser(user)){
+  
+      return res.status(200).send(user)
+    }else{
+      const error = user as any;
+      return  res.status(400).send(error.message);
+    }
+})
+
+router.post('/api/user/resetPassword', async (req: Request, res: Response) => {
+  const { email, otp, password } = req.body;
+  
+  const user = await VerifyOTPAndResetPassword(email, password, otp);
+  
+    if(instanceOfTypeIUser(user)){
+  
+      return res.status(200).send(user)
+    }else{
+      const error = user as any;
+      return  res.status(400).send(error.message);
+    }
+})
+
+router.post('/api/user/sendOTP', async (req: Request, res: Response) => {
+  const { email} = req.body;
+  console.log("SENDOTP", email)
+  const user = await SendOTP(email);
+  console.log("user", user)
+    if(!instanceOfTypeCustomError(user)){
+  
+      return res.status(200).send(user)
+    }else{
+      const error = user as any;
+      return  res.status(400).send(error.message);
+    }
+})
+
+router.post('/api/user/changePasswordAndActivate', async (req: Request, res: Response) => {
+  const { email, oldPassword, password } = req.body;
+  
+  const user = await ChangePasswordAndActivate(email, password);
+  
+    if(instanceOfTypeIUser(user)){
+  
+      return res.status(200).send(user)
+    }else{
+      const error = user as any;
+      return  res.status(400).send(error.message);
+    }
+})
+
 
 router.post('/api/user/deleteUser', async (req: Request, res: Response) => {
   const { userId, password } = req.body;

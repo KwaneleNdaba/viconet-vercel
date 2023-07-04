@@ -120,6 +120,52 @@ router.post('/api/user/deleteUser', (req, res) => __awaiter(void 0, void 0, void
         }
     }
 }));
+router.post('/api/user/changePassword', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email, oldPassword, password } = req.body;
+    const user = yield (0, usersRepository_1.ChangePassword)(email, password);
+    if ((0, typeCheck_1.instanceOfTypeIUser)(user)) {
+        return res.status(200).send(user);
+    }
+    else {
+        const error = user;
+        return res.status(400).send(error.message);
+    }
+}));
+router.post('/api/user/resetPassword', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email, otp, password } = req.body;
+    const user = yield (0, usersRepository_1.VerifyOTPAndResetPassword)(email, password, otp);
+    if ((0, typeCheck_1.instanceOfTypeIUser)(user)) {
+        return res.status(200).send(user);
+    }
+    else {
+        const error = user;
+        return res.status(400).send(error.message);
+    }
+}));
+router.post('/api/user/sendOTP', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email } = req.body;
+    console.log("SENDOTP", email);
+    const user = yield (0, usersRepository_1.SendOTP)(email);
+    console.log("user", user);
+    if (!(0, typeCheck_1.instanceOfTypeCustomError)(user)) {
+        return res.status(200).send(user);
+    }
+    else {
+        const error = user;
+        return res.status(400).send(error.message);
+    }
+}));
+router.post('/api/user/changePasswordAndActivate', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email, oldPassword, password } = req.body;
+    const user = yield (0, usersRepository_1.ChangePasswordAndActivate)(email, password);
+    if ((0, typeCheck_1.instanceOfTypeIUser)(user)) {
+        return res.status(200).send(user);
+    }
+    else {
+        const error = user;
+        return res.status(400).send(error.message);
+    }
+}));
 router.post('/api/user/deleteUser', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { userId, password } = req.body;
     const user = (0, usersRepository_1.GetUserById)(userId);

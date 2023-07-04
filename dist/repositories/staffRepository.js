@@ -35,7 +35,7 @@ const GetFullStaffById = function (id) {
             const staff = yield staff_1.Staff.find({ _user: id });
             const _staff = staff[0];
             const user = yield user_1.User.findById(id);
-            const personnel = yield GetShortListed(_staff._shortlist);
+            const personnel = yield GetShortListed(_staff === null || _staff === void 0 ? void 0 : _staff._shortlist);
             const response = {
                 staff: _staff,
                 shortlisted: personnel,

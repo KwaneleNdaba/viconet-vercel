@@ -64,6 +64,7 @@ export interface IPersonnelDoc extends mongoose.Document {
   state:number;
   projectState:string;
   preferedWorkMethod:number;
+  profilePicture?:string
 }
 
 const personnelSchema = new mongoose.Schema({

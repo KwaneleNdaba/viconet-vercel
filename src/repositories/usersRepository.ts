@@ -82,6 +82,103 @@ export const GetAllUsers= async function():Promise<IUser[] | IMongoError>{
     }
   }
 
+  export const GetUserProfilePicture = async function(userId:string):Promise<string | ICustomError | IMongoError> {
+    try{
+
+        const person = await GetUserById(userId) as IUser;
+         
+          return person.profilePicture;
+     
+    }catch(e){
+        // return e as IMongoError;
+        return {code:400, message:e } as ICustomError
+    }
+  }
+
+  
+  export const ChangePassword = async function(email:string, password:string):Promise<IUser | ICustomError | IMongoError> {
+    try{
+
+        const person = await GetUserByEmail(email) as IUser;
+        const newPassword = await HashPassword(password)
+        const newPerson = {...person, password:newPassword} as IUser;
+        
+          const updated = await UpdateUser(newPerson);
+          return updated;
+     
+
+    }catch(e){
+        // return e as IMongoError;
+        return {code:400, message:e } as ICustomError
+    }
+  }
+
+      
+  export const SendOTP = async function(_email:string):Promise<IUser | ICustomError | IMongoError> {
+    try{
+
+        const _user = await GetUserByEmail(_email) as IUser;
+        console.log("user", _user)
+        const _otp = Math.floor(Math.random() * (99999 -10000 + 1)) + 10000;
+
+        const _dbUser = {..._user, otp:_otp.toString()} as IUser;
+          const user = User.build(_dbUser);
+          const up = await user.updateOne(user);
+          console.log("up", up)
+          const email = await sendMail(_user.email, `Reset your VICO net password`, `Your otp is ${_otp.toString()}`, `Your otp is <strong> ${_otp.toString()}</strong>` );
+     
+          //TODO: NK remove passeword=> map response
+          const clean = {...user, password:"", otp:""} as IUser
+        return clean;
+
+    }catch(e){
+        // return e as IMongoError;
+        return {code:400, message:e } as ICustomError
+    }
+  }
+
+
+    
+  export const VerifyOTPAndResetPassword = async function(email:string, password:string, otp:string):Promise<IUser | ICustomError | IMongoError> {
+    try{
+
+        const person = await GetUserByEmail(email) as IUser;
+        if(otp == person.otp){
+          const newPassword = await HashPassword(password)
+          const newPerson = {...person, password:newPassword} as IUser;
+          
+            const updated = await UpdateUser(newPerson);
+            return updated;
+        }else{
+          return {code:401, message:"Invalid OTP provided"} as ICustomError
+        }
+
+    }catch(e){
+        // return e as IMongoError;
+        return {code:400, message:e } as ICustomError
+    }
+  }
+
+    
+
+  export const ChangePasswordAndActivate = async function(email:string, password:string):Promise<IUser | ICustomError | IMongoError> {
+    try{
+
+        const person = await GetUserByEmail(email) as IUser;
+        const newPassword = await HashPassword(password)
+        const newPerson = {...person, password:newPassword, status:1} as IUser;
+        
+          const updated = await UpdateUser(newPerson);
+          return updated;
+     
+
+    }catch(e){
+        // return e as IMongoError;
+        return {code:400, message:e } as ICustomError
+    }
+  }
+
+
   export const GetUserById = async function(id:string):Promise<IUser| IMongoError>{
     try{
     const users = await User.find({ _id: id})
