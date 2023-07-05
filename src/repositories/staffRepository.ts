@@ -120,7 +120,7 @@ export const RemoveFromShortlist = async function(personnel: string, staffId: st
 
 const GetShortListed = async function(shortlisted:string):Promise<IPersonnel[]> {
     const allPersonnel = await GetAllPersonnel() as IPersonnel[];
-    const allShortListed = shortlisted.split(",");
+    const allShortListed = shortlisted?.split(",")??[];
     const list = allShortListed.length>0? allPersonnel.filter(x=> allShortListed.includes(x?._id.toString())):[];
     return list;
 

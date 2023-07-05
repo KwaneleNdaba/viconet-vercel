@@ -119,9 +119,10 @@ const RemoveFromShortlist = function (personnel, staffId) {
 };
 exports.RemoveFromShortlist = RemoveFromShortlist;
 const GetShortListed = function (shortlisted) {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         const allPersonnel = yield (0, personnelRepository_1.GetAllPersonnel)();
-        const allShortListed = shortlisted.split(",");
+        const allShortListed = (_a = shortlisted === null || shortlisted === void 0 ? void 0 : shortlisted.split(",")) !== null && _a !== void 0 ? _a : [];
         const list = allShortListed.length > 0 ? allPersonnel.filter(x => allShortListed.includes(x === null || x === void 0 ? void 0 : x._id.toString())) : [];
         return list;
     });

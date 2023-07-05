@@ -31,6 +31,7 @@ const GetPersonnelByUserId = function (id) {
         try {
             const personnel = yield personnel_1.Personnel.find({ _user: id });
             const match = personnel[0];
+            console.log("match", personnel);
             return match;
         }
         catch (e) {
@@ -42,7 +43,9 @@ exports.GetPersonnelByUserId = GetPersonnelByUserId;
 const GetPersonnelById = function (id) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            console.log("IDDD", id);
             const personnel = yield personnel_1.Personnel.find({ _id: id });
+            console.log("IDDD", personnel);
             const match = personnel[0];
             return match;
         }
@@ -56,12 +59,14 @@ const AddPersonnel = function (_personnel) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const searchKeys = (0, searchService_1.GenerateSearchKeys)(_personnel);
+            console.log("RERER", searchKeys);
             const populated = Object.assign(Object.assign({}, _personnel), { searchKeys: searchKeys });
             const personnel = personnel_1.Personnel.build(populated);
-            yield personnel.save();
+            const res = yield personnel.save();
             return personnel;
         }
         catch (e) {
+            console.log("RERER", e);
             return e;
         }
     });

@@ -39,11 +39,11 @@ function ConvertToHashMap(array: string[]): any {
 
 export function GenerateSearchKeys(personnel: IPersonnel){
 
-  const skillsKey = personnel.keySkills.map(x=> `${x}`).join(",");
-  const coursesKey = personnel.keyCourses.map(x=> `${x}`).join(",");
+  const skillsKey = personnel.keySkills?.map(x=> `${x}`).join(",");
+  const coursesKey = personnel.keyCourses?.map(x=> `${x}`).join(",");
 
-  const education = personnel.education.map(x=>`${x.qualification}`).join(",");
-  const roles = personnel.currentJob?.responsibilities.map(x=>`${x}`).join(",");
+  const education = personnel.education?.map(x=>`${x.qualification}`).join(",");
+  const roles = personnel.currentJob?.responsibilities?.map(x=>`${x}`).join(",");
   const province = personnel?.personalInformation.province;
   const workMethod = personnel?.preferedWorkMethod;
 

@@ -42,11 +42,11 @@ function ConvertToHashMap(array) {
     return result;
 }
 function GenerateSearchKeys(personnel) {
-    var _a;
-    const skillsKey = personnel.keySkills.map(x => `${x}`).join(",");
-    const coursesKey = personnel.keyCourses.map(x => `${x}`).join(",");
-    const education = personnel.education.map(x => `${x.qualification}`).join(",");
-    const roles = (_a = personnel.currentJob) === null || _a === void 0 ? void 0 : _a.responsibilities.map(x => `${x}`).join(",");
+    var _a, _b, _c, _d, _e;
+    const skillsKey = (_a = personnel.keySkills) === null || _a === void 0 ? void 0 : _a.map(x => `${x}`).join(",");
+    const coursesKey = (_b = personnel.keyCourses) === null || _b === void 0 ? void 0 : _b.map(x => `${x}`).join(",");
+    const education = (_c = personnel.education) === null || _c === void 0 ? void 0 : _c.map(x => `${x.qualification}`).join(",");
+    const roles = (_e = (_d = personnel.currentJob) === null || _d === void 0 ? void 0 : _d.responsibilities) === null || _e === void 0 ? void 0 : _e.map(x => `${x}`).join(",");
     const province = personnel === null || personnel === void 0 ? void 0 : personnel.personalInformation.province;
     const workMethod = personnel === null || personnel === void 0 ? void 0 : personnel.preferedWorkMethod;
     const fullKey = `${skillsKey},${coursesKey},${personnel.personalInformation.name},${personnel.personalInformation.surname},${education},${province},${roles},${'pwm' + workMethod}`;
