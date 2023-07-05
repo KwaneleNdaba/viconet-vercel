@@ -1,9 +1,10 @@
 import express, { Request, Response } from 'express'
 import { instanceOfTypeCustomError } from '../lib/typeCheck';
 import { SearchByKey } from '../services/searchService';
-import { AddPersonnel, GetAllPersonnel, GetPersonnelById, GetPersonnelByUserId, UpdatePersonnel } from '../repositories/personnelRepository';
-import { IPersonnel, IPersonnelDoc } from '../models/personnel';
+import { AddPersonnel, GetAllPersonnel, GetPersonnelById, GetPersonnelByUserId, ToPersonnelViewModel, UpdatePersonnel } from '../repositories/personnelRepository';
+import { IPersonnel, IPersonnelDoc, IPersonnelViewModel } from '../models/personnel';
 import {parsefile} from '../services/documentService'
+import { IUser, User } from '../models/user';
 
 
 
@@ -14,14 +15,19 @@ const router = express.Router()
 router.post('/api/searchPersonnel', async (req: Request, res: Response) => {
   const { searchKey } = req.body;
   const personnel = await GetAllPersonnel();
+  
 
   if(!instanceOfTypeCustomError(personnel)){
     const _personnel = personnel as IPersonnelDoc[];
-    if(searchKey ==undefined || searchKey=="") return res.status(200).send(_personnel)
+    if(searchKey ==undefined || searchKey==""){
+      const _result =await  ToPersonnelViewModel(_personnel);
+       return res.status(200).send(_result)
+      }
 
     const result = await SearchByKey(searchKey,_personnel)
-
-    return res.status(200).send(result);
+    const responseModels = ToPersonnelViewModel(result);
+    console.log("SSSSSS", responseModels);
+    return res.status(200).send(responseModels);
   }else{
     return res.status(500).send({message:"an error occured", data:personnel})
   }

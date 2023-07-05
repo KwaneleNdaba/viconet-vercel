@@ -116,7 +116,8 @@ const AddOrganisationAndStaff = function (_organisation) {
             };
             const userReq = Object.assign({}, _user);
             const user = user_1.User.build(userReq);
-            const email = yield (0, emailService_1.sendMail)(_user.email, `Activate your VICO net profile`, `Your otp is ${_otp.toString()}`, `Activate your VICO net profile, Your otp is <strong> ${_otp.toString()}</strong>`);
+            const template = (0, emailService_1.companyRegistrationSuccessTemplate)(_organisation.userName, _organisation.userEmail, _otp.toString(), "https://viconet-dev.netlify.app/company/auth/otp");
+            const email = yield (0, emailService_1.sendMail)(_user.email, `Activate your VICO net profile`, template, template);
             const userResp = yield user.save();
             if (!(0, typeCheck_1.instanceOfTypeIUser)(userResp)) {
                 return { code: 500, message: "Failed to add user", object: userResp };

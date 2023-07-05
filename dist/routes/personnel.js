@@ -25,10 +25,14 @@ router.post('/api/searchPersonnel', (req, res) => __awaiter(void 0, void 0, void
     const personnel = yield (0, personnelRepository_1.GetAllPersonnel)();
     if (!(0, typeCheck_1.instanceOfTypeCustomError)(personnel)) {
         const _personnel = personnel;
-        if (searchKey == undefined || searchKey == "")
-            return res.status(200).send(_personnel);
+        if (searchKey == undefined || searchKey == "") {
+            const _result = yield (0, personnelRepository_1.ToPersonnelViewModel)(_personnel);
+            return res.status(200).send(_result);
+        }
         const result = yield (0, searchService_1.SearchByKey)(searchKey, _personnel);
-        return res.status(200).send(result);
+        const responseModels = (0, personnelRepository_1.ToPersonnelViewModel)(result);
+        console.log("SSSSSS", responseModels);
+        return res.status(200).send(responseModels);
     }
     else {
         return res.status(500).send({ message: "an error occured", data: personnel });

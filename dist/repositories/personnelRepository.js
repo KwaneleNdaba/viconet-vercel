@@ -9,9 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdatePersonnel = exports.AddPersonnelUser = exports.AddPersonnel = exports.GetPersonnelById = exports.GetPersonnelByUserId = exports.GetAllPersonnel = void 0;
+exports.UpdatePersonnel = exports.AddPersonnelUser = exports.AddPersonnel = exports.GetPersonnelById = exports.ToPersonnelViewModel = exports.GetPersonnelByUserId = exports.GetAllPersonnel = void 0;
 const typeCheck_1 = require("../lib/typeCheck");
 const personnel_1 = require("../models/personnel");
+const user_1 = require("../models/user");
 const searchService_1 = require("../services/searchService");
 const usersRepository_1 = require("./usersRepository");
 const GetAllPersonnel = function () {
@@ -40,6 +41,21 @@ const GetPersonnelByUserId = function (id) {
     });
 };
 exports.GetPersonnelByUserId = GetPersonnelByUserId;
+const ToPersonnelViewModel = function (personnel) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const userIds = personnel.map(x => x._user);
+        const users = yield user_1.User.find({ _id: userIds });
+        const responseModels = personnel.map((res) => {
+            const user = users.filter(x => x.id == res._user)[0];
+            const response = Object.assign(Object.assign({}, res._doc), { user: user });
+            console.log("erwrw", users);
+            console.log("erwsassasrw", users);
+            return response;
+        });
+        return responseModels;
+    });
+};
+exports.ToPersonnelViewModel = ToPersonnelViewModel;
 const GetPersonnelById = function (id) {
     return __awaiter(this, void 0, void 0, function* () {
         try {

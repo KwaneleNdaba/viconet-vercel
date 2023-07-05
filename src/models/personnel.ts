@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import { IUser } from './user';
 
 export interface IPersonalInformation{
   _id?:string;
@@ -45,6 +46,9 @@ export interface IPersonnel {
   
 }
 
+export interface IPersonnelViewModel extends IPersonnel{
+  user: IUser;
+}
 interface personnelDocInterface extends mongoose.Model<IPersonnelDoc> {
   build(attr: IPersonnel): IPersonnelDoc
 }

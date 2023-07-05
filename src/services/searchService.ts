@@ -1,16 +1,17 @@
 
+import { match } from "assert";
 import { IPersonnel, IPersonnelDoc } from "../models/personnel";
 
-export const SearchByKey = async function(searchKey: string, personnel: IPersonnelDoc[]): Promise<IPersonnelDoc[]> {
-
-  const searchKeySet = new Set(searchKey.split(","));
+export const SearchByKey = async function(searchKey: string, personnel: IPersonnelDoc[]): Promise<IPersonnel[]> {
   console.log("SER", searchKey.split(","));
+  const searchKeySet = new Set(searchKey.split(","));
+
   const matches = personnel
     .map((x) => {
       return { matchCount: CompareHash(Array.from(searchKeySet), x), personnel: x };
     })
     .filter((x) => x.matchCount > 0);
-
+    console.log("SEARCH",matches);
   matches.sort((a, b) => b.matchCount - a.matchCount);
   return matches.map((match) => match.personnel);
   

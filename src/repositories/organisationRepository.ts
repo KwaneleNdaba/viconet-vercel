@@ -7,7 +7,7 @@ import { ICreateStaffModel, IStaff, IStaffViewModel, Staff } from "../models/sta
 import { IUser, IUserDoc, User, UserState, UserType } from "../models/user";
 import { IProject, Project } from "../models/project";
 import { instanceOfTypeIStaff, instanceOfTypeIUser } from "../lib/typeCheck";
-import { sendMail } from "../services/emailService";
+import { companyRegistrationSuccessTemplate, sendMail } from "../services/emailService";
 import { GetAllProjects } from "./projectRepository";
 
 export const GetAllOrganisations= async function():Promise<IOrganisationDoc[] | ICustomError>{
@@ -119,7 +119,9 @@ export const AddOrganisationAndStaff = async function(_organisation: ICompanyReg
            
        const userReq = {..._user} as IUser;       
         const user = User.build(userReq);
-        const email = await sendMail(_user.email, `Activate your VICO net profile`, `Your otp is ${_otp.toString()}`, `Activate your VICO net profile, Your otp is <strong> ${_otp.toString()}</strong>` );
+        
+        const template = companyRegistrationSuccessTemplate(_organisation.userName, _organisation.userEmail, _otp.toString(), "https://viconet-dev.netlify.app/company/auth/otp"  );
+        const email = await sendMail(_user.email, `Activate your VICO net profile`, template,template );
         const userResp  = await user.save();
 
     
