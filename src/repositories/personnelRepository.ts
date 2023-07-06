@@ -1,7 +1,7 @@
 import { instanceOfTypeMongoError } from "../lib/typeCheck";
 import { ICustomError, IMongoError } from "../models/errors";
 import { IPersonnel, IPersonnelDoc, IPersonnelViewModel, Personnel } from "../models/personnel";
-import { ICreatePersonnelUser, IUser, User } from "../models/user";
+import { ICreatePersonnelUser, IUser, IUserDoc, User } from "../models/user";
 import { GenerateSearchKeys } from "../services/searchService";
 import { AddUser } from "./usersRepository";
 
@@ -28,9 +28,9 @@ export const GetPersonnelByUserId= async function(id:string):Promise<IPersonnelD
 }
 
 export const ToPersonnelViewModel = async function( personnel: IPersonnel[]):Promise<IPersonnelViewModel[]>{
-
+   
     const userIds = personnel.map(x=>x._user);
-
+   
     const users = await User.find({_id:userIds});
     const responseModels = personnel.map((res:any)=>{
       const user = users.filter(x=>x.id == res._user)[0];
@@ -39,8 +39,26 @@ export const ToPersonnelViewModel = async function( personnel: IPersonnel[]):Pro
         user:user
   
       } as IPersonnelViewModel
-      console.log("erwrw", users)
-      console.log("erwsassasrw", users)
+
+
+      return response;
+    })
+    return responseModels;
+}
+
+export const ToPersonnelViewModelSync = function( personnel: IPersonnel[], users: IUserDoc[]):IPersonnelViewModel[]{
+
+    const userIds = personnel.map(x=>x._user);
+
+   
+    const responseModels = personnel.map((res:any)=>{
+      const user = users.filter(x=>x.id == res._user)[0];
+      const response = {
+        ...res._doc,
+        user:user
+  
+      } as IPersonnelViewModel
+    
 
       return response;
     })
@@ -49,9 +67,9 @@ export const ToPersonnelViewModel = async function( personnel: IPersonnel[]):Pro
 
 export const GetPersonnelById= async function(id:string):Promise<IPersonnelDoc| IMongoError>{
     try{
-        console.log("IDDD", id);
+     
         const personnel = await Personnel.find({_id:id})
-   console.log("IDDD", personnel);
+   
         const match = personnel[0];
         return match as IPersonnelDoc;
         }catch(e){
@@ -65,7 +83,7 @@ export const AddPersonnel = async function(_personnel:IPersonnel):Promise<IPerso
        
 
         const searchKeys = GenerateSearchKeys(_personnel);
-        console.log("RERER", searchKeys)
+       
         const populated = {..._personnel, searchKeys:searchKeys};
 
         const personnel = Personnel.build(populated);

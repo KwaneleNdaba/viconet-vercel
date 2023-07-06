@@ -1,11 +1,11 @@
 import mongoose from 'mongoose'
-import { IPersonnel } from './personnel';
+import { IPersonnel, IPersonnelViewModel } from './personnel';
 
 export interface IProjectView extends IProject {
-  _uninvited:IPersonnel[];
-  _pending:IPersonnel[];
-  _declined:IPersonnel[];
-  _accepted:IPersonnel[];
+  _uninvited:IPersonnelViewModel[];
+  _pending:IPersonnelViewModel[];
+  _declined:IPersonnelViewModel[];
+  _accepted:IPersonnelViewModel[];
 }
 
 export interface ICreateProject{

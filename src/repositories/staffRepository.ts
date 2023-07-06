@@ -5,7 +5,7 @@ import { ICreateStaffModel, IStaff, IStaffDoc, IStaffViewModel, Staff } from "..
 import { ICreateStaffUser, IUser, IUserDoc, User, UserState, UserType } from "../models/user";
 import { Organisation } from "../models/organisations";
 import { IOrganisation } from "../models/organisations";
-import { GetAllPersonnel } from "./personnelRepository";
+import { GetAllPersonnel, ToPersonnelViewModel } from "./personnelRepository";
 import { IPersonnelDoc } from "../models/personnel";
 import { IPersonnel } from "../models/personnel";
 import { GetOrganisationById, UpdateOrganisation } from "./organisationRepository";
@@ -28,10 +28,10 @@ export const GetFullStaffById= async function(id:string):Promise<IStaffViewModel
         const user = await User.findById(id);
     
         const personnel = await GetShortListed(_staff?._shortlist);
-       
+       const personnelView = await ToPersonnelViewModel(personnel);
         const response = {
             staff: _staff,
-            shortlisted: personnel,
+            shortlisted: personnelView,
             user:user
 
         } as IStaffViewModel

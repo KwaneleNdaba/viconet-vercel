@@ -23,10 +23,11 @@ router.post('/api/searchPersonnel', async (req: Request, res: Response) => {
       const _result =await  ToPersonnelViewModel(_personnel);
        return res.status(200).send(_result)
       }
-
-    const result = await SearchByKey(searchKey,_personnel)
-    const responseModels = ToPersonnelViewModel(result);
-    console.log("SSSSSS", responseModels);
+    
+    const result = await SearchByKey(searchKey,_personnel);
+     console.log("SSSSSS", result);
+    const responseModels = await ToPersonnelViewModel(result);
+  
     return res.status(200).send(responseModels);
   }else{
     return res.status(500).send({message:"an error occured", data:personnel})

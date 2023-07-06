@@ -5,10 +5,10 @@ import { IPersonnel, IPersonnelDoc, Personnel } from "../models/personnel";
 import { IAddPersonnelToProject, ICreateProject, IProject, IProjectDoc, IProjectView, IUpdateProject, IUpdateProjectPersonnel, Project } from "../models/project";
 import { AddNotification, GetNotificationById, GetNotificationByTargetAndReference, UpdateNotification } from "./notificatonsRepository";
 import { AddProjectToOrganisation } from "./organisationRepository";
-import { GetAllPersonnel, GetPersonnelByUserId } from "./personnelRepository";
+import { GetAllPersonnel, GetPersonnelByUserId, ToPersonnelViewModel, ToPersonnelViewModelSync } from "./personnelRepository";
 import { RemoveFromShortlist } from "./staffRepository";
 import { GetUserByEmail, GetUserById } from "./usersRepository";
-import { IUser } from "../models/user";
+import { IUser, IUserDoc, User } from "../models/user";
 
 export const GetAllProjects= async function():Promise<IProjectDoc[] | IMongoError>{
     try{
@@ -23,9 +23,9 @@ export const GetProjectsByOrgId= async function(id:string):Promise<IProjectView[
     try{
         const project = await Project.find({ _organisation: id});
         const personnel = await GetAllPersonnel();
-
+        const users = await User.find({});
         if(instanceOfTypeIPersonnelArray(personnel)){
-            const fullProjects = project.map(x=> MapProjectPersonnel(x, personnel));
+            const fullProjects = project.map(x=> MapProjectPersonnelSync(x, personnel,users));
             return fullProjects;
         }
 
@@ -41,9 +41,9 @@ export const GetProjectsByUserId= async function(id:string):Promise<IProjectView
     try{
         const project = await Project.find({ _creatingUser: id});
         const personnel = await GetAllPersonnel();
-
+        const users = await User.find({});
         if(instanceOfTypeIPersonnelArray(personnel)){
-            const fullProjects = project.map(x=> MapProjectPersonnel(x, personnel));
+            const fullProjects = project.map(x=> MapProjectPersonnelSync(x, personnel, users));
             return fullProjects;
         }
 
@@ -63,8 +63,11 @@ export const GetProjectById= async function(id:string):Promise<IProjectView | IM
 
         if(instanceOfTypeIPersonnelArray(personnel)){
           const doc = project[0] as any;
-            const view = MapProjectPersonnel(doc._doc, personnel);
-           
+          console.log("BEEEE", doc)
+          const users =await User.find({});
+         
+            const view = MapProjectPersonnel(doc._doc, personnel, users);
+         
             return view;
         }
 
@@ -119,6 +122,7 @@ export const AddProject = async function(_project:ICreateProject):Promise<IProje
     
     const currentProject = await GetProjectById(_project.projectId) as any;
     // const currentProject = _currentProject._doc as IProject;
+    const users =await User.find({});
     const allPersonnel = await GetAllPersonnel() as IPersonnel[];
     const personnelUser = allPersonnel.filter(x=>x._id == _project.personnelId)[0] as IPersonnel;
     const user = await GetUserById(personnelUser._user) as IUser;
@@ -154,8 +158,8 @@ export const AddProject = async function(_project:ICreateProject):Promise<IProje
                 
      
                 const resp = AddNotification(notification);
-
-                const response = MapProjectPersonnel(newProject,allPersonnel);
+                const users =await User.find({});
+                const response = await MapProjectPersonnel(newProject,allPersonnel, users);
                 return response;
         //accepted
             case "1":
@@ -174,8 +178,8 @@ export const AddProject = async function(_project:ICreateProject):Promise<IProje
                 const _notification = await GetNotificationByTargetAndReference(_project.personnelId, _project.projectId) as INotification;
                 const newNotification = {..._notification, status:"1"} as INotification;
                 const updatedNotification = await UpdateNotification(newNotification);
-
-                const _response = MapProjectPersonnel(_newProject,allPersonnel);
+               
+                const _response = await MapProjectPersonnel(_newProject,allPersonnel, users);
                 return _response;
         //declined
             case "2":
@@ -195,7 +199,7 @@ export const AddProject = async function(_project:ICreateProject):Promise<IProje
                 const _newNotification = {...__notification, status:"1"} as INotification;
                 const _updatedNotification = await UpdateNotification(_newNotification);
 
-                const __response = MapProjectPersonnel(__newProject,allPersonnel);
+                const __response = await MapProjectPersonnel(__newProject,allPersonnel,users);
                 return __response;
         //removed
             case "3":
@@ -212,7 +216,7 @@ export const AddProject = async function(_project:ICreateProject):Promise<IProje
 
                 const ____project = Project.build(___newProject);
                 const ___newProjectDb = await ____project.updateOne(____project);
-                const ___response = MapProjectPersonnel(___newProjectDb,allPersonnel);
+                const ___response = await MapProjectPersonnel(___newProjectDb,allPersonnel, users);
                 return ___response;
         }
        
@@ -276,26 +280,58 @@ export const AddProject = async function(_project:ICreateProject):Promise<IProje
 //   }
 
 
-
-
-
- function MapProjectPersonnel(project:IProject,  personnel: IPersonnel[]):IProjectView{
+function MapProjectPersonnelSync(project:IProject,  personnel: IPersonnel[], users:IUserDoc[]):IProjectView{
 
 
     // const p = _project as any;
     // const project = p._doc as IProject;
-    
-        const uninvited = project.uninvited.split(",").map(proj=> personnel.filter(pers=>pers._id.toString()== proj)[0]);
-        const pending = project.pending.split(",").map(proj=> personnel.filter(pers=>pers._id.toString()== proj)[0]);
-        const accepted = project.accepted.split(",").map(proj=> personnel.filter(pers=>pers._id.toString()== proj)[0]);
-        const declined = project.declined.split(",").map(proj=> personnel.filter(pers=>pers._id.toString()== proj)[0]);
+
+        const uninvited = ToPersonnelViewModelSync(project.uninvited.split(",").map(proj=> personnel.filter(pers=>pers._id.toString()== proj)[0]),users);
+        const pending =  ToPersonnelViewModelSync(project.pending.split(",").map(proj=> personnel.filter(pers=>pers._id.toString()== proj)[0]),users);
+        const accepted = ToPersonnelViewModelSync(project.accepted.split(",").map(proj=> personnel.filter(pers=>pers._id.toString()== proj)[0]),users);
+        const declined = ToPersonnelViewModelSync(project.declined.split(",").map(proj=> personnel.filter(pers=>pers._id.toString()== proj)[0]),users);
 
         const result ={
           ...project, 
             _uninvited:uninvited,
             _pending: pending,
-            _accepted:accepted,
+            _accepted:  accepted,
             _declined:declined
+        } as IProjectView
+
+        return result;
+
+}
+
+
+
+ function MapProjectPersonnel(project:IProject,  personnel: IPersonnel[], users:IUserDoc[]):IProjectView{
+
+
+    // const p = _project as any;
+    // const project = p._doc as IProject;
+       
+        const uninvited = project.uninvited.split(",").map(proj=> personnel.filter(pers=>pers._id.toString()== proj)[0]).filter(x=>x!=undefined);
+        const pending = project.pending.split(",").map(proj=> personnel.filter(pers=>pers._id.toString()== proj)[0]).filter(x=>x!=undefined);;
+        const accepted =project.accepted.split(",").map(proj=> personnel.filter(pers=>pers._id.toString()== proj)[0]).filter(x=>x!=undefined);;
+        const declined =project.declined.split(",").map(proj=> personnel.filter(pers=>pers._id.toString()== proj)[0]).filter(x=>x!=undefined);;
+        console.log("BEEEE111sasa", uninvited)
+        console.log("BEEEE111sasa1", pending)
+        console.log("BEEEE111sasa3", accepted)
+        console.log("BEEEE111sasa33", declined)
+
+        const _uninvited = ToPersonnelViewModelSync(uninvited,users);
+        const _pending = ToPersonnelViewModelSync(pending,users);
+        const _accepted = ToPersonnelViewModelSync(accepted,users);
+        const _declined = ToPersonnelViewModelSync(declined,users);
+
+
+        const result ={
+          ...project, 
+            _uninvited:_uninvited,
+            _pending: _pending,
+            _accepted:  _accepted,
+            _declined:_declined
         } as IProjectView
 
         return result;

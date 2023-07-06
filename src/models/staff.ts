@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 import { IUser, IUserRegisterModel } from './user';
-import { IPersonnel } from './personnel';
+import { IPersonnel, IPersonnelViewModel } from './personnel';
 
 
 export interface IStaff {
@@ -14,7 +14,7 @@ export interface IStaff {
 
 export interface IStaffViewModel {
   staff:IStaff,
-  shortlisted: IPersonnel[]
+  shortlisted: IPersonnelViewModel[]
   user?:IUser
 }
 
