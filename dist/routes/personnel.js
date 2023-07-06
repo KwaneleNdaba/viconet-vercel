@@ -30,8 +30,8 @@ router.post('/api/searchPersonnel', (req, res) => __awaiter(void 0, void 0, void
             return res.status(200).send(_result);
         }
         const result = yield (0, searchService_1.SearchByKey)(searchKey, _personnel);
-        const responseModels = (0, personnelRepository_1.ToPersonnelViewModel)(result);
-        console.log("SSSSSS", responseModels);
+        console.log("SSSSSS", result);
+        const responseModels = yield (0, personnelRepository_1.ToPersonnelViewModel)(result);
         return res.status(200).send(responseModels);
     }
     else {

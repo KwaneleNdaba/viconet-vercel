@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdatePersonnel = exports.AddPersonnelUser = exports.AddPersonnel = exports.GetPersonnelById = exports.ToPersonnelViewModel = exports.GetPersonnelByUserId = exports.GetAllPersonnel = void 0;
+exports.UpdatePersonnel = exports.AddPersonnelUser = exports.AddPersonnel = exports.GetPersonnelById = exports.ToPersonnelViewModelSync = exports.ToPersonnelViewModel = exports.GetPersonnelByUserId = exports.GetAllPersonnel = void 0;
 const typeCheck_1 = require("../lib/typeCheck");
 const personnel_1 = require("../models/personnel");
 const user_1 = require("../models/user");
@@ -48,20 +48,26 @@ const ToPersonnelViewModel = function (personnel) {
         const responseModels = personnel.map((res) => {
             const user = users.filter(x => x.id == res._user)[0];
             const response = Object.assign(Object.assign({}, res._doc), { user: user });
-            console.log("erwrw", users);
-            console.log("erwsassasrw", users);
             return response;
         });
         return responseModels;
     });
 };
 exports.ToPersonnelViewModel = ToPersonnelViewModel;
+const ToPersonnelViewModelSync = function (personnel, users) {
+    const userIds = personnel.map(x => x._user);
+    const responseModels = personnel.map((res) => {
+        const user = users.filter(x => x.id == res._user)[0];
+        const response = Object.assign(Object.assign({}, res._doc), { user: user });
+        return response;
+    });
+    return responseModels;
+};
+exports.ToPersonnelViewModelSync = ToPersonnelViewModelSync;
 const GetPersonnelById = function (id) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            console.log("IDDD", id);
             const personnel = yield personnel_1.Personnel.find({ _id: id });
-            console.log("IDDD", personnel);
             const match = personnel[0];
             return match;
         }
@@ -75,7 +81,6 @@ const AddPersonnel = function (_personnel) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const searchKeys = (0, searchService_1.GenerateSearchKeys)(_personnel);
-            console.log("RERER", searchKeys);
             const populated = Object.assign(Object.assign({}, _personnel), { searchKeys: searchKeys });
             const personnel = personnel_1.Personnel.build(populated);
             const res = yield personnel.save();

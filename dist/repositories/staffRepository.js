@@ -36,9 +36,10 @@ const GetFullStaffById = function (id) {
             const _staff = staff[0];
             const user = yield user_1.User.findById(id);
             const personnel = yield GetShortListed(_staff === null || _staff === void 0 ? void 0 : _staff._shortlist);
+            const personnelView = yield (0, personnelRepository_1.ToPersonnelViewModel)(personnel);
             const response = {
                 staff: _staff,
-                shortlisted: personnel,
+                shortlisted: personnelView,
                 user: user
             };
             return response;

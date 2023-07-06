@@ -17,6 +17,7 @@ const organisationRepository_1 = require("./organisationRepository");
 const personnelRepository_1 = require("./personnelRepository");
 const staffRepository_1 = require("./staffRepository");
 const usersRepository_1 = require("./usersRepository");
+const user_1 = require("../models/user");
 const GetAllProjects = function () {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -34,8 +35,9 @@ const GetProjectsByOrgId = function (id) {
         try {
             const project = yield project_1.Project.find({ _organisation: id });
             const personnel = yield (0, personnelRepository_1.GetAllPersonnel)();
+            const users = yield user_1.User.find({});
             if ((0, typeCheck_1.instanceOfTypeIPersonnelArray)(personnel)) {
-                const fullProjects = project.map(x => MapProjectPersonnel(x, personnel));
+                const fullProjects = project.map(x => MapProjectPersonnelSync(x, personnel, users));
                 return fullProjects;
             }
             return { code: "500", message: "Error occured while fetching personnel" };
@@ -51,8 +53,9 @@ const GetProjectsByUserId = function (id) {
         try {
             const project = yield project_1.Project.find({ _creatingUser: id });
             const personnel = yield (0, personnelRepository_1.GetAllPersonnel)();
+            const users = yield user_1.User.find({});
             if ((0, typeCheck_1.instanceOfTypeIPersonnelArray)(personnel)) {
-                const fullProjects = project.map(x => MapProjectPersonnel(x, personnel));
+                const fullProjects = project.map(x => MapProjectPersonnelSync(x, personnel, users));
                 return fullProjects;
             }
             return { code: "500", message: "Error occured while fetching personnel" };
@@ -70,7 +73,9 @@ const GetProjectById = function (id) {
             const personnel = yield (0, personnelRepository_1.GetAllPersonnel)();
             if ((0, typeCheck_1.instanceOfTypeIPersonnelArray)(personnel)) {
                 const doc = project[0];
-                const view = MapProjectPersonnel(doc._doc, personnel);
+                console.log("BEEEE", doc);
+                const users = yield user_1.User.find({});
+                const view = MapProjectPersonnel(doc._doc, personnel, users);
                 return view;
             }
             return { code: "500", message: "Error occured while fetching personnel" };
@@ -126,6 +131,7 @@ const UpdatePersonnelOnProject = function (_project) {
     return __awaiter(this, void 0, void 0, function* () {
         const currentProject = yield (0, exports.GetProjectById)(_project.projectId);
         // const currentProject = _currentProject._doc as IProject;
+        const users = yield user_1.User.find({});
         const allPersonnel = yield (0, personnelRepository_1.GetAllPersonnel)();
         const personnelUser = allPersonnel.filter(x => x._id == _project.personnelId)[0];
         const user = yield (0, usersRepository_1.GetUserById)(personnelUser._user);
@@ -153,7 +159,8 @@ const UpdatePersonnelOnProject = function (_project) {
                         date: new Date().toString()
                     };
                     const resp = (0, notificatonsRepository_1.AddNotification)(notification);
-                    const response = MapProjectPersonnel(newProject, allPersonnel);
+                    const users = yield user_1.User.find({});
+                    const response = yield MapProjectPersonnel(newProject, allPersonnel, users);
                     return response;
                 //accepted
                 case "1":
@@ -167,7 +174,7 @@ const UpdatePersonnelOnProject = function (_project) {
                     const _notification = yield (0, notificatonsRepository_1.GetNotificationByTargetAndReference)(_project.personnelId, _project.projectId);
                     const newNotification = Object.assign(Object.assign({}, _notification), { status: "1" });
                     const updatedNotification = yield (0, notificatonsRepository_1.UpdateNotification)(newNotification);
-                    const _response = MapProjectPersonnel(_newProject, allPersonnel);
+                    const _response = yield MapProjectPersonnel(_newProject, allPersonnel, users);
                     return _response;
                 //declined
                 case "2":
@@ -181,7 +188,7 @@ const UpdatePersonnelOnProject = function (_project) {
                     const __notification = yield (0, notificatonsRepository_1.GetNotificationByTargetAndReference)(_project.personnelId, _project.projectId);
                     const _newNotification = Object.assign(Object.assign({}, __notification), { status: "1" });
                     const _updatedNotification = yield (0, notificatonsRepository_1.UpdateNotification)(_newNotification);
-                    const __response = MapProjectPersonnel(__newProject, allPersonnel);
+                    const __response = yield MapProjectPersonnel(__newProject, allPersonnel, users);
                     return __response;
                 //removed
                 case "3":
@@ -191,7 +198,7 @@ const UpdatePersonnelOnProject = function (_project) {
                     const ___newProject = Object.assign(Object.assign({}, currentProject), { accepted: __removeAccepted, pending: __removedInvited, declined: __removeRejected, uninvited: `${currentProject.uninvited},${_project.personnelId}` });
                     const ____project = project_1.Project.build(___newProject);
                     const ___newProjectDb = yield ____project.updateOne(____project);
-                    const ___response = MapProjectPersonnel(___newProjectDb, allPersonnel);
+                    const ___response = yield MapProjectPersonnel(___newProjectDb, allPersonnel, users);
                     return ___response;
             }
         }
@@ -238,14 +245,35 @@ exports.UpdatePersonnelOnProject = UpdatePersonnelOnProject;
 //             })
 //         return results;
 //   }
-function MapProjectPersonnel(project, personnel) {
+function MapProjectPersonnelSync(project, personnel, users) {
     // const p = _project as any;
     // const project = p._doc as IProject;
-    const uninvited = project.uninvited.split(",").map(proj => personnel.filter(pers => pers._id.toString() == proj)[0]);
-    const pending = project.pending.split(",").map(proj => personnel.filter(pers => pers._id.toString() == proj)[0]);
-    const accepted = project.accepted.split(",").map(proj => personnel.filter(pers => pers._id.toString() == proj)[0]);
-    const declined = project.declined.split(",").map(proj => personnel.filter(pers => pers._id.toString() == proj)[0]);
+    const uninvited = (0, personnelRepository_1.ToPersonnelViewModelSync)(project.uninvited.split(",").map(proj => personnel.filter(pers => pers._id.toString() == proj)[0]), users);
+    const pending = (0, personnelRepository_1.ToPersonnelViewModelSync)(project.pending.split(",").map(proj => personnel.filter(pers => pers._id.toString() == proj)[0]), users);
+    const accepted = (0, personnelRepository_1.ToPersonnelViewModelSync)(project.accepted.split(",").map(proj => personnel.filter(pers => pers._id.toString() == proj)[0]), users);
+    const declined = (0, personnelRepository_1.ToPersonnelViewModelSync)(project.declined.split(",").map(proj => personnel.filter(pers => pers._id.toString() == proj)[0]), users);
     const result = Object.assign(Object.assign({}, project), { _uninvited: uninvited, _pending: pending, _accepted: accepted, _declined: declined });
+    return result;
+}
+function MapProjectPersonnel(project, personnel, users) {
+    // const p = _project as any;
+    // const project = p._doc as IProject;
+    const uninvited = project.uninvited.split(",").map(proj => personnel.filter(pers => pers._id.toString() == proj)[0]).filter(x => x != undefined);
+    const pending = project.pending.split(",").map(proj => personnel.filter(pers => pers._id.toString() == proj)[0]).filter(x => x != undefined);
+    ;
+    const accepted = project.accepted.split(",").map(proj => personnel.filter(pers => pers._id.toString() == proj)[0]).filter(x => x != undefined);
+    ;
+    const declined = project.declined.split(",").map(proj => personnel.filter(pers => pers._id.toString() == proj)[0]).filter(x => x != undefined);
+    ;
+    console.log("BEEEE111sasa", uninvited);
+    console.log("BEEEE111sasa1", pending);
+    console.log("BEEEE111sasa3", accepted);
+    console.log("BEEEE111sasa33", declined);
+    const _uninvited = (0, personnelRepository_1.ToPersonnelViewModelSync)(uninvited, users);
+    const _pending = (0, personnelRepository_1.ToPersonnelViewModelSync)(pending, users);
+    const _accepted = (0, personnelRepository_1.ToPersonnelViewModelSync)(accepted, users);
+    const _declined = (0, personnelRepository_1.ToPersonnelViewModelSync)(declined, users);
+    const result = Object.assign(Object.assign({}, project), { _uninvited: _uninvited, _pending: _pending, _accepted: _accepted, _declined: _declined });
     return result;
 }
 //# sourceMappingURL=projectRepository.js.map
