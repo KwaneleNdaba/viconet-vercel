@@ -3,7 +3,10 @@ import { HashPassword } from '../services/loginService';
 import { AddOrganisation, GetAllOrganisations, GetOrganisationById } from '../repositories/organisationRepository';
 import { instanceOfTypeCustomError, instanceOfTypeIOrganisation } from '../lib/typeCheck';
 import { AddNotification, CloseNotification, GetAllNotifications, GetNotificationById, GetNotificationByTargetUser } from '../repositories/notificatonsRepository';
-import { INotification } from '../models/notifications';
+import { INotification, INotificationDoc } from '../models/notifications';
+import { IMongoError } from '../models/errors';
+import { sendMail } from '../services/emailService';
+import { ICustomError } from '../models/errors';
 
 const router = express.Router()
 
@@ -12,6 +15,36 @@ router.get('/api/notification', async (req: Request, res: Response) => {
   return res.status(200).send(user)
 })
 
+export const AddBatchNotification = async function(notifications:INotification[]):Promise<INotificationDoc | IMongoError| ICustomError> {
+  try{
+
+
+      notifications.map(async(notification)=>{
+            if(notification.type=="0"){
+          const sendEmail = await sendMail(notification.email,
+          
+              "New Invite",
+          `You have been invited to join a group, view more here`,
+          `You have been invited to join a group, view more here. 
+          <br/>
+          <a href="https://viconet-dev.netlify.app/personnel/notifications/"> View Notifications</a>
+          <br/>         
+          `
+          )
+      }
+
+
+      // const noti = Notification.build(notification);
+      // const res = await noti.save();
+
+      // return noti;
+      })
+    
+
+  }catch(e){
+      return e as IMongoError;
+  }
+}
 
 router.get('/api/notification/:id', async (req: Request, res: Response) => {
   

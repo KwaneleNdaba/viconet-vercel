@@ -1,9 +1,44 @@
+import { IProject } from "../models/project";
 import { instanceOfTypeMongoError } from "../lib/typeCheck";
 import { ICustomError, IMongoError } from "../models/errors";
 import { IPersonnel, IPersonnelDoc, IPersonnelViewModel, Personnel } from "../models/personnel";
 import { ICreatePersonnelUser, IUser, IUserDoc, User } from "../models/user";
 import { GenerateSearchKeys } from "../services/searchService";
 import { AddUser } from "./usersRepository";
+import { IProjectView } from "../models/project";
+
++ function MapProjectPersonnel(project:IProject,  personnel: IPersonnel[], users:IUser[]):IProjectView{
+
+
+    // const p = _project as any;
+    // const project = p._doc as IProject;
+       
+        const uninvited = project.uninvited.split(",").map(proj=> personnel.filter(pers=>pers._id.toString()== proj)[0]).filter(x=>x!=undefined);
+        const pending = project.pending.split(",").map(proj=> personnel.filter(pers=>pers._id.toString()== proj)[0]).filter(x=>x!=undefined);;
+        const accepted =project.accepted.split(",").map(proj=> personnel.filter(pers=>pers._id.toString()== proj)[0]).filter(x=>x!=undefined);;
+        const declined =project.declined.split(",").map(proj=> personnel.filter(pers=>pers._id.toString()== proj)[0]).filter(x=>x!=undefined);;
+
+
+        const _uninvited = ToPersonnelViewModelSync(uninvited,users);
+        const _pending = ToPersonnelViewModelSync(pending,users);
+        const _accepted = ToPersonnelViewModelSync(accepted,users);
+        const _declined = ToPersonnelViewModelSync(declined,users);
+
+
+        const result ={
+          ...project, 
+            _uninvited:_uninvited,
+            _pending: _pending,
+            _accepted:  _accepted,
+            _declined:_declined
+        } as IProjectView
+
+        return result;
+
+}
+
+
+
 
 export const GetAllPersonnel= async function():Promise<IPersonnelDoc[] | IMongoError>{
     try{
@@ -46,13 +81,13 @@ export const ToPersonnelViewModel = async function( personnel: IPersonnel[]):Pro
     return responseModels;
 }
 
-export const ToPersonnelViewModelSync = function( personnel: IPersonnel[], users: IUserDoc[]):IPersonnelViewModel[]{
+export const ToPersonnelViewModelSync = function( personnel: IPersonnel[], users: IUser[]):IPersonnelViewModel[]{
 
     const userIds = personnel.map(x=>x._user);
 
    
     const responseModels = personnel.map((res:any)=>{
-      const user = users.filter(x=>x.id == res._user)[0];
+      const user = users.filter(x=>x._id == res._user)[0];
       const response = {
         ...res._doc,
         user:user

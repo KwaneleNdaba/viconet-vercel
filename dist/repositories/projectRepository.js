@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdatePersonnelOnProject = exports.UpdateProject = exports.AddProject = exports.GetProjectById = exports.GetProjectsByUserId = exports.GetProjectsByOrgId = exports.GetAllProjects = void 0;
+exports.MapProjectPersonnel = exports.UpdatePersonnelOnProject = exports.MapBatchProjectPersonnel = exports.UpdateProject = exports.AddProject = exports.GetProjectById = exports.GetProjectsByUserId = exports.GetProjectsByOrgId = exports.GetAllProjects = void 0;
 const typeCheck_1 = require("../lib/typeCheck");
 const project_1 = require("../models/project");
 const notificatonsRepository_1 = require("./notificatonsRepository");
@@ -127,6 +127,24 @@ const UpdateProject = function (_project, _projectId) {
     });
 };
 exports.UpdateProject = UpdateProject;
+function MapBatchProjectPersonnel(project, personnel, users) {
+    // const p = _project as any;
+    // const project = p._doc as IProject;
+    const uninvited = project.uninvited.split(",").map(proj => personnel.filter(pers => pers._id.toString() == proj)[0]).filter(x => x != undefined);
+    const pending = project.pending.split(",").map(proj => personnel.filter(pers => pers._id.toString() == proj)[0]).filter(x => x != undefined);
+    ;
+    const accepted = project.accepted.split(",").map(proj => personnel.filter(pers => pers._id.toString() == proj)[0]).filter(x => x != undefined);
+    ;
+    const declined = project.declined.split(",").map(proj => personnel.filter(pers => pers._id.toString() == proj)[0]).filter(x => x != undefined);
+    ;
+    const _uninvited = (0, personnelRepository_1.ToPersonnelViewModelSync)(uninvited, users);
+    const _pending = (0, personnelRepository_1.ToPersonnelViewModelSync)(pending, users);
+    const _accepted = (0, personnelRepository_1.ToPersonnelViewModelSync)(accepted, users);
+    const _declined = (0, personnelRepository_1.ToPersonnelViewModelSync)(declined, users);
+    const result = Object.assign(Object.assign({}, project), { _uninvited: _uninvited, _pending: _pending, _accepted: _accepted, _declined: _declined });
+    return result;
+}
+exports.MapBatchProjectPersonnel = MapBatchProjectPersonnel;
 const UpdatePersonnelOnProject = function (_project) {
     return __awaiter(this, void 0, void 0, function* () {
         const currentProject = yield (0, exports.GetProjectById)(_project.projectId);
@@ -192,10 +210,15 @@ const UpdatePersonnelOnProject = function (_project) {
                     return __response;
                 //removed
                 case "3":
-                    const __removedInvited = currentProject.pending.split(",").filter((x) => x == _project.personnelId).join(",");
-                    const __removeAccepted = currentProject.accepted.split(",").filter((x) => x == _project.personnelId).join(",");
-                    const __removeRejected = currentProject.declined.split(",").filter((x) => x == _project.personnelId).join(",");
-                    const ___newProject = Object.assign(Object.assign({}, currentProject), { accepted: __removeAccepted, pending: __removedInvited, declined: __removeRejected, uninvited: `${currentProject.uninvited},${_project.personnelId}` });
+                    const __removedInvited = currentProject.pending.split(",").filter((x) => x != _project.personnelId).join(",");
+                    const __removeAccepted = currentProject.accepted.split(",").filter((x) => x != _project.personnelId).join(",");
+                    const __removeRejected = currentProject.declined.split(",").filter((x) => x != _project.personnelId).join(",");
+                    const __removedInvitedClean = __removedInvited.charAt(0) === ',' ? __removedInvited.slice(1) : __removedInvited;
+                    const __removeAcceptedClean = __removeAccepted.charAt(0) === ',' ? __removeAccepted.slice(1) : __removeAccepted;
+                    const __removeRejectedClean = __removeRejected.charAt(0) === ',' ? __removeRejected.slice(1) : __removeRejected;
+                    const uninvited = `${currentProject.uninvited},${_project.personnelId}`;
+                    const uninvitedClean = uninvited.charAt(0) === ',' ? uninvited.slice(1) : uninvited;
+                    const ___newProject = Object.assign(Object.assign({}, currentProject), { accepted: __removeAcceptedClean, pending: __removedInvitedClean, declined: __removeRejectedClean, uninvited: uninvitedClean });
                     const ____project = project_1.Project.build(___newProject);
                     const ___newProjectDb = yield ____project.updateOne(____project);
                     const ___response = yield MapProjectPersonnel(___newProjectDb, allPersonnel, users);
@@ -276,4 +299,5 @@ function MapProjectPersonnel(project, personnel, users) {
     const result = Object.assign(Object.assign({}, project), { _uninvited: _uninvited, _pending: _pending, _accepted: _accepted, _declined: _declined });
     return result;
 }
+exports.MapProjectPersonnel = MapProjectPersonnel;
 //# sourceMappingURL=projectRepository.js.map

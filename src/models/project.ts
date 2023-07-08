@@ -40,6 +40,18 @@ export interface IAddPersonnelToProject{
 }
 
 
+export interface IAddBatchPersonnelToProject{
+  personelIds: string[],
+  staffId:string,
+  projectId:string,
+}
+
+
+export interface IRemoveFromProject{
+  personelId: string,
+  projectId:string,
+}
+
 
 
 export interface IProject {

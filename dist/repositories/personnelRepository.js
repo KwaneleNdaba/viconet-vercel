@@ -15,6 +15,23 @@ const personnel_1 = require("../models/personnel");
 const user_1 = require("../models/user");
 const searchService_1 = require("../services/searchService");
 const usersRepository_1 = require("./usersRepository");
++function MapProjectPersonnel(project, personnel, users) {
+    // const p = _project as any;
+    // const project = p._doc as IProject;
+    const uninvited = project.uninvited.split(",").map(proj => personnel.filter(pers => pers._id.toString() == proj)[0]).filter(x => x != undefined);
+    const pending = project.pending.split(",").map(proj => personnel.filter(pers => pers._id.toString() == proj)[0]).filter(x => x != undefined);
+    ;
+    const accepted = project.accepted.split(",").map(proj => personnel.filter(pers => pers._id.toString() == proj)[0]).filter(x => x != undefined);
+    ;
+    const declined = project.declined.split(",").map(proj => personnel.filter(pers => pers._id.toString() == proj)[0]).filter(x => x != undefined);
+    ;
+    const _uninvited = (0, exports.ToPersonnelViewModelSync)(uninvited, users);
+    const _pending = (0, exports.ToPersonnelViewModelSync)(pending, users);
+    const _accepted = (0, exports.ToPersonnelViewModelSync)(accepted, users);
+    const _declined = (0, exports.ToPersonnelViewModelSync)(declined, users);
+    const result = Object.assign(Object.assign({}, project), { _uninvited: _uninvited, _pending: _pending, _accepted: _accepted, _declined: _declined });
+    return result;
+};
 const GetAllPersonnel = function () {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -57,7 +74,7 @@ exports.ToPersonnelViewModel = ToPersonnelViewModel;
 const ToPersonnelViewModelSync = function (personnel, users) {
     const userIds = personnel.map(x => x._user);
     const responseModels = personnel.map((res) => {
-        const user = users.filter(x => x.id == res._user)[0];
+        const user = users.filter(x => x._id == res._user)[0];
         const response = Object.assign(Object.assign({}, res._doc), { user: user });
         return response;
     });

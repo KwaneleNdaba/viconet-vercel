@@ -117,7 +117,37 @@ export const AddProject = async function(_project:ICreateProject):Promise<IProje
     }
   }
 
-  
+export function MapBatchProjectPersonnel(project:IProject,  personnel: IPersonnel[], users:IUserDoc[]):IProjectView{
+
+
+    // const p = _project as any;
+    // const project = p._doc as IProject;
+       
+        const uninvited = project.uninvited.split(",").map(proj=> personnel.filter(pers=>pers._id.toString()== proj)[0]).filter(x=>x!=undefined);
+        const pending = project.pending.split(",").map(proj=> personnel.filter(pers=>pers._id.toString()== proj)[0]).filter(x=>x!=undefined);;
+        const accepted =project.accepted.split(",").map(proj=> personnel.filter(pers=>pers._id.toString()== proj)[0]).filter(x=>x!=undefined);;
+        const declined =project.declined.split(",").map(proj=> personnel.filter(pers=>pers._id.toString()== proj)[0]).filter(x=>x!=undefined);;
+      
+
+        const _uninvited = ToPersonnelViewModelSync(uninvited,users);
+        const _pending = ToPersonnelViewModelSync(pending,users);
+        const _accepted = ToPersonnelViewModelSync(accepted,users);
+        const _declined = ToPersonnelViewModelSync(declined,users);
+
+
+        const result ={
+          ...project, 
+            _uninvited:_uninvited,
+            _pending: _pending,
+            _accepted:  _accepted,
+            _declined:_declined
+        } as IProjectView
+
+        return result;
+
+}
+
+
   export const UpdatePersonnelOnProject = async function(_project:IUpdateProjectPersonnel):Promise<IProjectView | IMongoError> {
     
     const currentProject = await GetProjectById(_project.projectId) as any;
@@ -203,15 +233,21 @@ export const AddProject = async function(_project:ICreateProject):Promise<IProje
                 return __response;
         //removed
             case "3":
-                const __removedInvited = currentProject.pending.split(",").filter((x:any)=>x == _project.personnelId).join(",");
-                const __removeAccepted = currentProject.accepted.split(",").filter((x:any)=>x == _project.personnelId).join(",");
-                const __removeRejected = currentProject.declined.split(",").filter((x:any)=>x == _project.personnelId).join(",");
+                const __removedInvited = currentProject.pending.split(",").filter((x:any)=>x != _project.personnelId).join(",");
+                const __removeAccepted = currentProject.accepted.split(",").filter((x:any)=>x != _project.personnelId).join(",");
+                const __removeRejected = currentProject.declined.split(",").filter((x:any)=>x != _project.personnelId).join(",");
+       
+                const __removedInvitedClean = __removedInvited.charAt(0) === ','? __removedInvited.slice(1): __removedInvited;
+                const __removeAcceptedClean = __removeAccepted.charAt(0) === ','? __removeAccepted.slice(1): __removeAccepted;
+                const __removeRejectedClean = __removeRejected.charAt(0) === ','? __removeRejected.slice(1): __removeRejected;
+                const uninvited =`${currentProject.uninvited},${_project.personnelId}`;
+                const uninvitedClean =  uninvited.charAt(0) === ','? uninvited.slice(1): uninvited;
 
                 const ___newProject = {...currentProject,
-                    accepted:__removeAccepted,
-                    pending:__removedInvited,
-                    declined:__removeRejected,
-                    uninvited:`${currentProject.uninvited},${_project.personnelId}`
+                    accepted:__removeAcceptedClean,
+                    pending:__removedInvitedClean,
+                    declined:__removeRejectedClean,
+                    uninvited:uninvitedClean
                 } as IProject;
 
                 const ____project = Project.build(___newProject);
@@ -305,7 +341,7 @@ function MapProjectPersonnelSync(project:IProject,  personnel: IPersonnel[], use
 
 
 
- function MapProjectPersonnel(project:IProject,  personnel: IPersonnel[], users:IUserDoc[]):IProjectView{
+ export function MapProjectPersonnel(project:IProject,  personnel: IPersonnel[], users:IUserDoc[]):IProjectView{
 
 
     // const p = _project as any;

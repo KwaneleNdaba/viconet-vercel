@@ -9,10 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GetUserByEmail = exports.GetUserById = exports.ChangePasswordAndActivate = exports.VerifyOTPAndResetPassword = exports.SendOTP = exports.ChangePassword = exports.GetUserProfilePicture = exports.OnboardUser = exports.ActivateUser = exports.AddUser = exports.UpdateUser = exports.GetAllUsers = void 0;
+exports.GetUserByEmail = exports.GetUserById = exports.ChangePasswordAndActivate = exports.VerifyOTPAndResetPassword = exports.GetBatchUserByPersonnelId = exports.GetBatchUserById = exports.SendOTP = exports.ChangePassword = exports.GetUserProfilePicture = exports.OnboardUser = exports.ActivateUser = exports.AddUser = exports.UpdateUser = exports.GetAllUsers = void 0;
 const loginService_1 = require("../services/loginService");
 const user_1 = require("../models/user");
 const emailService_1 = require("../services/emailService");
+const personnel_1 = require("../models/personnel");
 const GetAllUsers = function () {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -150,6 +151,34 @@ const SendOTP = function (_email) {
     });
 };
 exports.SendOTP = SendOTP;
+const GetBatchUserById = function (id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const users = yield user_1.User.find({ _id: id });
+            const data = users[0];
+            return data._doc;
+        }
+        catch (e) {
+            return e;
+        }
+    });
+};
+exports.GetBatchUserById = GetBatchUserById;
+const GetBatchUserByPersonnelId = function (personnelIds) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const personnel = yield personnel_1.Personnel.find({ _id: personnelIds });
+            const personnelUserIds = personnel.map(x => x._user);
+            const users = yield user_1.User.find({ _id: personnelUserIds });
+            const response = users.map(x => x._doc);
+            return response;
+        }
+        catch (e) {
+            return e;
+        }
+    });
+};
+exports.GetBatchUserByPersonnelId = GetBatchUserByPersonnelId;
 const VerifyOTPAndResetPassword = function (email, password, otp) {
     return __awaiter(this, void 0, void 0, function* () {
         try {

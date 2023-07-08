@@ -6,7 +6,7 @@ import { ICreateStaffUser, IUser, IUserDoc, User, UserState, UserType } from "..
 import { Organisation } from "../models/organisations";
 import { IOrganisation } from "../models/organisations";
 import { GetAllPersonnel, ToPersonnelViewModel } from "./personnelRepository";
-import { IPersonnelDoc } from "../models/personnel";
+import { IPersonnelDoc, IPersonnelViewModel } from "../models/personnel";
 import { IPersonnel } from "../models/personnel";
 import { GetOrganisationById, UpdateOrganisation } from "./organisationRepository";
 import { sendMail } from "../services/emailService";
@@ -27,17 +27,19 @@ export const GetFullStaffById= async function(id:string):Promise<IStaffViewModel
         const _staff = staff[0] as IStaff;
         const user = await User.findById(id);
     
-        const personnel = await GetShortListed(_staff?._shortlist);
-       const personnelView = await ToPersonnelViewModel(personnel);
+        const personnel = await GetShortListed(_staff?._shortlist) as IPersonnelViewModel[];
+  
+    
+
         const response = {
             staff: _staff,
-            shortlisted: personnelView,
+            shortlisted: personnel,
             user:user
 
         } as IStaffViewModel
+
         return response;
         }catch(e){
-            console.log("er", e)
             return e as IMongoError;
         }
 }
@@ -77,15 +79,13 @@ export const AddToShortlist = async function(personnel: string, staffId: string)
             const newStaff = {...currentStaff, _shortlist:newPersonnel} as IStaff
             const savedStaff = await UpdateStaff(newStaff) as IStaff;
             const newShortlist = await GetShortListed(newPersonnel);
+
             const response = {
                 staff: savedStaff,
-                shortlisted: newShortlist
-    
+                shortlisted: newShortlist,    
             } as IStaffViewModel
     
             return response;
-    
-         
         }
     }catch(e){
         return e as IMongoError;
@@ -117,14 +117,47 @@ export const RemoveFromShortlist = async function(personnel: string, staffId: st
         return e as IMongoError;
     }
 }
+export const RemoveBatchFromShortlist = async function(personnel: string[], staffId: string):Promise<IStaffViewModel | IMongoError>{
 
-const GetShortListed = async function(shortlisted:string):Promise<IPersonnel[]> {
-    const allPersonnel = await GetAllPersonnel() as IPersonnel[];
+    try{
+        const staffDoc = await GetStaffById(staffId) as any;
+        const currentStaff = staffDoc._doc as IStaff;
+        const currentPersonnel = currentStaff._shortlist.trim().split(",");
+
+        const toRemove = personnel;
+
+
+
+        const _newShortlist = currentPersonnel.filter(x=>!toRemove.includes(x)).join(",");
+        
+        const newStaff = {...currentStaff, _shortlist:_newShortlist}
+      
+        const savedStaff = await UpdateStaff(newStaff) as IStaff;
+
+        const newShortlistPersonnel = await GetShortListed(_newShortlist);
+        const response = {
+            staff: savedStaff,
+            shortlisted: newShortlistPersonnel
+
+        } as IStaffViewModel
+
+        return response;
+
+    }catch(e){
+        return e as IMongoError;
+    }
+}
+
+
+const GetShortListed = async function(shortlisted:string):Promise<IPersonnelViewModel[]> {
+    const allPersonnel = await GetAllPersonnel() as IPersonnelDoc[];
+    // console.log("ALLP", allPersonnel)
     const allShortListed = shortlisted?.split(",")??[];
     const list = allShortListed.length>0? allPersonnel.filter(x=> allShortListed.includes(x?._id.toString())):[];
-    return list;
-
-
+    console.log("DSDDSADADDASDSA", list)
+    const viewModels = await ToPersonnelViewModel(list)
+    console.log("333333333333333333", viewModels)
+    return viewModels;
 }
 
 export const GetStaffInOrganisation= async function(organisationId:string):Promise<IStaffDoc[] | IMongoError | ICustomError>{
@@ -242,7 +275,6 @@ export const AddStaffToOrganisaion = async function(_staff: ICreateStaffModel):P
     }
 }
 
-
 export const UpdateStaff = async function(_staff:IStaff):Promise<IStaff | IMongoError> {
     try{
          
@@ -254,7 +286,3 @@ export const UpdateStaff = async function(_staff:IStaff):Promise<IStaff | IMongo
         return e as IMongoError;
     }
 }
-
-
-
-

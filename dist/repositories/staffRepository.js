@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdateStaff = exports.AddStaffToOrganisaion = exports.AddStaff = exports.GetStaffInOrganisation = exports.RemoveFromShortlist = exports.AddToShortlist = exports.GetStaffById = exports.GetFullStaffById = exports.GetAllStaff = void 0;
+exports.UpdateStaff = exports.AddStaffToOrganisaion = exports.AddStaff = exports.GetStaffInOrganisation = exports.RemoveBatchFromShortlist = exports.RemoveFromShortlist = exports.AddToShortlist = exports.GetStaffById = exports.GetFullStaffById = exports.GetAllStaff = void 0;
 const typeCheck_1 = require("../lib/typeCheck");
 const staff_1 = require("../models/staff");
 const user_1 = require("../models/user");
@@ -36,16 +36,14 @@ const GetFullStaffById = function (id) {
             const _staff = staff[0];
             const user = yield user_1.User.findById(id);
             const personnel = yield GetShortListed(_staff === null || _staff === void 0 ? void 0 : _staff._shortlist);
-            const personnelView = yield (0, personnelRepository_1.ToPersonnelViewModel)(personnel);
             const response = {
                 staff: _staff,
-                shortlisted: personnelView,
+                shortlisted: personnel,
                 user: user
             };
             return response;
         }
         catch (e) {
-            console.log("er", e);
             return e;
         }
     });
@@ -86,7 +84,7 @@ const AddToShortlist = function (personnel, staffId) {
                 const newShortlist = yield GetShortListed(newPersonnel);
                 const response = {
                     staff: savedStaff,
-                    shortlisted: newShortlist
+                    shortlisted: newShortlist,
                 };
                 return response;
             }
@@ -119,13 +117,40 @@ const RemoveFromShortlist = function (personnel, staffId) {
     });
 };
 exports.RemoveFromShortlist = RemoveFromShortlist;
+const RemoveBatchFromShortlist = function (personnel, staffId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const staffDoc = yield (0, exports.GetStaffById)(staffId);
+            const currentStaff = staffDoc._doc;
+            const currentPersonnel = currentStaff._shortlist.trim().split(",");
+            const toRemove = personnel;
+            const _newShortlist = currentPersonnel.filter(x => !toRemove.includes(x)).join(",");
+            const newStaff = Object.assign(Object.assign({}, currentStaff), { _shortlist: _newShortlist });
+            const savedStaff = yield (0, exports.UpdateStaff)(newStaff);
+            const newShortlistPersonnel = yield GetShortListed(_newShortlist);
+            const response = {
+                staff: savedStaff,
+                shortlisted: newShortlistPersonnel
+            };
+            return response;
+        }
+        catch (e) {
+            return e;
+        }
+    });
+};
+exports.RemoveBatchFromShortlist = RemoveBatchFromShortlist;
 const GetShortListed = function (shortlisted) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
         const allPersonnel = yield (0, personnelRepository_1.GetAllPersonnel)();
+        // console.log("ALLP", allPersonnel)
         const allShortListed = (_a = shortlisted === null || shortlisted === void 0 ? void 0 : shortlisted.split(",")) !== null && _a !== void 0 ? _a : [];
         const list = allShortListed.length > 0 ? allPersonnel.filter(x => allShortListed.includes(x === null || x === void 0 ? void 0 : x._id.toString())) : [];
-        return list;
+        console.log("DSDDSADADDASDSA", list);
+        const viewModels = yield (0, personnelRepository_1.ToPersonnelViewModel)(list);
+        console.log("333333333333333333", viewModels);
+        return viewModels;
     });
 };
 const GetStaffInOrganisation = function (organisationId) {

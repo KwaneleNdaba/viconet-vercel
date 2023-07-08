@@ -1,8 +1,14 @@
 import express, { Request, Response } from 'express'
 
-import { AddProject, GetAllProjects, GetProjectById, GetProjectsByOrgId, UpdatePersonnelOnProject, UpdateProject } from '../repositories/projectRepository';
-import { IAddPersonnelToProject, IProject, IUpdateProject, IUpdateProjectPersonnel } from '../models/project';
+import { AddProject, GetAllProjects, GetProjectById, GetProjectsByOrgId, UpdatePersonnelOnProject, UpdateProject, MapProjectPersonnel } from '../repositories/projectRepository';
+import { IAddBatchPersonnelToProject, IAddPersonnelToProject, IProject, IProjectView, IRemoveFromProject, IUpdateProject, IUpdateProjectPersonnel, Project } from '../models/project';
 import { ICreateProject } from '../models/project';
+import { IUser, IUserDoc, User } from '../models/user';
+import { INotification } from '../models/notifications';
+import { GetBatchUserByPersonnelId } from '../repositories/usersRepository';
+import { Personnel } from '../models/personnel';
+import { AddBatchNotification } from './notification';
+import { RemoveBatchFromShortlist } from '../repositories/staffRepository';
 
 const router = express.Router()
 
@@ -96,6 +102,27 @@ router.get('/api/project/user/:id', async (req: Request, res: Response) => {
 })
 
 
+router.post('/api/project/shortlist/batch', async (req: Request, res: Response) => {
+  const { 
+    personelIds,
+    staffId,
+    projectId} = req.body;
+
+    const request = {
+      personelIds,
+      staffId,
+      projectId
+    
+    } as IAddBatchPersonnelToProject;
+
+    const _project = await AddBatchPersonnelToProject(request) as IProject;
+
+
+  return res.status(200).send(_project);
+
+});
+
+
 router.post('/api/project', async (req: Request, res: Response) => {
   const { 
     _organisation,
@@ -118,6 +145,65 @@ router.post('/api/project', async (req: Request, res: Response) => {
   return res.status(200).send(_project);
 
 });
+
+
+
+export const AddBatchPersonnelToProject= async function(_project: IAddBatchPersonnelToProject){
+
+  const currentProject = await GetProjectById(_project.projectId) as any;
+  const allUsers = await User.find({});
+
+
+  const currentPending = currentProject.pending.split(",");
+  const metaPending = _project.personelIds;
+  const newPending = [...metaPending, ...currentPending];
+  const newPendingString = newPending.join(",");
+  const pendingClean = newPendingString.charAt(0) === ','? newPendingString.slice(1): newPendingString;
+
+
+  const newProject = {...currentProject, pending:pendingClean} as IProject;
+  const project = Project.build(newProject);
+  const newProjectDb = await project.updateOne(project);
+  
+
+  //remove from shortlist
+
+  await RemoveBatchFromShortlist(_project.personelIds, _project.staffId);
+
+  //get personnel users 
+
+  const users = await GetBatchUserByPersonnelId(_project.personelIds) as IUserDoc[];
+  const allPersonnel = await Personnel.find({_id:_project.personelIds }) as any[];
+  //send notifications
+  console.log("USERS", users);
+  console.log("allPersonnel", allPersonnel);
+  console.log("personelIds", _project.personelIds);
+
+  const notifications = _project.personelIds.map(personelId=>  {
+     
+      const personnel = allPersonnel.filter(x=>x._id == personelId)[0];
+      const user = users.filter(x=>x._id == personnel._user)[0];
+   
+
+      const notification = {
+          targetUser:personelId,
+          reference:_project.projectId,
+          message: "Invited to a new project",
+          status:"0",
+          type:"0",
+          email:user.email,
+          phone:user.mobileNumber,
+          date:new Date().toString()
+      } as INotification
+      return notification;
+  }); 
+
+  const resp = AddBatchNotification(notifications);
+  
+  const response = await MapProjectPersonnel(newProject,allPersonnel, users);
+  return response;
+}
+
 
 
 router.post('/api/project/:id', async (req: Request, res: Response) => {

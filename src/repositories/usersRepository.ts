@@ -2,6 +2,8 @@ import { HashPassword } from "../services/loginService";
 import { ICustomError, IMongoError } from "../models/errors";
 import { IUser, IUserDoc, User  } from "../models/user";
 import { sendMail } from "../services/emailService";
+import { Personnel } from "../models/personnel";
+import { IPersonnel } from "../models/personnel";
 
 export const GetAllUsers= async function():Promise<IUser[] | IMongoError>{
     try{
@@ -136,6 +138,31 @@ export const GetAllUsers= async function():Promise<IUser[] | IMongoError>{
         return {code:400, message:e } as ICustomError
     }
   }
+  export const GetBatchUserById = async function(id:string[]):Promise<IUser| IMongoError>{
+    try{
+    const users = await User.find({ _id: id})
+    const data = users[0] as any;
+    return data._doc as IUser;
+    }catch(e){
+        return e as IMongoError;
+    }
+  
+  }
+
+  export const GetBatchUserByPersonnelId = async function(personnelIds:string[]):Promise<IUser[]| IMongoError>{
+    try{
+     const personnel = await Personnel.find({_id:personnelIds})as IPersonnel[];
+     const personnelUserIds = personnel.map(x=>x._user);
+
+    const users = await User.find({ _id: personnelUserIds}) as any[];
+    const response = users.map(x=>x._doc) as IUser[];
+    return response;
+    }catch(e){
+        return e as IMongoError;
+    }
+  
+  }
+
 
 
     
