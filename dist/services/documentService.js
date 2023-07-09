@@ -72,9 +72,6 @@ const parsefile = (req) => __awaiter(void 0, void 0, void 0, function* () {
                     })
                         .done()
                         .then((data) => {
-                        // GetUserById("649d5221adc8d05c4b7d3c34").then((user:any)=>{
-                        //     console.log("DSDASDUSER", user);
-                        // })
                         form.emit('data', { name: "complete", value: data });
                     }).catch((err) => {
                         form.emit('error', err);
@@ -143,13 +140,10 @@ const uploadProfilePic = (req, userId) => __awaiter(void 0, void 0, void 0, func
                     })
                         .done()
                         .then((data) => {
-                        console.log("ID", userId);
                         (0, usersRepository_1.GetUserById)(userId).then((user) => {
-                            console.log("DSDASDATA", data);
                             const newUser = Object.assign(Object.assign({}, user), { profilePicture: data.Location });
                             const _user = user_1.User.build(newUser);
                             _user.updateOne(_user).then(x => {
-                                console.log("DSDASDUSER", x);
                             });
                         });
                         form.emit('data', { name: "complete", value: data });

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GetUserByEmail = exports.GetUserById = exports.ChangePasswordAndActivate = exports.VerifyOTPAndResetPassword = exports.GetBatchUserByPersonnelId = exports.GetBatchUserById = exports.SendOTP = exports.ChangePassword = exports.GetUserProfilePicture = exports.OnboardUser = exports.ActivateUser = exports.AddUser = exports.UpdateUser = exports.GetAllUsers = void 0;
+exports.DeleteUser = exports.GetUserByEmail = exports.GetUserById = exports.ChangePasswordAndActivate = exports.VerifyOTPAndResetPassword = exports.GetBatchUserByPersonnelId = exports.GetBatchUserById = exports.SendOTP = exports.ChangePassword = exports.GetUserProfilePicture = exports.OnboardUser = exports.ActivateUser = exports.AddUser = exports.UpdateUser = exports.GetAllUsers = void 0;
 const loginService_1 = require("../services/loginService");
 const user_1 = require("../models/user");
 const emailService_1 = require("../services/emailService");
@@ -133,12 +133,10 @@ const SendOTP = function (_email) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const _user = yield (0, exports.GetUserByEmail)(_email);
-            console.log("user", _user);
             const _otp = Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000;
             const _dbUser = Object.assign(Object.assign({}, _user), { otp: _otp.toString() });
             const user = user_1.User.build(_dbUser);
             const up = yield user.updateOne(user);
-            console.log("up", up);
             const email = yield (0, emailService_1.sendMail)(_user.email, `Reset your VICO net password`, `Your otp is ${_otp.toString()}`, `Your otp is <strong> ${_otp.toString()}</strong>`);
             //TODO: NK remove passeword=> map response
             const clean = Object.assign(Object.assign({}, user), { password: "", otp: "" });
@@ -242,4 +240,21 @@ const GetUserByEmail = function (email) {
     });
 };
 exports.GetUserByEmail = GetUserByEmail;
+const DeleteUser = function (userId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const _user = yield (0, exports.GetUserById)(userId);
+            const newUser = Object.assign(Object.assign({}, _user), { status: 2, email: `${_user.email}--deleted-${new Date().getTime()}` });
+            console.log("DSASDADA", newUser);
+            const user = user_1.User.build(newUser);
+            const p = yield user.updateOne(user);
+            console.log("RESS", p);
+            return user;
+        }
+        catch (e) {
+            return e;
+        }
+    });
+};
+exports.DeleteUser = DeleteUser;
 //# sourceMappingURL=usersRepository.js.map

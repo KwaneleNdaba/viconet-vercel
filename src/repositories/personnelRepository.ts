@@ -55,7 +55,6 @@ export const GetPersonnelByUserId= async function(id:string):Promise<IPersonnelD
 
         const personnel = await Personnel.find({_user:id})
         const match = personnel[0];
-        console.log("match", personnel)
         return match as IPersonnelDoc;
         }catch(e){
             return e as IMongoError;
@@ -82,21 +81,18 @@ export const ToPersonnelViewModel = async function( personnel: IPersonnel[]):Pro
 }
 
 export const ToPersonnelViewModelSync = function( personnel: IPersonnel[], users: IUser[]):IPersonnelViewModel[]{
-
-    const userIds = personnel.map(x=>x._user);
-
-   
     const responseModels = personnel.map((res:any)=>{
+      
       const user = users.filter(x=>x._id == res._user)[0];
       const response = {
-        ...res._doc,
+        ...res,
         user:user
   
       } as IPersonnelViewModel
-    
-
+  
       return response;
     })
+
     return responseModels;
 }
 
@@ -126,7 +122,6 @@ export const AddPersonnel = async function(_personnel:IPersonnel):Promise<IPerso
     
         return personnel;
     }catch(e){
-        console.log("RERER", e)
         return e as IMongoError;
     }
 }

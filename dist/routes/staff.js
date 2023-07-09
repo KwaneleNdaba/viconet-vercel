@@ -46,6 +46,11 @@ router.get('/api/staffuser/:id', (req, res) => __awaiter(void 0, void 0, void 0,
         return res.status(404).send("Cannot find user");
     }
 }));
+router.post('/api/staff/delete/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { staffId } = req.body;
+    const _staff = yield (0, staffRepository_1.DeleteStaff)(staffId);
+    return res.status(200).send(_staff);
+}));
 router.get('/api/staff/removeShortlist/:personnelId/:staffId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.params.personnelId;
     const staffId = req.params.staffId;

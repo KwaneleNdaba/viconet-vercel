@@ -3,7 +3,7 @@ import { User, IUser, ICreateStaffUser } from '../models/user'
 import { AddUser } from '../repositories/usersRepository';
 import { HashPassword } from '../services/loginService';
 import { ICreateStaffModel, IStaff } from '../models/staff';
-import { AddStaff, AddStaffToOrganisaion, AddToShortlist, GetAllStaff, GetFullStaffById, GetStaffById, RemoveFromShortlist } from '../repositories/staffRepository';
+import { AddStaff, AddStaffToOrganisaion, AddToShortlist, DeleteStaff, GetAllStaff, GetFullStaffById, GetStaffById, RemoveFromShortlist } from '../repositories/staffRepository';
 import { AddStaffToOrganisation, GetOrganisationById } from '../repositories/organisationRepository';
 
 const router = express.Router()
@@ -39,6 +39,19 @@ router.get('/api/staffuser/:id', async (req: Request, res: Response) => {
   }
 })
 
+
+router.post('/api/staff/delete/', async (req: Request, res: Response) => {
+  const { staffId } = req.body;
+  
+  
+      const _staff = await DeleteStaff(staffId);
+  
+  
+      return res.status(200).send(_staff);
+    
+ 
+
+});
 
 
 router.get('/api/staff/removeShortlist/:personnelId/:staffId', async (req: Request, res: Response) => {

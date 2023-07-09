@@ -75,10 +75,7 @@ export const parsefile = async (req:any) => {
                 })
                     .done()
                     .then((data:any) => {
-                        
-                        // GetUserById("649d5221adc8d05c4b7d3c34").then((user:any)=>{
-                        //     console.log("DSDASDUSER", user);
-                        // })
+           
                         form.emit('data', { name: "complete", value: data });
 
                         
@@ -157,15 +154,12 @@ export const uploadProfilePic = async (req:any, userId:string) => {
                 })
                     .done()
                     .then((data:any) => {
-                        console.log("ID", userId);
                         GetUserById(userId).then((user:any)=>{
-                            console.log("DSDASDATA", data);
                             const newUser = {...user, profilePicture:data.Location} as IUser;
 
                             const _user = User.build(newUser)
             
                             _user.updateOne(_user).then(x=>{
-                                console.log("DSDASDUSER", x);
                             });
                         
                            

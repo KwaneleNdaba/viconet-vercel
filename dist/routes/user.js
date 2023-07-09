@@ -66,8 +66,6 @@ router.post('/api/upload_profilepicture/:id', (req, res) => __awaiter(void 0, vo
     const id = req.params.id;
     yield (0, documentService_1.uploadProfilePic)(req, id)
         .then((data) => {
-        console.log("imageData", data.Location);
-        console.log("personnelId", id);
         // res.header("Access-Control-Allow-Origin", "*");
         res.header("Access-Control-Allow-Origin", "*");
         res.status(200).json({
@@ -144,9 +142,7 @@ router.post('/api/user/resetPassword', (req, res) => __awaiter(void 0, void 0, v
 }));
 router.post('/api/user/sendOTP', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email } = req.body;
-    console.log("SENDOTP", email);
     const user = yield (0, usersRepository_1.SendOTP)(email);
-    console.log("user", user);
     if (!(0, typeCheck_1.instanceOfTypeCustomError)(user)) {
         return res.status(200).send(user);
     }
@@ -230,5 +226,10 @@ router.post('/api/login', (req, res) => __awaiter(void 0, void 0, void 0, functi
     else {
         return res.status(result.code).send(result.message);
     }
+}));
+router.post('/api/user/delete/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { userId } = req.body;
+    const _user = yield (0, usersRepository_1.DeleteUser)(userId);
+    return res.status(200).send(_user);
 }));
 //# sourceMappingURL=user.js.map

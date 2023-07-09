@@ -88,7 +88,7 @@ router.get('/api/project/organisation/:id', (req, res) => __awaiter(void 0, void
 router.get('/api/project/user/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.params.id;
     if (id.match(/^[0-9a-fA-F]{24}$/)) { // valid ObjectId
-        const user = yield (0, projectRepository_1.GetProjectsByOrgId)(id);
+        const user = yield (0, projectRepository_1.GetProjectsByUserId)(id);
         res.header("Access-Control-Allow-Origin", "*");
         return res.status(200).send(user);
     }
@@ -135,10 +135,6 @@ const AddBatchPersonnelToProject = function (_project) {
         //get personnel users 
         const users = yield (0, usersRepository_1.GetBatchUserByPersonnelId)(_project.personelIds);
         const allPersonnel = yield personnel_1.Personnel.find({ _id: _project.personelIds });
-        //send notifications
-        console.log("USERS", users);
-        console.log("allPersonnel", allPersonnel);
-        console.log("personelIds", _project.personelIds);
         const notifications = _project.personelIds.map(personelId => {
             const personnel = allPersonnel.filter(x => x._id == personelId)[0];
             const user = users.filter(x => x._id == personnel._user)[0];
@@ -181,6 +177,12 @@ router.post('/api/updateProjectPersonnel/', (req, res) => __awaiter(void 0, void
         staffId
     };
     const _project = yield (0, projectRepository_1.UpdatePersonnelOnProject)(project);
+    return res.status(200).send(_project);
+}));
+router.post('/api/project/delete/deleteProject', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { projectId } = req.body;
+    console.log("DSSDSDSD");
+    const _project = yield (0, projectRepository_1.DeleteProject)(projectId);
     return res.status(200).send(_project);
 }));
 //# sourceMappingURL=project.js.map

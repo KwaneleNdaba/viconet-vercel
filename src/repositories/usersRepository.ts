@@ -120,13 +120,13 @@ export const GetAllUsers= async function():Promise<IUser[] | IMongoError>{
     try{
 
         const _user = await GetUserByEmail(_email) as IUser;
-        console.log("user", _user)
+
         const _otp = Math.floor(Math.random() * (99999 -10000 + 1)) + 10000;
 
         const _dbUser = {..._user, otp:_otp.toString()} as IUser;
           const user = User.build(_dbUser);
           const up = await user.updateOne(user);
-          console.log("up", up)
+      
           const email = await sendMail(_user.email, `Reset your VICO net password`, `Your otp is ${_otp.toString()}`, `Your otp is <strong> ${_otp.toString()}</strong>` );
      
           //TODO: NK remove passeword=> map response
@@ -230,3 +230,22 @@ export const GetAllUsers= async function():Promise<IUser[] | IMongoError>{
     }
   
   }
+
+  export const DeleteUser = async function(userId:string):Promise<IUser | IMongoError> {
+    try{
+        const _user = await GetUserById(userId) as IUser;
+     
+        const newUser = {
+            ..._user,
+            status:2,
+            email:`${_user.email}--deleted-${new Date().getTime()}`
+        } as IUser;
+        console.log("DSASDADA", newUser);
+        const user = User.build(newUser);
+       const p =  await user.updateOne(user);
+        console.log("RESS", p);
+        return user;
+    }catch(e){
+        return e as IMongoError;
+    }
+}

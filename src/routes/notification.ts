@@ -21,16 +21,16 @@ export const AddBatchNotification = async function(notifications:INotification[]
 
       notifications.map(async(notification)=>{
             if(notification.type=="0"){
-          const sendEmail = await sendMail(notification.email,
+          // const sendEmail = await sendMail(notification.email,
           
-              "New Invite",
-          `You have been invited to join a group, view more here`,
-          `You have been invited to join a group, view more here. 
-          <br/>
-          <a href="https://viconet-dev.netlify.app/personnel/notifications/"> View Notifications</a>
-          <br/>         
-          `
-          )
+          //     "New Invite",
+          // `You have been invited to join a group, view more here`,
+          // `You have been invited to join a group, view more here. 
+          // <br/>
+          // <a href="https://viconet-dev.netlify.app/personnel/notifications/"> View Notifications</a>
+          // <br/>         
+          // `
+          // )
       }
 
 

@@ -49,7 +49,6 @@ const GetPersonnelByUserId = function (id) {
         try {
             const personnel = yield personnel_1.Personnel.find({ _user: id });
             const match = personnel[0];
-            console.log("match", personnel);
             return match;
         }
         catch (e) {
@@ -72,10 +71,9 @@ const ToPersonnelViewModel = function (personnel) {
 };
 exports.ToPersonnelViewModel = ToPersonnelViewModel;
 const ToPersonnelViewModelSync = function (personnel, users) {
-    const userIds = personnel.map(x => x._user);
     const responseModels = personnel.map((res) => {
         const user = users.filter(x => x._id == res._user)[0];
-        const response = Object.assign(Object.assign({}, res._doc), { user: user });
+        const response = Object.assign(Object.assign({}, res), { user: user });
         return response;
     });
     return responseModels;
@@ -104,7 +102,6 @@ const AddPersonnel = function (_personnel) {
             return personnel;
         }
         catch (e) {
-            console.log("RERER", e);
             return e;
         }
     });

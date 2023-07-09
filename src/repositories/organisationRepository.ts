@@ -60,9 +60,6 @@ export const GetFullOganisationById= async function(id:string):Promise<IOrganisa
 
             } as IStaffViewModel
         });
-        
-
-        console.log("SDADA",users)
         const viewModel = {
             organisation:org,
             projects: projects,

@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express'
 
-import { AddProject, GetAllProjects, GetProjectById, GetProjectsByOrgId, UpdatePersonnelOnProject, UpdateProject, MapProjectPersonnel } from '../repositories/projectRepository';
+import { AddProject, GetAllProjects, GetProjectById, GetProjectsByOrgId, UpdatePersonnelOnProject, UpdateProject, MapProjectPersonnel, GetProjectsByUserId, DeleteProject } from '../repositories/projectRepository';
 import { IAddBatchPersonnelToProject, IAddPersonnelToProject, IProject, IProjectView, IRemoveFromProject, IUpdateProject, IUpdateProjectPersonnel, Project } from '../models/project';
 import { ICreateProject } from '../models/project';
 import { IUser, IUserDoc, User } from '../models/user';
@@ -88,11 +88,12 @@ router.get('/api/project/organisation/:id', async (req: Request, res: Response) 
 })
 
 router.get('/api/project/user/:id', async (req: Request, res: Response) => {
-  
+
   const id = req.params.id;
   if (id.match(/^[0-9a-fA-F]{24}$/)) {// valid ObjectId
     
-    const user = await GetProjectsByOrgId(id);
+    const user = await GetProjectsByUserId(id);
+
     res.header("Access-Control-Allow-Origin", "*");
     return res.status(200).send(user)
   }else{
@@ -174,10 +175,6 @@ export const AddBatchPersonnelToProject= async function(_project: IAddBatchPerso
 
   const users = await GetBatchUserByPersonnelId(_project.personelIds) as IUserDoc[];
   const allPersonnel = await Personnel.find({_id:_project.personelIds }) as any[];
-  //send notifications
-  console.log("USERS", users);
-  console.log("allPersonnel", allPersonnel);
-  console.log("personelIds", _project.personelIds);
 
   const notifications = _project.personelIds.map(personelId=>  {
      
@@ -238,6 +235,18 @@ router.post('/api/updateProjectPersonnel/', async (req: Request, res: Response) 
       } as IUpdateProjectPersonnel;
   
       const _project = await UpdatePersonnelOnProject(project) as IProject;
+  
+  
+      return res.status(200).send(_project);
+    
+ 
+
+});
+router.post('/api/project/delete/deleteProject', async (req: Request, res: Response) => {
+  const { projectId } = req.body;
+  
+    console.log("DSSDSDSD")
+      const _project = await DeleteProject(projectId);
   
   
       return res.status(200).send(_project);

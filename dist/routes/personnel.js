@@ -30,7 +30,6 @@ router.post('/api/searchPersonnel', (req, res) => __awaiter(void 0, void 0, void
             return res.status(200).send(_result);
         }
         const result = yield (0, searchService_1.SearchByKey)(searchKey, _personnel);
-        console.log("SSSSSS", result);
         const responseModels = yield (0, personnelRepository_1.ToPersonnelViewModel)(result);
         return res.status(200).send(responseModels);
     }
@@ -59,7 +58,6 @@ router.post('/api/upload_cv/:id', (req, res) => __awaiter(void 0, void 0, void 0
 router.post('/api/personnel', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { information, currentJob, previousWorkExperience, yearsOfExperience, education, keySkills, keyCourses, cvUrl, personalInformation, _user, preferedWorkMethod } = req.body;
     const dbUser = { information, currentJob, previousWorkExperience, yearsOfExperience, education, keySkills, keyCourses, cvUrl, personalInformation, _user: _user, state: 0, preferedWorkMethod: preferedWorkMethod };
-    console.log("RERER", dbUser);
     const user = yield (0, personnelRepository_1.AddPersonnel)(dbUser);
     return res.status(201).send(user);
 }));
@@ -75,7 +73,6 @@ router.get('/api/personnel/:userId', (req, res) => __awaiter(void 0, void 0, voi
 router.get('/api/personnelByUserId/:userId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const email = req.params.userId;
     const user = yield (0, personnelRepository_1.GetPersonnelByUserId)(email);
-    console.log("sasasas", user);
     if (!user) {
         const resp = { code: 404, message: "User not found" };
         return res.status(404).send(resp);

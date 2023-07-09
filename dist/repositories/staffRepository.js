@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdateStaff = exports.AddStaffToOrganisaion = exports.AddStaff = exports.GetStaffInOrganisation = exports.RemoveBatchFromShortlist = exports.RemoveFromShortlist = exports.AddToShortlist = exports.GetStaffById = exports.GetFullStaffById = exports.GetAllStaff = void 0;
+exports.DeleteStaff = exports.UpdateStaff = exports.AddStaffToOrganisaion = exports.AddStaff = exports.GetStaffInOrganisation = exports.RemoveBatchFromShortlist = exports.RemoveFromShortlist = exports.AddToShortlist = exports.GetStaffById = exports.GetFullStaffById = exports.GetAllStaff = void 0;
 const typeCheck_1 = require("../lib/typeCheck");
 const staff_1 = require("../models/staff");
 const user_1 = require("../models/user");
@@ -17,6 +17,7 @@ const personnelRepository_1 = require("./personnelRepository");
 const organisationRepository_1 = require("./organisationRepository");
 const emailService_1 = require("../services/emailService");
 const loginService_1 = require("../services/loginService");
+const usersRepository_1 = require("./usersRepository");
 const GetAllStaff = function () {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -144,12 +145,9 @@ const GetShortListed = function (shortlisted) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
         const allPersonnel = yield (0, personnelRepository_1.GetAllPersonnel)();
-        // console.log("ALLP", allPersonnel)
         const allShortListed = (_a = shortlisted === null || shortlisted === void 0 ? void 0 : shortlisted.split(",")) !== null && _a !== void 0 ? _a : [];
         const list = allShortListed.length > 0 ? allPersonnel.filter(x => allShortListed.includes(x === null || x === void 0 ? void 0 : x._id.toString())) : [];
-        console.log("DSDDSADADDASDSA", list);
         const viewModels = yield (0, personnelRepository_1.ToPersonnelViewModel)(list);
-        console.log("333333333333333333", viewModels);
         return viewModels;
     });
 };
@@ -230,7 +228,6 @@ const AddStaffToOrganisaion = function (_staff) {
             const staff = staff_1.Staff.build(staffReq);
             const staffResp = yield staff.save();
             const organisation = yield (0, organisationRepository_1.GetOrganisationById)(_staff._organisation);
-            console.log("EEWEWRES", organisation);
             const newOrg = Object.assign(Object.assign({}, organisation.organisation), { _staff: `${[...(_b = organisation === null || organisation === void 0 ? void 0 : organisation._staff) !== null && _b !== void 0 ? _b : "".split(","), staff._id].join(",")}` });
             const savedOrg = yield (0, organisationRepository_1.UpdateOrganisation)(newOrg);
             const email = yield (0, emailService_1.sendMail)(_user.email, `Viconet profile created`, `Hi, a staff profile for ${(_c = organisation === null || organisation === void 0 ? void 0 : organisation.organisation) === null || _c === void 0 ? void 0 : _c.name} has been created for you. <br/>
@@ -245,7 +242,6 @@ const AddStaffToOrganisaion = function (_staff) {
             return response;
         }
         catch (e) {
-            console.log("ee", e);
             return { code: 500, message: "Fail;ed to add staff user", object: e };
             // return e as IMongoError;
         }
@@ -265,4 +261,18 @@ const UpdateStaff = function (_staff) {
     });
 };
 exports.UpdateStaff = UpdateStaff;
+const DeleteStaff = function (_staffId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const _staff = yield (0, exports.GetStaffById)(_staffId);
+            //  const deletedStaff = await Staff.deleteOne(_staff);
+            const _user = yield (0, usersRepository_1.DeleteUser)(_staff._user);
+            return _user;
+        }
+        catch (e) {
+            return e;
+        }
+    });
+};
+exports.DeleteStaff = DeleteStaff;
 //# sourceMappingURL=staffRepository.js.map

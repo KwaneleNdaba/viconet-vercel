@@ -25,7 +25,7 @@ router.post('/api/searchPersonnel', async (req: Request, res: Response) => {
       }
     
     const result = await SearchByKey(searchKey,_personnel);
-     console.log("SSSSSS", result);
+  
     const responseModels = await ToPersonnelViewModel(result);
   
     return res.status(200).send(responseModels);
@@ -59,7 +59,7 @@ router.post('/api/upload_cv/:id', async (req: Request, res: Response) => {
 router.post('/api/personnel', async (req: Request, res: Response) => {
   const { information, currentJob, previousWorkExperience, yearsOfExperience, education, keySkills, keyCourses, cvUrl, personalInformation, _user, preferedWorkMethod } = req.body;
   const dbUser = {  information, currentJob, previousWorkExperience, yearsOfExperience, education, keySkills, keyCourses, cvUrl, personalInformation, _user:_user, state:0, preferedWorkMethod:preferedWorkMethod } as IPersonnel;
-  console.log("RERER", dbUser)
+
   const user = await AddPersonnel(dbUser);
  
   return res.status(201).send(user)
@@ -84,7 +84,7 @@ router.get('/api/personnelByUserId/:userId', async (req: Request, res: Response)
   const email = req.params.userId;
 
   const user = await GetPersonnelByUserId(email);
-  console.log("sasasas", user)
+
   if(!user){
     const resp = {code:404, message:"User not found"}
     return res.status(404).send(resp)

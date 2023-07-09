@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MapProjectPersonnel = exports.UpdatePersonnelOnProject = exports.MapBatchProjectPersonnel = exports.UpdateProject = exports.AddProject = exports.GetProjectById = exports.GetProjectsByUserId = exports.GetProjectsByOrgId = exports.GetAllProjects = void 0;
+exports.MapProjectPersonnel = exports.UpdatePersonnelOnProject = exports.MapBatchProjectPersonnel = exports.DeleteProject = exports.UpdateProject = exports.AddProject = exports.GetProjectById = exports.GetProjectsByUserId = exports.GetProjectsByOrgId = exports.GetAllProjects = void 0;
 const typeCheck_1 = require("../lib/typeCheck");
 const project_1 = require("../models/project");
 const notificatonsRepository_1 = require("./notificatonsRepository");
@@ -52,13 +52,7 @@ const GetProjectsByUserId = function (id) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const project = yield project_1.Project.find({ _creatingUser: id });
-            const personnel = yield (0, personnelRepository_1.GetAllPersonnel)();
-            const users = yield user_1.User.find({});
-            if ((0, typeCheck_1.instanceOfTypeIPersonnelArray)(personnel)) {
-                const fullProjects = project.map(x => MapProjectPersonnelSync(x, personnel, users));
-                return fullProjects;
-            }
-            return { code: "500", message: "Error occured while fetching personnel" };
+            return project;
         }
         catch (e) {
             return e;
@@ -73,7 +67,6 @@ const GetProjectById = function (id) {
             const personnel = yield (0, personnelRepository_1.GetAllPersonnel)();
             if ((0, typeCheck_1.instanceOfTypeIPersonnelArray)(personnel)) {
                 const doc = project[0];
-                console.log("BEEEE", doc);
                 const users = yield user_1.User.find({});
                 const view = MapProjectPersonnel(doc._doc, personnel, users);
                 return view;
@@ -127,6 +120,20 @@ const UpdateProject = function (_project, _projectId) {
     });
 };
 exports.UpdateProject = UpdateProject;
+const DeleteProject = function (_projectId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            console.log("DSASDADA", _projectId);
+            const deleteRes = yield project_1.Project.deleteOne({ _id: _projectId });
+            console.log("DSASDADAEWS", deleteRes);
+            return deleteRes;
+        }
+        catch (e) {
+            return e;
+        }
+    });
+};
+exports.DeleteProject = DeleteProject;
 function MapBatchProjectPersonnel(project, personnel, users) {
     // const p = _project as any;
     // const project = p._doc as IProject;
@@ -231,50 +238,14 @@ const UpdatePersonnelOnProject = function (_project) {
     });
 };
 exports.UpdatePersonnelOnProject = UpdatePersonnelOnProject;
-//   export const AddMultiplePersonnelToProject = async function(_project:IAddPersonnelToProject):Promise<IProjectView[]> {
-//             const currentProject = await GetProjectById(_project.projectId) as any;
-//             const allPersonnel = await GetAllPersonnel() as IPersonnel[];
-//             const personnelUsers = allPersonnel.filter(x=>_project.personnelIds??[].includes(x._id))as IPersonnel[];
-//             const results = await personnelUsers.map((personnel)=>{
-//                 const perUserRes = GetUserById(personnel._user).then((user:any)=>{
-//                         try{
-//                             const currentPending = currentProject.pending.split(",");
-//                             const pending = currentPending.length>0?[...currentPending,personnel._id].join(","): personnel._id;
-//                             const pendingClean = pending.charAt(0) === ','? pending.slice(1): pending;
-//                             const newProject = {...currentProject, pending:pendingClean} as IProject;
-//                             const project = Project.build(newProject);
-//                             const newProjectDb = project.updateOne(project)
-//                             .then((project)=>{
-//                                 //send notification
-//                                 const notification = {
-//                                     targetUser: personnel._id,
-//                                     reference:_project.projectId,
-//                                     message: "Invited to a new project",
-//                                     status:"0",
-//                                     type:"0",
-//                                     email:user.email,
-//                                     phone:user.mobileNumber,
-//                                     date:new Date().toString()
-//                                 } as INotification
-//                                 const resp = AddNotification(notification);
-//                             });
-//                             const response = MapProjectPersonnel(newProject,allPersonnel);
-//                             return response;
-//                         } catch(E){
-//                             console.log("Inner", E)
-//                         }
-//                 });
-//                 return perUserRes;
-//             })
-//         return results;
-//   }
 function MapProjectPersonnelSync(project, personnel, users) {
-    // const p = _project as any;
-    // const project = p._doc as IProject;
     const uninvited = (0, personnelRepository_1.ToPersonnelViewModelSync)(project.uninvited.split(",").map(proj => personnel.filter(pers => pers._id.toString() == proj)[0]), users);
-    const pending = (0, personnelRepository_1.ToPersonnelViewModelSync)(project.pending.split(",").map(proj => personnel.filter(pers => pers._id.toString() == proj)[0]), users);
-    const accepted = (0, personnelRepository_1.ToPersonnelViewModelSync)(project.accepted.split(",").map(proj => personnel.filter(pers => pers._id.toString() == proj)[0]), users);
-    const declined = (0, personnelRepository_1.ToPersonnelViewModelSync)(project.declined.split(",").map(proj => personnel.filter(pers => pers._id.toString() == proj)[0]), users);
+    const _p = project.pending.split(",").map(proj => personnel.filter(pers => pers._id.toString() == proj)[0]).filter(x => x != undefined);
+    const pending = (0, personnelRepository_1.ToPersonnelViewModelSync)(_p, users);
+    const _a = project.accepted.split(",").map(proj => personnel.filter(pers => pers._id.toString() == proj)[0]).filter(x => x != undefined);
+    const accepted = (0, personnelRepository_1.ToPersonnelViewModelSync)(_a, users);
+    const _d = project.declined.split(",").map(proj => personnel.filter(pers => pers._id.toString() == proj)[0]).filter(x => x != undefined);
+    const declined = (0, personnelRepository_1.ToPersonnelViewModelSync)(_d, users);
     const result = Object.assign(Object.assign({}, project), { _uninvited: uninvited, _pending: pending, _accepted: accepted, _declined: declined });
     return result;
 }
@@ -288,10 +259,6 @@ function MapProjectPersonnel(project, personnel, users) {
     ;
     const declined = project.declined.split(",").map(proj => personnel.filter(pers => pers._id.toString() == proj)[0]).filter(x => x != undefined);
     ;
-    console.log("BEEEE111sasa", uninvited);
-    console.log("BEEEE111sasa1", pending);
-    console.log("BEEEE111sasa3", accepted);
-    console.log("BEEEE111sasa33", declined);
     const _uninvited = (0, personnelRepository_1.ToPersonnelViewModelSync)(uninvited, users);
     const _pending = (0, personnelRepository_1.ToPersonnelViewModelSync)(pending, users);
     const _accepted = (0, personnelRepository_1.ToPersonnelViewModelSync)(accepted, users);

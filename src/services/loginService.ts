@@ -9,6 +9,8 @@ export const LoginUser= async function(email:string, password: string):Promise<I
     const user = await GetUserByEmail(email)
     
     if(instanceOfTypeIUser(user)){
+      
+
       if(user.status==2){
         return {code:401, message:"User has been deleted"} as ICustomError;
       }

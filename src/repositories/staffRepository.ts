@@ -11,6 +11,7 @@ import { IPersonnel } from "../models/personnel";
 import { GetOrganisationById, UpdateOrganisation } from "./organisationRepository";
 import { sendMail } from "../services/emailService";
 import { HashPassword } from "../services/loginService";
+import { DeleteUser, GetUserById } from "./usersRepository";
 
 export const GetAllStaff= async function():Promise<IStaffDoc[] | IMongoError>{
     try{
@@ -151,12 +152,10 @@ export const RemoveBatchFromShortlist = async function(personnel: string[], staf
 
 const GetShortListed = async function(shortlisted:string):Promise<IPersonnelViewModel[]> {
     const allPersonnel = await GetAllPersonnel() as IPersonnelDoc[];
-    // console.log("ALLP", allPersonnel)
     const allShortListed = shortlisted?.split(",")??[];
     const list = allShortListed.length>0? allPersonnel.filter(x=> allShortListed.includes(x?._id.toString())):[];
-    console.log("DSDDSADADDASDSA", list)
+
     const viewModels = await ToPersonnelViewModel(list)
-    console.log("333333333333333333", viewModels)
     return viewModels;
 }
 
@@ -247,7 +246,7 @@ export const AddStaffToOrganisaion = async function(_staff: ICreateStaffModel):P
         const staffResp = await staff.save();
 
         const organisation = await GetOrganisationById(_staff._organisation) as IOrganisationViewModel;
-        console.log("EEWEWRES", organisation);
+
         const newOrg = {...organisation.organisation, _staff:`${[...organisation?._staff??"".split(","), staff._id].join(",")}`}
         const savedOrg = await UpdateOrganisation(newOrg);
         
@@ -269,7 +268,6 @@ export const AddStaffToOrganisaion = async function(_staff: ICreateStaffModel):P
         return response;
 
     }catch(e){ 
-        console.log("ee", e)
         return {code:500, message:"Fail;ed to add staff user", object:e} as ICustomError
         // return e as IMongoError;
     }
@@ -282,6 +280,19 @@ export const UpdateStaff = async function(_staff:IStaff):Promise<IStaff | IMongo
         await staff.updateOne(staff);
 
         return staff;
+    }catch(e){
+        return e as IMongoError;
+    }
+}
+
+export const DeleteStaff = async function(_staffId:string):Promise<IUser | IMongoError> {
+    try{
+        const _staff = await GetStaffById(_staffId) as IStaff;
+      //  const deletedStaff = await Staff.deleteOne(_staff);
+
+        const _user = await DeleteUser(_staff._user);
+
+        return _user;
     }catch(e){
         return e as IMongoError;
     }

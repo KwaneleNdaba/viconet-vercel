@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.notificationRouter = exports.AddBatchNotification = void 0;
 const express_1 = __importDefault(require("express"));
 const notificatonsRepository_1 = require("../repositories/notificatonsRepository");
-const emailService_1 = require("../services/emailService");
 const router = express_1.default.Router();
 exports.notificationRouter = router;
 router.get('/api/notification', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -27,11 +26,15 @@ const AddBatchNotification = function (notifications) {
         try {
             notifications.map((notification) => __awaiter(this, void 0, void 0, function* () {
                 if (notification.type == "0") {
-                    const sendEmail = yield (0, emailService_1.sendMail)(notification.email, "New Invite", `You have been invited to join a group, view more here`, `You have been invited to join a group, view more here. 
-          <br/>
-          <a href="https://viconet-dev.netlify.app/personnel/notifications/"> View Notifications</a>
-          <br/>         
-          `);
+                    // const sendEmail = await sendMail(notification.email,
+                    //     "New Invite",
+                    // `You have been invited to join a group, view more here`,
+                    // `You have been invited to join a group, view more here. 
+                    // <br/>
+                    // <a href="https://viconet-dev.netlify.app/personnel/notifications/"> View Notifications</a>
+                    // <br/>         
+                    // `
+                    // )
                 }
                 // const noti = Notification.build(notification);
                 // const res = await noti.save();

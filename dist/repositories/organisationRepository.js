@@ -63,7 +63,6 @@ const GetFullOganisationById = function (id) {
                     user: users.filter(y => y._id == x._user)[0]
                 };
             });
-            console.log("SDADA", users);
             const viewModel = {
                 organisation: org,
                 projects: projects,

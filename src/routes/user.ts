@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express'
 import { User, IUser, ICreateStaffUser } from '../models/user'
-import { ActivateUser, AddUser, ChangePassword, ChangePasswordAndActivate, GetAllUsers, GetUserByEmail, GetUserById, SendOTP, UpdateUser, VerifyOTPAndResetPassword } from '../repositories/usersRepository';
+import { ActivateUser, AddUser, ChangePassword, ChangePasswordAndActivate, DeleteUser, GetAllUsers, GetUserByEmail, GetUserById, SendOTP, UpdateUser, VerifyOTPAndResetPassword } from '../repositories/usersRepository';
 import { HashPassword, LoginUser } from '../services/loginService';
 import { instanceOfTypeCustomError, instanceOfTypeIUser } from '../lib/typeCheck';
 import { ICustomError } from '../models/errors';
@@ -70,8 +70,6 @@ router.post('/api/upload_profilepicture/:id', async (req: Request, res: Response
   await uploadProfilePic(req, id)
   .then((data:any) => {
 
-    console.log("imageData", data.Location);
-    console.log("personnelId",id);
     // res.header("Access-Control-Allow-Origin", "*");
 
         res.header("Access-Control-Allow-Origin", "*");
@@ -173,9 +171,7 @@ router.post('/api/user/resetPassword', async (req: Request, res: Response) => {
 
 router.post('/api/user/sendOTP', async (req: Request, res: Response) => {
   const { email} = req.body;
-  console.log("SENDOTP", email)
   const user = await SendOTP(email);
-  console.log("user", user)
     if(!instanceOfTypeCustomError(user)){
   
       return res.status(200).send(user)
@@ -292,5 +288,18 @@ router.post('/api/login', async (req: Request, res: Response) => {
   }
 
 })
+
+router.post('/api/user/delete/', async (req: Request, res: Response) => {
+  const { userId } = req.body;
+  
+  
+      const _user = await DeleteUser(userId);
+  
+  
+      return res.status(200).send(_user);
+    
+ 
+
+});
 
 export { router as userRouter }

@@ -12,14 +12,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GenerateSearchKeys = exports.SearchByKey = void 0;
 const SearchByKey = function (searchKey, personnel) {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log("SER", searchKey.split(","));
         const searchKeySet = new Set(searchKey.split(","));
         const matches = personnel
             .map((x) => {
             return { matchCount: CompareHash(Array.from(searchKeySet), x), personnel: x };
         })
             .filter((x) => x.matchCount > 0);
-        console.log("SEARCH", matches);
         matches.sort((a, b) => b.matchCount - a.matchCount);
         return matches.map((match) => match.personnel);
     });
