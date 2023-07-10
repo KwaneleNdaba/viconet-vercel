@@ -82,14 +82,17 @@ export const ToPersonnelViewModel = async function( personnel: IPersonnel[]):Pro
 
 export const ToPersonnelViewModelSync = function( personnel: IPersonnel[], users: IUser[]):IPersonnelViewModel[]{
     const responseModels = personnel.map((res:any)=>{
-      
+  
       const user = users.filter(x=>x._id == res._user)[0];
+     
+        const resDoc = res as any;
       const response = {
-        ...res,
+        ...resDoc._doc,
         user:user
   
       } as IPersonnelViewModel
-  
+    //   console.log("res", ...res)
+      console.log("user", res)
       return response;
     })
 

@@ -181,7 +181,6 @@ router.post('/api/updateProjectPersonnel/', (req, res) => __awaiter(void 0, void
 }));
 router.post('/api/project/delete/deleteProject', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { projectId } = req.body;
-    console.log("DSSDSDSD");
     const _project = yield (0, projectRepository_1.DeleteProject)(projectId);
     return res.status(200).send(_project);
 }));

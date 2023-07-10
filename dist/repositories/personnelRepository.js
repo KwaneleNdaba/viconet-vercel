@@ -73,7 +73,10 @@ exports.ToPersonnelViewModel = ToPersonnelViewModel;
 const ToPersonnelViewModelSync = function (personnel, users) {
     const responseModels = personnel.map((res) => {
         const user = users.filter(x => x._id == res._user)[0];
-        const response = Object.assign(Object.assign({}, res), { user: user });
+        const resDoc = res;
+        const response = Object.assign(Object.assign({}, resDoc._doc), { user: user });
+        //   console.log("res", ...res)
+        console.log("user", res);
         return response;
     });
     return responseModels;

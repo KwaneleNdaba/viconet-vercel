@@ -61,7 +61,7 @@ export const GetProjectById= async function(id:string):Promise<IProjectView | IM
           const doc = project[0] as any;
           const users =await User.find({});
          
-            const view = MapProjectPersonnel(doc._doc, personnel, users);
+            const view = MapProjectPersonnelForProject(doc._doc, personnel, users);
          
             return view;
         }
@@ -114,9 +114,9 @@ export const AddProject = async function(_project:ICreateProject):Promise<IProje
 
   export const DeleteProject = async function( _projectId: string):Promise<any | IMongoError> {
     try{
-        console.log("DSASDADA", _projectId);
+       
         const deleteRes = await Project.deleteOne({_id:_projectId});
-        console.log("DSASDADAEWS", deleteRes);
+       
         return deleteRes;
     }catch(e){
         return e as IMongoError;
@@ -326,9 +326,40 @@ function MapProjectPersonnelSync(project:IProject,  personnel: IPersonnel[], use
             _accepted:  _accepted,
             _declined:_declined
         } as IProjectView
-
+      
         return result;
 
 }
+
+export function MapProjectPersonnelForProject(project:IProject,  personnel: IPersonnel[], users:IUserDoc[]):IProjectView{
+   
+
+    // const p = _project as any;
+    // const project = p._doc as IProject;
+       
+        const uninvited = project.uninvited.split(",").map(proj=> personnel.filter(pers=>pers._id.toString()== proj)[0]).filter(x=>x!=undefined);
+        const pending = project.pending.split(",").map(proj=> personnel.filter(pers=>pers._id.toString()== proj)[0]).filter(x=>x!=undefined);;
+        const accepted =project.accepted.split(",").map(proj=> personnel.filter(pers=>pers._id.toString()== proj)[0]).filter(x=>x!=undefined);;
+        const declined =project.declined.split(",").map(proj=> personnel.filter(pers=>pers._id.toString()== proj)[0]).filter(x=>x!=undefined);;
+
+        console.log("res",pending)
+        const _uninvited = ToPersonnelViewModelSync(uninvited,users);
+        const _pending = ToPersonnelViewModelSync(pending,users);
+        const _accepted = ToPersonnelViewModelSync(accepted,users);
+        const _declined = ToPersonnelViewModelSync(declined,users);
+
+
+        const result ={
+          ...project, 
+            _uninvited:_uninvited,
+            _pending: _pending,
+            _accepted:  _accepted,
+            _declined:_declined
+        } as IProjectView
+      
+        return result;
+
+}
+
 
 

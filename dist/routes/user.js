@@ -227,7 +227,7 @@ router.post('/api/login', (req, res) => __awaiter(void 0, void 0, void 0, functi
         return res.status(result.code).send(result.message);
     }
 }));
-router.post('/api/user/delete/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post('/api/user/delete/deleteUser', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { userId } = req.body;
     const _user = yield (0, usersRepository_1.DeleteUser)(userId);
     return res.status(200).send(_user);

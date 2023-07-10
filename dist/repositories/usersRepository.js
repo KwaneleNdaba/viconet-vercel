@@ -244,11 +244,10 @@ const DeleteUser = function (userId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const _user = yield (0, exports.GetUserById)(userId);
+            console.log("DSSDSDSD");
             const newUser = Object.assign(Object.assign({}, _user), { status: 2, email: `${_user.email}--deleted-${new Date().getTime()}` });
-            console.log("DSASDADA", newUser);
             const user = user_1.User.build(newUser);
             const p = yield user.updateOne(user);
-            console.log("RESS", p);
             return user;
         }
         catch (e) {

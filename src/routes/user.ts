@@ -289,7 +289,7 @@ router.post('/api/login', async (req: Request, res: Response) => {
 
 })
 
-router.post('/api/user/delete/', async (req: Request, res: Response) => {
+router.post('/api/user/delete/deleteUser', async (req: Request, res: Response) => {
   const { userId } = req.body;
   
   

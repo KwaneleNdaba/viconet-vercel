@@ -245,7 +245,7 @@ router.post('/api/updateProjectPersonnel/', async (req: Request, res: Response) 
 router.post('/api/project/delete/deleteProject', async (req: Request, res: Response) => {
   const { projectId } = req.body;
   
-    console.log("DSSDSDSD")
+
       const _project = await DeleteProject(projectId);
   
   
