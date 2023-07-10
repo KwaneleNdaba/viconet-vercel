@@ -3,10 +3,11 @@ import { HashPassword } from '../services/loginService';
 import { AddOrganisation, GetAllOrganisations, GetOrganisationById } from '../repositories/organisationRepository';
 import { instanceOfTypeCustomError, instanceOfTypeIOrganisation } from '../lib/typeCheck';
 import { AddNotification, CloseNotification, GetAllNotifications, GetNotificationById, GetNotificationByTargetUser } from '../repositories/notificatonsRepository';
-import { INotification, INotificationDoc } from '../models/notifications';
+import { INotification, INotificationDoc, Notification} from '../models/notifications';
 import { IMongoError } from '../models/errors';
-import { sendMail } from '../services/emailService';
+import { addToProjectTemplate, sendMail } from '../services/emailService';
 import { ICustomError } from '../models/errors';
+import { User } from '../models/user';
 
 const router = express.Router()
 
@@ -21,24 +22,14 @@ export const AddBatchNotification = async function(notifications:INotification[]
 
       notifications.map(async(notification)=>{
             if(notification.type=="0"){
-          // const sendEmail = await sendMail(notification.email,
-          
-          //     "New Invite",
-          // `You have been invited to join a group, view more here`,
-          // `You have been invited to join a group, view more here. 
-          // <br/>
-          // <a href="https://viconet-dev.netlify.app/personnel/notifications/"> View Notifications</a>
-          // <br/>         
-          // `
-          // )
+          const emailText = addToProjectTemplate(notification.userName, `https://viconet-dev.netlify.app/protected/profile/notifications?id=${notification.targetUser}`);
+       
+         const sendEmail = await sendMail(notification.email,"New project invite", `You have been invited to a new project, you can accept/decline here:${notification.targetUser}`,emailText)
+         const noti = Notification.build(notification);
+         const res = await noti.save();
       }
-
-
-      // const noti = Notification.build(notification);
-      // const res = await noti.save();
-
-      // return noti;
-      })
+    })
+    
     
 
   }catch(e){
@@ -111,7 +102,7 @@ router.post('/api/notification', async (req: Request, res: Response) => {
     
     } as INotification;
 
-    const _project = await AddNotification(notification) as INotification;
+    const _project = await AddNotification(notification);
 
 
   return res.status(200).send(_project);
@@ -139,7 +130,7 @@ router.post('/api/notification/update', async (req: Request, res: Response) => {
     
     } as INotification;
 
-    const _project = await AddNotification(notification) as INotification;
+    const _project = await AddNotification(notification);
 
 
   return res.status(200).send(_project);

@@ -154,10 +154,12 @@ export const AddBatchPersonnelToProject= async function(_project: IAddBatchPerso
   const currentProject = await GetProjectById(_project.projectId) as any;
   const allUsers = await User.find({});
 
-
+  
   const currentPending = currentProject.pending.split(",");
+  console.log("CURR PEND", currentPending)
   const metaPending = _project.personelIds;
   const newPending = [...metaPending, ...currentPending];
+  console.log("NEW  PEND", newPending)
   const newPendingString = newPending.join(",");
   const pendingClean = newPendingString.charAt(0) === ','? newPendingString.slice(1): newPendingString;
 
@@ -181,7 +183,6 @@ export const AddBatchPersonnelToProject= async function(_project: IAddBatchPerso
       const personnel = allPersonnel.filter(x=>x._id == personelId)[0];
       const user = users.filter(x=>x._id == personnel._user)[0];
    
-
       const notification = {
           targetUser:personelId,
           reference:_project.projectId,
@@ -190,13 +191,14 @@ export const AddBatchPersonnelToProject= async function(_project: IAddBatchPerso
           type:"0",
           email:user.email,
           phone:user.mobileNumber,
+          userName: user.firstName,
           date:new Date().toString()
       } as INotification
       return notification;
   }); 
 
   const resp = AddBatchNotification(notifications);
-  
+
   const response = await MapProjectPersonnel(newProject,allPersonnel, users);
   return response;
 }

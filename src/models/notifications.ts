@@ -10,6 +10,7 @@ export interface INotification {
   type:string;
   email:string;
   phone:string;
+  userName?:string
 }
 
 interface notificationInterface extends mongoose.Model<INotificationDoc> {

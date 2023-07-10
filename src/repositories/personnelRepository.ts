@@ -91,8 +91,7 @@ export const ToPersonnelViewModelSync = function( personnel: IPersonnel[], users
         user:user
   
       } as IPersonnelViewModel
-    //   console.log("res", ...res)
-      console.log("user", res)
+
       return response;
     })
 

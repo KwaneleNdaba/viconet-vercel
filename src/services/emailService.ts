@@ -2,16 +2,21 @@ const sgMail = require('@sendgrid/mail')
 sgMail.setApiKey("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")
 
 export async function sendMail(to:string, subject:string, text:string, html:string) {
+try{
+    const msg = {
+        to: to, // Change to your recipient
+        from: 'dev1@webparam.org',
+        subject: subject,
+        text: text,
+        html:html,
+      };
     
-const msg = {
-  to: to, // Change to your recipient
-  from: 'dev1@webparam.org',
-  subject: subject,
-  text: text,
-  html:html,
-};
+    const res = await sgMail.send(msg);
 
-const res = await sgMail.send(msg);
+}catch(e){
+    console.log("RESS", e.response.body.errors)
+}
+
 
 }
 
@@ -135,6 +140,65 @@ export const companyRegistrationSuccessTemplate = function(username:string, emai
     </html>
     `;
 }
+
+export const addToProjectTemplate = function(username:string, platformURL:string) {
+    return `
+    <html>
+    <head>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+            }
+
+            .container {
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+
+            h1 {
+                color: #333333;
+            }
+
+            p {
+                margin-bottom: 20px;
+            }
+
+            .link-button {
+                display: inline-block;
+                background-color: #4CAF50;
+                color: white;
+                text-align: center;
+                padding: 10px 16px;
+                text-decoration: none;
+                border-radius: 4px;
+                transition: background-color 0.3s;
+            }
+
+            .link-button:hover {
+                background-color: #45a049;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="container">
+            <h1>Dear ${username},</h1>
+
+            <p>We are thrilled to inform you that your have been invited to a project.</p>
+
+            <p>You can accept or decline the invitation by viewing your notifications: <a href="${platformURL}"> here</a>.</p>
+
+            <p>If you have any questions or concerns, please do not hesitate to contact our support team.</p>
+
+            <p>Thank you for choosing us. We look forward to serving you!</p>
+        </div>
+    </body>
+
+    </html>
+    `;
+}
+
 
 
 export const customerRegistrationSuccessTemplate = function(username:string, email:string, password:string, platformURL:string) {

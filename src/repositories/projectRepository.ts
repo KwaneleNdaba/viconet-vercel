@@ -342,7 +342,6 @@ export function MapProjectPersonnelForProject(project:IProject,  personnel: IPer
         const accepted =project.accepted.split(",").map(proj=> personnel.filter(pers=>pers._id.toString()== proj)[0]).filter(x=>x!=undefined);;
         const declined =project.declined.split(",").map(proj=> personnel.filter(pers=>pers._id.toString()== proj)[0]).filter(x=>x!=undefined);;
 
-        console.log("res",pending)
         const _uninvited = ToPersonnelViewModelSync(uninvited,users);
         const _pending = ToPersonnelViewModelSync(pending,users);
         const _accepted = ToPersonnelViewModelSync(accepted,users);

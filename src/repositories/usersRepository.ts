@@ -234,7 +234,7 @@ export const GetAllUsers= async function():Promise<IUser[] | IMongoError>{
   export const DeleteUser = async function(userId:string):Promise<IUser | IMongoError> {
     try{
         const _user = await GetUserById(userId) as IUser;
-        console.log("DSSDSDSD")
+ 
         const newUser = {
             ..._user,
             status:2,
