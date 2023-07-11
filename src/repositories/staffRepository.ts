@@ -9,7 +9,7 @@ import { GetAllPersonnel, ToPersonnelViewModel } from "./personnelRepository";
 import { IPersonnelDoc, IPersonnelViewModel } from "../models/personnel";
 import { IPersonnel } from "../models/personnel";
 import { GetOrganisationById, UpdateOrganisation } from "./organisationRepository";
-import { sendMail } from "../services/emailService";
+import { addStaffUserTemplate, sendMail } from "../services/emailService";
 import { HashPassword } from "../services/loginService";
 import { DeleteUser, GetUserById } from "./usersRepository";
 
@@ -249,14 +249,14 @@ export const AddStaffToOrganisaion = async function(_staff: ICreateStaffModel):P
 
         const newOrg = {...organisation.organisation, _staff:`${[...organisation?._staff??"".split(","), staff._id].join(",")}`}
         const savedOrg = await UpdateOrganisation(newOrg);
-        
+        const staffemail = addStaffUserTemplate(_staff.firstName, organisation.name, "https://viconet-dev.netlify.app/company/auth/login",_otp.toString()) 
+
         const email = await sendMail(_user.email, 
-            `Viconet profile created`, `Hi, a staff profile for ${organisation?.organisation?.name} has been created for you. <br/>
-            Your one time password is ${_otp.toString()}. Your may login here: <br/> `,  
-            `Hi, a staff profile for ${organisation?.organisation?.name} has been created for you. <br/>
-            Your one time password is ${_otp.toString()} <br/> 
-            Your may login here: <br/> ` );
-    
+            `Viconet profile created`,
+            `Viconet profile created: Hi, a staff profile for ${organisation?.organisation?.name} has been created for you.
+            Your one time password is:  ${_otp.toString()}. Your may login here: https://viconet-dev.netlify.app/company/auth/login`,  
+            staffemail );
+    console.log("emmm", email)
       
 
         const response ={
@@ -268,7 +268,7 @@ export const AddStaffToOrganisaion = async function(_staff: ICreateStaffModel):P
         return response;
 
     }catch(e){ 
-        return {code:500, message:"Fail;ed to add staff user", object:e} as ICustomError
+        return {code:500, message:"Failed to add staff user", object:e} as ICustomError
         // return e as IMongoError;
     }
 }

@@ -46,7 +46,8 @@ const AddUser = function (_user) {
             const _dbUser = Object.assign(Object.assign({}, _user), { otp: _otp.toString() });
             const user = user_1.User.build(_dbUser);
             yield user.save();
-            const email = yield (0, emailService_1.sendMail)(_user.email, `Activate your VICO net profile`, `Your otp is ${_otp.toString()}`, `Activate your VICO net profile, Your otp is <strong> ${_otp.toString()}</strong>`);
+            const template = (0, emailService_1.activateProfile)(_user.firstName, _user.email, _otp.toString());
+            const email = yield (0, emailService_1.sendMail)(_user.email, `Activate your VICO net profile`, `Your otp is ${_otp.toString()}`, template);
             //TODO: NK remove passeword=> map response
             const clean = Object.assign(Object.assign({}, user), { password: "", status: 0 });
             return user;

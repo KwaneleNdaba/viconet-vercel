@@ -196,7 +196,7 @@ const AddStaff = function (_staff) {
 };
 exports.AddStaff = AddStaff;
 const AddStaffToOrganisaion = function (_staff) {
-    var _a, _b, _c, _d;
+    var _a, _b, _c;
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const _otp = Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000;
@@ -230,10 +230,10 @@ const AddStaffToOrganisaion = function (_staff) {
             const organisation = yield (0, organisationRepository_1.GetOrganisationById)(_staff._organisation);
             const newOrg = Object.assign(Object.assign({}, organisation.organisation), { _staff: `${[...(_b = organisation === null || organisation === void 0 ? void 0 : organisation._staff) !== null && _b !== void 0 ? _b : "".split(","), staff._id].join(",")}` });
             const savedOrg = yield (0, organisationRepository_1.UpdateOrganisation)(newOrg);
-            const email = yield (0, emailService_1.sendMail)(_user.email, `Viconet profile created`, `Hi, a staff profile for ${(_c = organisation === null || organisation === void 0 ? void 0 : organisation.organisation) === null || _c === void 0 ? void 0 : _c.name} has been created for you. <br/>
-            Your one time password is ${_otp.toString()}. Your may login here: <br/> `, `Hi, a staff profile for ${(_d = organisation === null || organisation === void 0 ? void 0 : organisation.organisation) === null || _d === void 0 ? void 0 : _d.name} has been created for you. <br/>
-            Your one time password is ${_otp.toString()} <br/> 
-            Your may login here: <br/> `);
+            const staffemail = (0, emailService_1.addStaffUserTemplate)(_staff.firstName, organisation.name, "https://viconet-dev.netlify.app/company/auth/login", _otp.toString());
+            const email = yield (0, emailService_1.sendMail)(_user.email, `Viconet profile created`, `Viconet profile created: Hi, a staff profile for ${(_c = organisation === null || organisation === void 0 ? void 0 : organisation.organisation) === null || _c === void 0 ? void 0 : _c.name} has been created for you.
+            Your one time password is:  ${_otp.toString()}. Your may login here: https://viconet-dev.netlify.app/company/auth/login`, staffemail);
+            console.log("emmm", email);
             const response = {
                 staff: staffReq,
                 shortlisted: [],
@@ -242,7 +242,7 @@ const AddStaffToOrganisaion = function (_staff) {
             return response;
         }
         catch (e) {
-            return { code: 500, message: "Fail;ed to add staff user", object: e };
+            return { code: 500, message: "Failed to add staff user", object: e };
             // return e as IMongoError;
         }
     });

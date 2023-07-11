@@ -1,7 +1,7 @@
 import { HashPassword } from "../services/loginService";
 import { ICustomError, IMongoError } from "../models/errors";
 import { IUser, IUserDoc, User  } from "../models/user";
-import { sendMail } from "../services/emailService";
+import { activateProfile, sendMail } from "../services/emailService";
 import { Personnel } from "../models/personnel";
 import { IPersonnel } from "../models/personnel";
 
@@ -31,7 +31,8 @@ export const GetAllUsers= async function():Promise<IUser[] | IMongoError>{
       const _dbUser = {..._user, otp:_otp.toString()} as IUser;
         const user = User.build(_dbUser);
         await user.save();
-        const email = await sendMail(_user.email, `Activate your VICO net profile`, `Your otp is ${_otp.toString()}`, `Activate your VICO net profile, Your otp is <strong> ${_otp.toString()}</strong>` );
+        const template = activateProfile(_user.firstName,_user.email, _otp.toString() )
+        const email = await sendMail(_user.email, `Activate your VICO net profile`, `Your otp is ${_otp.toString()}`,template );
         //TODO: NK remove passeword=> map response
         const clean = {...user, password:"", status:0} as IUser
       

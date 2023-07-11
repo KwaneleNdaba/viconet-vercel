@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.customerRegistrationSuccessTemplate = exports.addToProjectTemplate = exports.companyRegistrationSuccessTemplate = exports.resetPasswordTemplate = exports.sendMail = void 0;
+exports.customerRegistrationSuccessTemplate = exports.addStaffUserTemplate = exports.addToProjectTemplate = exports.companyRegistrationSuccessTemplate = exports.activateProfile = exports.resetPasswordTemplate = exports.sendMail = void 0;
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey("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");
 function sendMail(to, subject, text, html) {
@@ -23,6 +23,7 @@ function sendMail(to, subject, text, html) {
                 html: html,
             };
             const res = yield sgMail.send(msg);
+            console.log("PPPPP", res);
         }
         catch (e) {
             console.log("RESS", e.response.body.errors);
@@ -87,6 +88,63 @@ const resetPasswordTemplate = function (userName, email, otp) {
 `;
 };
 exports.resetPasswordTemplate = resetPasswordTemplate;
+const activateProfile = function (username, email, otp) {
+    return `
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333333;
+        }
+
+        p {
+            margin-bottom: 20px;
+        }
+
+        .link-button {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 10px 16px;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .link-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Dear ${username},</h1>
+
+        <p>To activate your viconet profile, please enter the OTP below <a href="https://viconet-dev.netlify.app/auth/otp?email=${email}">here</a>.</p>
+
+        <p>Your OTP is:<strong>${otp}</strong></p>
+
+        <!-- Additional email content here -->
+
+    </div>
+</body>
+
+</html>
+`;
+};
+exports.activateProfile = activateProfile;
 const companyRegistrationSuccessTemplate = function (username, email, otp, platformURL) {
     return `
     <html>
@@ -209,6 +267,66 @@ const addToProjectTemplate = function (username, platformURL) {
     `;
 };
 exports.addToProjectTemplate = addToProjectTemplate;
+const addStaffUserTemplate = function (username, organisation, platformURL, otp) {
+    return `
+    <html>
+    <head>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+            }
+
+            .container {
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+
+            h1 {
+                color: #333333;
+            }
+
+            p {
+                margin-bottom: 20px;
+            }
+
+            .link-button {
+                display: inline-block;
+                background-color: #4CAF50;
+                color: white;
+                text-align: center;
+                padding: 10px 16px;
+                text-decoration: none;
+                border-radius: 4px;
+                transition: background-color 0.3s;
+            }
+
+            .link-button:hover {
+                background-color: #45a049;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="container">
+            <h1>Dear ${username},</h1>
+
+            <p>A staff profile for ${organisation} has been created for you.</p>
+
+            <p>Your one time password is: ${otp}. </p> 
+            
+            <p>You may login <a href="${platformURL}"> here </a></p>
+
+            <p>If you have any questions or concerns, please do not hesitate to contact our support team.</p>
+
+           
+        </div>
+    </body>
+
+    </html>
+    `;
+};
+exports.addStaffUserTemplate = addStaffUserTemplate;
 const customerRegistrationSuccessTemplate = function (username, email, password, platformURL) {
     return `
   <html>
