@@ -20,7 +20,7 @@ const options = {
 app.use(json())
 app.use(function(req, res, next) {
 	
-res.header("Access-Control-Allow-Origin", "*");
+res.header("Access-Control-Allow-Origin", "https://fraktional-web-be.onrender.com");
 res.header("Access-Control-Request-Headers",
 "access-control-allow-credentials,access-control-allow-headers,access-control-allow-methods,access-control-allow-origin,authorization,content-type,access-control-allow-origin");
  res.header("Access-Control-Allow-Headers", "Authorization, Access-Control-Allow-Headers,access-control-allow-origin, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
@@ -29,7 +29,7 @@ res.header("Access-Control-Request-Headers",
   });
 app.use(userRouter, personnelRouter, projectRouter, organiwsationRouter, staffRouter, notificationRouter)
 // const app = express()
-const port = process.env.PORT || "https://fraktional-web-be.onrender.com"
+const port = process.env.PORT || 8080
 
 app.get('/', (_req: Request, res: Response) => {
 	return res.send('Viconet V1')
