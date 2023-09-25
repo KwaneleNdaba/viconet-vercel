@@ -23,7 +23,7 @@ const options = {
 };
 app.use((0, body_parser_1.json)());
 app.use(function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "https://fraktional-web-be.onrender.com");
+    res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Request-Headers", "access-control-allow-credentials,access-control-allow-headers,access-control-allow-methods,access-control-allow-origin,authorization,content-type,access-control-allow-origin");
     res.header("Access-Control-Allow-Headers", "Authorization, Access-Control-Allow-Headers,access-control-allow-origin, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
     next();
