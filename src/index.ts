@@ -29,7 +29,7 @@ res.header("Access-Control-Request-Headers",
   });
 app.use(userRouter, personnelRouter, projectRouter, organiwsationRouter, staffRouter, notificationRouter)
 // const app = express()
-const port = process.env.PORT || 8080
+const port = process.env.PORT || "https://fraktional-web-be.onrender.com"
 
 app.get('/', (_req: Request, res: Response) => {
 	return res.send('Viconet V1')

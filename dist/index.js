@@ -30,7 +30,7 @@ app.use(function (req, res, next) {
 });
 app.use(user_1.userRouter, personnel_1.personnelRouter, project_1.projectRouter, organisation_1.organiwsationRouter, staff_1.staffRouter, notification_1.notificationRouter);
 // const app = express()
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || "https://fraktional-web-be.onrender.com";
 app.get('/', (_req, res) => {
     return res.send('Viconet V1');
 });
