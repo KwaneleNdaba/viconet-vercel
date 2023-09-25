@@ -41,7 +41,7 @@ app.get('/ping', (_req: Request, res: Response) => {
 
 
 
-mongoose.connect("mongodb+srv://suntecTMS:suntectms2022@cluster0.zm9cv.mongodb.net/viconet?retryWrites=true&w=majority")
+mongoose.connect("mongodb+srv://prince:LTSNsskk113@cluster0.mrb5jxy.mongodb.net/")
 
 app.listen(port, () => {
 	return console.log(`Server is listening on ${port}`)

@@ -37,7 +37,7 @@ app.get('/', (_req, res) => {
 app.get('/ping', (_req, res) => {
     return res.send('pong 🏓');
 });
-mongoose_1.default.connect("mongodb+srv://suntecTMS:suntectms2022@cluster0.zm9cv.mongodb.net/viconet?retryWrites=true&w=majority");
+mongoose_1.default.connect("mongodb+srv://prince:LTSNsskk113@cluster0.mrb5jxy.mongodb.net/");
 app.listen(port, () => {
     return console.log(`Server is listening on ${port}`);
 });
