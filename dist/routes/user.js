@@ -82,13 +82,13 @@ router.post('/api/upload_profilepicture/:id', (req, res) => __awaiter(void 0, vo
     });
 }));
 router.post('/api/users', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { title, firstName, surname, email, password, type, mobileNumber } = req.body;
+    const { title, firstName, surname, email, password, mobileNumber } = req.body;
     const hashedPassword = yield (0, loginService_1.HashPassword)(password);
     const dbUser = { title: title,
         firstName: firstName,
-        surname: surname,
+        lastName: surname,
         email: email === null || email === void 0 ? void 0 : email.toLowerCase(),
-        type: type,
+        type: "0",
         mobileNumber: mobileNumber,
         status: 0,
         password: hashedPassword };
