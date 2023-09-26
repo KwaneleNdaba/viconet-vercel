@@ -91,13 +91,13 @@ router.post('/api/upload_profilepicture/:id', async (req: Request, res: Response
 
 
 router.post('/api/users', async (req: Request, res: Response) => {
-  const { title, firstName, lastName, email, password,  mobileNumber } = req.body;
+  const { title, firstName, surname, email, password,  mobileNumber } = req.body;
   
   const hashedPassword = await HashPassword(password);
   
   const dbUser = { title:title,
     firstName: firstName, 
-    lastName: lastName, 
+    surname: surname, 
     email: email?.toLowerCase(),
     type: "0", 
     mobileNumber: mobileNumber,
