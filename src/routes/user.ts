@@ -89,14 +89,18 @@ router.post('/api/upload_profilepicture/:id', async (req: Request, res: Response
   })
 });
 
+
 router.post('/api/users', async (req: Request, res: Response) => {
-  const { email, password } = req.body;
+  const { title, firstName, surname, email, password, type, mobileNumber } = req.body;
   
   const hashedPassword = await HashPassword(password);
   
-  const dbUser = { 
+  const dbUser = { title:title,
+    firstName: firstName, 
+    surname: surname, 
     email: email?.toLowerCase(),
-    type: "0", 
+    type: type, 
+    mobileNumber: mobileNumber,
     status:0,
     password:hashedPassword } as IUser;
 
@@ -110,6 +114,7 @@ router.post('/api/users', async (req: Request, res: Response) => {
     return  res.status(400).send(error.message);
   }
 })
+
 
 router.post('/api/user/deleteUser', async (req: Request, res: Response) => {
   const { email, oldPassword, password } = req.body;
