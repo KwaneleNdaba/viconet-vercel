@@ -26,7 +26,6 @@ function sendMail(to, subject, text, html) {
             };
             console.log("PPPPP", msg);
             const res = yield sgMail.send(msg);
-            console.log("Res", res);
         }
         catch (e) {
             console.log("RESS", e.response.body.errors);

@@ -14,7 +14,7 @@ try{
       };
       console.log("PPPPP", msg)
     const res = await sgMail.send(msg);
-    console.log("Res",res)
+  
   
 }catch(e){
     console.log("RESS", e.response.body.errors)
