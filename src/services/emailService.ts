@@ -1,10 +1,6 @@
 const sgMail = require('@sendgrid/mail')
 require('dotenv').config(); // Load environment variables from .env file
-
-
-const apiKey = process.env.API_KEY;
-
-
+const apiKey=process.env.API_KEY;
 sgMail.setApiKey(apiKey)
 
 export async function sendMail(to:string, subject:string, text:string, html:string) {
