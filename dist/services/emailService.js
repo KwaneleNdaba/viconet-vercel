@@ -11,7 +11,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.customerRegistrationSuccessTemplate = exports.addStaffUserTemplate = exports.addToProjectTemplate = exports.companyRegistrationSuccessTemplate = exports.activateProfile = exports.resetPasswordTemplate = exports.sendMail = void 0;
 const sgMail = require('@sendgrid/mail');
-sgMail.setApiKey("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");
+require('dotenv').config(); // Load environment variables from .env file
+const apiKey = process.env.API_KEY;
+sgMail.setApiKey(apiKey);
 function sendMail(to, subject, text, html) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -24,6 +26,7 @@ function sendMail(to, subject, text, html) {
             };
             console.log("PPPPP", msg);
             const res = yield sgMail.send(msg);
+            console.log("Res", res);
         }
         catch (e) {
             console.log("RESS", e.response.body.errors);

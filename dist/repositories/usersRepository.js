@@ -140,7 +140,6 @@ const SendOTP = function (_email) {
             const user = user_1.User.build(_dbUser);
             const up = yield user.updateOne(user);
             const email = yield (0, emailService_1.sendMail)(_user.email, `Reset your VICO net password`, `Your otp is ${_otp.toString()}`, `Your otp is <strong> ${_otp.toString()}</strong>`);
-            console.log(email);
             //TODO: NK remove passeword=> map response
             const clean = Object.assign(Object.assign({}, user), { password: "", otp: "" });
             return clean;

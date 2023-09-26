@@ -1,5 +1,11 @@
 const sgMail = require('@sendgrid/mail')
-sgMail.setApiKey("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")
+require('dotenv').config(); // Load environment variables from .env file
+
+
+const apiKey = process.env.API_KEY;
+
+
+sgMail.setApiKey(apiKey)
 
 export async function sendMail(to:string, subject:string, text:string, html:string) {
 try{
@@ -12,6 +18,7 @@ try{
       };
       console.log("PPPPP", msg)
     const res = await sgMail.send(msg);
+    console.log("Res",res)
   
 }catch(e){
     console.log("RESS", e.response.body.errors)
