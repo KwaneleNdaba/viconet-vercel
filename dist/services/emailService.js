@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.customerRegistrationSuccessTemplate = exports.addStaffUserTemplate = exports.addToProjectTemplate = exports.companyRegistrationSuccessTemplate = exports.activateProfile = exports.resetPasswordTemplate = exports.sendMail = void 0;
 const sgMail = require('@sendgrid/mail');
-sgMail.setApiKey("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");
+sgMail.setApiKey("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");
 function sendMail(to, subject, text, html) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -22,8 +22,8 @@ function sendMail(to, subject, text, html) {
                 text: text,
                 html: html,
             };
+            console.log("PPPPP", msg);
             const res = yield sgMail.send(msg);
-            console.log("PPPPP", res);
         }
         catch (e) {
             console.log("RESS", e.response.body.errors);

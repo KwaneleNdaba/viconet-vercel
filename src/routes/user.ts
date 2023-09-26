@@ -173,6 +173,7 @@ router.post('/api/user/resetPassword', async (req: Request, res: Response) => {
 
 router.post('/api/user/sendOTP', async (req: Request, res: Response) => {
   const { email} = req.body;
+  console.log(email);
   const user = await SendOTP(email);
     if(!instanceOfTypeCustomError(user)){
   

@@ -142,6 +142,7 @@ router.post('/api/user/resetPassword', (req, res) => __awaiter(void 0, void 0, v
 }));
 router.post('/api/user/sendOTP', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email } = req.body;
+    console.log(email);
     const user = yield (0, usersRepository_1.SendOTP)(email);
     if (!(0, typeCheck_1.instanceOfTypeCustomError)(user)) {
         return res.status(200).send(user);

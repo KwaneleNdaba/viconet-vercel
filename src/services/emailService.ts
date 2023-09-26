@@ -1,5 +1,5 @@
 const sgMail = require('@sendgrid/mail')
-sgMail.setApiKey("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")
+sgMail.setApiKey("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")
 
 export async function sendMail(to:string, subject:string, text:string, html:string) {
 try{
@@ -10,9 +10,9 @@ try{
         text: text,
         html:html,
       };
-    
+      console.log("PPPPP", msg)
     const res = await sgMail.send(msg);
-      console.log("PPPPP", res)
+  
 }catch(e){
     console.log("RESS", e.response.body.errors)
 }
