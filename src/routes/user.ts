@@ -7,8 +7,8 @@ import { ICustomError } from '../models/errors';
 import { IStaff } from '../models/staff';
 import { AddStaff } from '../repositories/staffRepository';
 import { AddStaffToOrganisation, GetOrganisationById } from '../repositories/organisationRepository';
-import { parsefile, uploadProfilePic } from '../services/documentService';
-// import { uploadProfilePic } from '../services/documentService';
+import { parsefile, } from '../services/documentService';
+ import { uploadProfilePic } from '../services/documentService';
 
 const router = express.Router()
 

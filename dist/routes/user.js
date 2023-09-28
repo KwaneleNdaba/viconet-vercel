@@ -20,7 +20,6 @@ const typeCheck_1 = require("../lib/typeCheck");
 const staffRepository_1 = require("../repositories/staffRepository");
 const organisationRepository_1 = require("../repositories/organisationRepository");
 const documentService_1 = require("../services/documentService");
-// import { uploadProfilePic } from '../services/documentService';
 const router = express_1.default.Router();
 exports.userRouter = router;
 router.get('/api/users', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
