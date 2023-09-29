@@ -46,24 +46,25 @@ router.post('/api/users/email/', async (req: Request, res: Response) => {
 
 })
 
-router.post('/api/users/verify/', async (req: Request, res: Response) => {
-  const {  email, otp } = req.body;
+router.post('/api/users/verify', async (req: Request, res: Response) => {
+  const { email, otp } = req.body;
   if (email) {
     const user = await ActivateUser(otp, email);
 
-    if(instanceOfTypeCustomError(user)){
-   
+    if (instanceOfTypeCustomError(user)) {
       const errorResponse = user as ICustomError;
+      res.header("Access-Control-Allow-Origin", "*"); // Add this line to set the CORS headers
       return res.status(errorResponse.code).send(errorResponse);
-
     }
+    
+    res.header("Access-Control-Allow-Origin", "*"); // Add this line to set the CORS headers
     return res.status(200).send(user);
-
-  }else{
+  } else {
+    res.header("Access-Control-Allow-Origin", "*"); // Add this line to set the CORS headers
     return res.status(404).send("Cannot find user");
   }
-
 })
+
 
 router.post('/api/upload_profilepicture/:id', async (req: Request, res: Response) => {
   const id = req.params.id;
@@ -144,7 +145,7 @@ router.post('/api/user/deleteUser', async (req: Request, res: Response) => {
 
 
 router.post('/api/user/changePassword', async (req: Request, res: Response) => {
-  const { email, oldPassword, password } = req.body;
+  const { email,  password } = req.body;
   
   const user = await ChangePassword(email, password);
   

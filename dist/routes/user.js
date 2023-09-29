@@ -47,17 +47,20 @@ router.post('/api/users/email/', (req, res) => __awaiter(void 0, void 0, void 0,
         return res.status(404).send("Cannot find user");
     }
 }));
-router.post('/api/users/verify/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post('/api/users/verify', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, otp } = req.body;
     if (email) {
         const user = yield (0, usersRepository_1.ActivateUser)(otp, email);
         if ((0, typeCheck_1.instanceOfTypeCustomError)(user)) {
             const errorResponse = user;
+            res.header("Access-Control-Allow-Origin", "*"); // Add this line to set the CORS headers
             return res.status(errorResponse.code).send(errorResponse);
         }
+        res.header("Access-Control-Allow-Origin", "*"); // Add this line to set the CORS headers
         return res.status(200).send(user);
     }
     else {
+        res.header("Access-Control-Allow-Origin", "*"); // Add this line to set the CORS headers
         return res.status(404).send("Cannot find user");
     }
 }));
@@ -118,7 +121,7 @@ router.post('/api/user/deleteUser', (req, res) => __awaiter(void 0, void 0, void
     }
 }));
 router.post('/api/user/changePassword', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email, oldPassword, password } = req.body;
+    const { email, password } = req.body;
     const user = yield (0, usersRepository_1.ChangePassword)(email, password);
     if ((0, typeCheck_1.instanceOfTypeIUser)(user)) {
         return res.status(200).send(user);
