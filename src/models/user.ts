@@ -22,7 +22,7 @@ export interface IUser {
   status?:number;
   otp?: string;
   profilePicture?:string
-  role? : string;
+
 }
 
 export const UserState = {

@@ -17,7 +17,6 @@ router.get('/api/users', async (req: Request, res: Response) => {
   return res.status(200).send(user)
 })
 
-
 router.get('/api/users/:id', async (req: Request, res: Response) => {
   
     const id = req.params.id;
@@ -92,7 +91,7 @@ router.post('/api/upload_profilepicture/:id', async (req: Request, res: Response
 
 
 router.post('/api/users', async (req: Request, res: Response) => {
-  const { title, firstName, surname, email, password,  mobileNumber, role } = req.body;
+  const { title, firstName, surname, email, password,  mobileNumber} = req.body;
   
   const hashedPassword = await HashPassword(password);
   
@@ -104,7 +103,7 @@ router.post('/api/users', async (req: Request, res: Response) => {
     mobileNumber: mobileNumber,
     status:0,
     password:hashedPassword,
-    role : role,
+
   } as IUser;
 
   const user = await AddUser(dbUser);

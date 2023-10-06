@@ -84,7 +84,7 @@ router.post('/api/upload_profilepicture/:id', (req, res) => __awaiter(void 0, vo
     });
 }));
 router.post('/api/users', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { title, firstName, surname, email, password, mobileNumber, role } = req.body;
+    const { title, firstName, surname, email, password, mobileNumber } = req.body;
     const hashedPassword = yield (0, loginService_1.HashPassword)(password);
     const dbUser = { title: title,
         firstName: firstName,
@@ -93,8 +93,7 @@ router.post('/api/users', (req, res) => __awaiter(void 0, void 0, void 0, functi
         type: "0",
         mobileNumber: mobileNumber,
         status: 0,
-        password: hashedPassword,
-        role: role, };
+        password: hashedPassword, };
     const user = yield (0, usersRepository_1.AddUser)(dbUser);
     if ((0, typeCheck_1.instanceOfTypeIUser)(user)) {
         return res.status(200).send(user);

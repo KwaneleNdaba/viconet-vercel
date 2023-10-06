@@ -99,7 +99,7 @@ const AddOrganisationAndStaff = function (_organisation) {
         try {
             const _otp = Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000;
             const _user = {
-                title: "",
+                title: _organisation.title,
                 firstName: _organisation.userName,
                 surname: _organisation.userSurname,
                 email: _organisation.userEmail,
