@@ -146,7 +146,7 @@ const SendOTP = function (_email) {
         }
         catch (e) {
             // return e as IMongoError;
-            return { code: 400, message: e };
+            return { code: 400, message: "Email address not registered" };
         }
     });
 };

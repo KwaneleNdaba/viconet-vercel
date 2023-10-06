@@ -137,7 +137,7 @@ export const GetAllUsers= async function():Promise<IUser[] | IMongoError>{
 
     }catch(e){
         // return e as IMongoError;
-        return {code:400, message:e } as ICustomError
+        return {code:400, message:"Email address not registered" } as ICustomError
     }
   }
   export const GetBatchUserById = async function(id:string[]):Promise<IUser| IMongoError>{
