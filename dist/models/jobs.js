@@ -59,11 +59,11 @@ const jobApplicationSchema = new mongoose_1.default.Schema({
         required: true,
     },
     hires: {
-        type: Number,
+        type: String,
         required: true,
     },
     urgency: {
-        type: Number,
+        type: String,
         required: true,
     },
     pay: {
@@ -71,7 +71,7 @@ const jobApplicationSchema = new mongoose_1.default.Schema({
         required: true,
     },
     currency: {
-        type: Number,
+        type: String,
         required: true,
     },
     fromDate: {

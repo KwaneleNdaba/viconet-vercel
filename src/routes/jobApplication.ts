@@ -1,7 +1,7 @@
 import express, { Request, Response, Router } from 'express'
 import { ICustomError } from '../models/errors';
 import { instanceOfTypeCustomError, instanceOfTypeIUser } from '../lib/typeCheck';
-import { IJobApplication, jobApplication } from '../models/jobs';
+import { IJobApplication, IJobApplicationDoc, jobApplication } from '../models/jobs';
 import { AddJobApplication, GetAllJobApplications, GetJobApplicationById } from '../repositories/jobApplicationsRepository';
 
 const router = express.Router()
@@ -19,7 +19,7 @@ router.post('/api/jobApplications', async (req: Request, res: Response) => {
 
   router.get('/api/getJobApplications', async (req: Request, res: Response) => {
     const jobApplications = await GetAllJobApplications();
-    return res.status(200).send(jobApplications)
+    return res.status(200).send(jobApplications) 
   })
 
 

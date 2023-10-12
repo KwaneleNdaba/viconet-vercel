@@ -14,10 +14,10 @@ export interface IJobApplication{
     zipCode:string,
     remote:number,
     jobtype:number,
-    hires:number,
-    urgency:number,
+    hires:string,
+    urgency:string,
     pay:number,
-    currency:number,
+    currency:string,
     fromDate:string,
     toDate:string,
     period:string,
@@ -80,10 +80,10 @@ interface jobApplicationDocInterface extends mongoose.Model<IJobApplicationDoc> 
     remote:number,
     description:string; 
     jobtype:number,
-    hires:number,
-    urgency:number,
+    hires:string,
+    urgency:string,
     pay:number,
-    currency:number,
+    currency:string,
     fromDate:string,
     toDate:string,
     period:string,
@@ -179,11 +179,11 @@ const jobApplicationSchema = new mongoose.Schema({
         required: true,
     },
     hires:{
-        type:Number,
+        type:String,
         required: true,
     },
     urgency:{
-        type:Number,
+        type:String,
         required: true,
     },
     pay:{
@@ -191,7 +191,7 @@ const jobApplicationSchema = new mongoose.Schema({
         required: true,
     },
     currency:{
-        type:Number,
+        type:String,
         required: true,
     },
     fromDate:{
