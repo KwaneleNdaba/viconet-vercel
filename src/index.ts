@@ -7,6 +7,7 @@ import { personnelRouter } from './routes/personnel';
 import { projectRouter } from './routes/project';
 import { organiwsationRouter } from './routes/organisation';
 import { staffRouter } from './routes/staff';
+import {jobApplicationRouter} from './routes/jobApplication'
 import { notificationRouter } from './routes/notification';
 const cors = require('cors'); 
 const formData = require("express-form-data");
@@ -29,7 +30,7 @@ res.header("Access-Control-Request-Headers",
 
 	next();
   });
-app.use(userRouter, personnelRouter, projectRouter, organiwsationRouter, staffRouter, notificationRouter)
+app.use(userRouter, personnelRouter, projectRouter, organiwsationRouter, staffRouter, notificationRouter, jobApplicationRouter)
 // const app = express()
 const port = process.env.PORT || 8080
 

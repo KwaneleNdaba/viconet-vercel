@@ -9,6 +9,8 @@ import { IProject, Project } from "../models/project";
 import { instanceOfTypeIStaff, instanceOfTypeIUser } from "../lib/typeCheck";
 import { companyRegistrationSuccessTemplate, sendMail } from "../services/emailService";
 import { GetAllProjects } from "./projectRepository";
+import { jobApplication } from "../models/jobs";
+import { IJobApplication } from "../models/jobs";
 
 export const GetAllOrganisations= async function():Promise<IOrganisationDoc[] | ICustomError>{
     try{
@@ -41,37 +43,41 @@ export const GetOrganisationById= async function(id:string):Promise<IOrganisatio
 }
 
 
-export const GetFullOganisationById= async function(id:string):Promise<IOrganisationViewModel | ICustomError>{
-    try{
-        const organisation = await Organisation.find({_id:id})
-        const org =  organisation[0] as IOrganisation;
+export const GetFullOganisationById = async function (id: string): Promise<IOrganisationViewModel | ICustomError> {
+    try {
+        const organisation = await Organisation.find({ _id: id });
+        const org = organisation[0] as IOrganisation;
 
-        const projects = await Project.find({_organisation:id}) as IProject[];
-        const staff = await Staff.find({_organisation:id}) as IStaff[];
-        const userIds = staff.map(x=>x._user);
+        const projects = await Project.find({ _organisation: id }) as IProject[];
+        const staff = await Staff.find({ _organisation: id }) as IStaff[];
+        const userIds = staff.map(x => x._user);
 
-        const users = await User.find({_id:userIds}) as IUser[];
+        const users = await User.find({ _id: userIds }) as IUser[];
 
-        const staffView = staff.map(x=> {
+        const staffView = staff.map(x => {
             return {
-                staff:x,
+                staff: x,
                 shortlisted: [],
-                user:users.filter(y=>y._id == x._user)[0]
-
-            } as IStaffViewModel
+                user: users.find(y => y._id == x._user)
+            } as IStaffViewModel;
         });
+
+        
+        const jobs = await jobApplication.find({ companyId: id }) as IJobApplication[];
+
         const viewModel = {
-            organisation:org,
+            organisation: org,
             projects: projects,
-            staff:staffView
+            staff: staffView,
+            jobs: jobs
         } as IOrganisationViewModel;
 
-
         return viewModel;
-        }catch(e){
-            return {code:500, message:"error", object:e} as ICustomError;
-        }
+    } catch (e) {
+        return { code: 500, message: "error", object: e } as ICustomError;
+    }
 }
+
 
 export const GetOrganisationProjects = function(projectIds:string, allProjects: IProject[]):IProject[]{
     

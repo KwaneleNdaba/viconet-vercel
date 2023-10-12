@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 import { IProject } from './project';
 import { IStaff, IStaffViewModel } from './staff';
+import { IJobApplication } from './jobs';
 
 
 export interface ICompanyRegisterModel{
@@ -23,7 +24,8 @@ export interface ICompanyRegisterModel{
 export interface IOrganisationViewModel extends IOrganisation{
   projects: IProject[],
   organisation: IOrganisation,
-  staff?:IStaffViewModel[]
+  staff?:IStaffViewModel[],
+  jobs?:IJobApplication[]
 }
 
 export interface IOrganisation {

@@ -27,7 +27,7 @@ router.get('/api/organisation/:id', async (req: Request, res: Response) => {
 })
 
 
-router.get('/api/organisationStaff/:id', async (req: Request, res: Response) => {
+router.get('/api/organisationSummary/:id', async (req: Request, res: Response) => {
   
   const id = req.params.id;
   if (id.match(/^[0-9a-fA-F]{24}$/)) {// valid ObjectId
@@ -36,7 +36,7 @@ router.get('/api/organisationStaff/:id', async (req: Request, res: Response) => 
     res.header("Access-Control-Allow-Origin", "*");
     return res.status(200).send(user)
   }else{
-    return res.status(404).send("Cannot find user");
+    return res.status(404).send("Cannot find organisation");
   }
 
 })

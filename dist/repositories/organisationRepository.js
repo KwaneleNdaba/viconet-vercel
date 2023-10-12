@@ -16,6 +16,7 @@ const user_1 = require("../models/user");
 const project_1 = require("../models/project");
 const typeCheck_1 = require("../lib/typeCheck");
 const emailService_1 = require("../services/emailService");
+const jobs_1 = require("../models/jobs");
 const GetAllOrganisations = function () {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -60,13 +61,15 @@ const GetFullOganisationById = function (id) {
                 return {
                     staff: x,
                     shortlisted: [],
-                    user: users.filter(y => y._id == x._user)[0]
+                    user: users.find(y => y._id == x._user)
                 };
             });
+            const jobs = yield jobs_1.jobApplication.find({ companyId: id });
             const viewModel = {
                 organisation: org,
                 projects: projects,
-                staff: staffView
+                staff: staffView,
+                jobs: jobs
             };
             return viewModel;
         }
