@@ -12,10 +12,7 @@ import { parsefile, } from '../services/documentService';
 
 const router = express.Router()
 
-router.get('/api/users', async (req: Request, res: Response) => {
-  const user = await GetAllUsers();
-  return res.status(200).send(user)
-})
+ 
 
 router.get('/api/users/:id', async (req: Request, res: Response) => {
   

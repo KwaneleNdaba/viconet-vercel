@@ -43,4 +43,24 @@ router.get('/api/jobApplications/:id', (req, res) => __awaiter(void 0, void 0, v
         return res.status(404).send("Cannot find job application");
     }
 }));
+router.delete('/api/jobApplications/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = req.params.id;
+    if (id.match(/^[0-9a-fA-F]{24}$/)) {
+        try {
+            const deletedJobApplication = yield (0, jobApplicationsRepository_1.DeleteJobApplicationById)(id);
+            if (deletedJobApplication) {
+                return res.status(204).send();
+            }
+            else {
+                return res.status(404).send("Job application not found");
+            }
+        }
+        catch (error) {
+            return res.status(500).send("Error deleting job application");
+        }
+    }
+    else {
+        return res.status(400).send("Invalid ID format");
+    }
+}));
 //# sourceMappingURL=jobApplication.js.map

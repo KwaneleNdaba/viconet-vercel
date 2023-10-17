@@ -2,7 +2,7 @@ import express, { Request, Response, Router } from 'express'
 import { ICustomError } from '../models/errors';
 import { instanceOfTypeCustomError, instanceOfTypeIUser } from '../lib/typeCheck';
 import { IJobApplication, IJobApplicationDoc, jobApplication } from '../models/jobs';
-import { AddJobApplication, GetAllJobApplications, GetJobApplicationById } from '../repositories/jobApplicationsRepository';
+import { AddJobApplication, DeleteJobApplicationById, GetAllJobApplications, GetJobApplicationById } from '../repositories/jobApplicationsRepository';
 
 const router = express.Router()
 
@@ -36,5 +36,27 @@ router.post('/api/jobApplications', async (req: Request, res: Response) => {
     }
 
 })
+
+
+router.delete('/api/jobApplications/:id', async (req, res) => {
+  const id = req.params.id;
+
+  if (id.match(/^[0-9a-fA-F]{24}$/)) {
+    try {
+      const deletedJobApplication = await DeleteJobApplicationById(id);
+      
+      if (deletedJobApplication) {
+        return res.status(204).send(); 
+      } else {
+        return res.status(404).send("Job application not found");
+      }
+    } catch (error) {
+      return res.status(500).send("Error deleting job application");
+    }
+  } else {
+    return res.status(400).send("Invalid ID format");
+  }
+});
+
   
   export { router as jobApplicationRouter }

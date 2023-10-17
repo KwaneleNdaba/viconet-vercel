@@ -22,10 +22,6 @@ const organisationRepository_1 = require("../repositories/organisationRepository
 const documentService_1 = require("../services/documentService");
 const router = express_1.default.Router();
 exports.userRouter = router;
-router.get('/api/users', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield (0, usersRepository_1.GetAllUsers)();
-    return res.status(200).send(user);
-}));
 router.get('/api/users/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.params.id;
     if (id.match(/^[0-9a-fA-F]{24}$/)) { // valid ObjectId

@@ -23,6 +23,20 @@ export const AddJobApplication = async function(_job:IJobApplication):Promise<IJ
         }
 }
 
+export const DeleteJobApplicationById = async function(id: string): Promise<IJobApplication | ICustomError> {
+  try {
+    const deletedJobApplication = await jobApplication.findByIdAndDelete(id);
+
+    if (deletedJobApplication) {
+      return deletedJobApplication;
+    } else {
+      return { code: 404, message: "Job application not found" } as ICustomError;
+    }
+  } catch (e) {
+    return { code: 500, message: e.message } as ICustomError;
+  }
+}
+
 
 export const GetJobApplicationById = async function(id:string):Promise<IJobApplication| IMongoError>{
     try{

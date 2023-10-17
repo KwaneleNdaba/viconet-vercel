@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GetJobApplicationById = exports.GetAllJobApplications = exports.AddJobApplication = void 0;
+exports.GetJobApplicationById = exports.DeleteJobApplicationById = exports.GetAllJobApplications = exports.AddJobApplication = void 0;
 const jobs_1 = require("../models/jobs");
 const AddJobApplication = function (_job) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -37,6 +37,23 @@ const GetAllJobApplications = function () {
     });
 };
 exports.GetAllJobApplications = GetAllJobApplications;
+const DeleteJobApplicationById = function (id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const deletedJobApplication = yield jobs_1.jobApplication.findByIdAndDelete(id);
+            if (deletedJobApplication) {
+                return deletedJobApplication;
+            }
+            else {
+                return { code: 404, message: "Job application not found" };
+            }
+        }
+        catch (e) {
+            return { code: 500, message: e.message };
+        }
+    });
+};
+exports.DeleteJobApplicationById = DeleteJobApplicationById;
 const GetJobApplicationById = function (id) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
