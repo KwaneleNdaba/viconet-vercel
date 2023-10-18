@@ -115,13 +115,13 @@ export const AddPersonnel = async function(_personnel:IPersonnel):Promise<IPerso
     try{
        
 
-        const searchKeys = GenerateSearchKeys(_personnel);
+        const searchKeys = "";
        
         const populated = {..._personnel, searchKeys:searchKeys};
-
+        console.log("USerRES", populated)
         const personnel = Personnel.build(populated);
         const res = await personnel.save();
-    
+    console.log("USERRES", res)
         return personnel;
     }catch(e){
         return e as IMongoError;
@@ -138,8 +138,9 @@ export const AddPersonnelUser = async function(_personnel:ICreatePersonnelUser):
         const searchKeys = GenerateSearchKeys(_personnel.personnel);
         const userId = saveUser as IUser;
         const populated = {..._personnel.personnel, searchKeys:searchKeys, _user:userId._id} as IPersonnel;
-       
+     
         const personnel = Personnel.build(populated);
+
         await personnel.save();
 
         return personnel;
@@ -149,9 +150,9 @@ export const AddPersonnelUser = async function(_personnel:ICreatePersonnelUser):
 }
 export const UpdatePersonnel = async function(_personnel:IPersonnel):Promise<IPersonnelDoc | IMongoError> {
     try{
-        const searchKeys = GenerateSearchKeys(_personnel);
+        const searchKeys = "";
         const populated = {..._personnel, searchKeys:searchKeys} as IPersonnel;
-   
+        console.log("UP", populated);
         const personnel = Personnel.build(populated);
         await personnel.updateOne(personnel);
         return personnel;

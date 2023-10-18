@@ -59,7 +59,7 @@ router.post('/api/upload_cv/:id', async (req: Request, res: Response) => {
 router.post('/api/personnel', async (req: Request, res: Response) => {
   const { information, currentJob, previousWorkExperience, yearsOfExperience, education, keySkills, keyCourses, cvUrl, personalInformation, _user, preferedWorkMethod } = req.body;
   const dbUser = {  information, currentJob, previousWorkExperience, yearsOfExperience, education, keySkills, keyCourses, cvUrl, personalInformation, _user:_user, state:0, preferedWorkMethod:preferedWorkMethod } as IPersonnel;
-
+console.log("USER", dbUser)
   const user = await AddPersonnel(dbUser);
  
   return res.status(201).send(user)
@@ -71,6 +71,8 @@ router.get('/api/personnel', async (req: Request, res: Response) => {
  
   return res.status(201).send(user)
 })
+
+
 
 
 router.get('/api/personnel/:userId', async (req: Request, res: Response) => {

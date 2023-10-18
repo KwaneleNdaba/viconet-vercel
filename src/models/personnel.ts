@@ -4,7 +4,7 @@ import { IUser } from './user';
 export interface IPersonalInformation{
   _id?:string;
   about? :string;
-  name:string;
+  name?:string;
   surname?:string;
   dateOfBirth?	:string; //not sent
   address?	:string; //not sent
@@ -39,10 +39,10 @@ export interface IPersonnel {
   keySkills?: string[];
   keyCourses?:string[];
   cvUrl?:string;
-  personalInformation:IPersonalInformation;
-  _user:string;
-  state:number;
-  preferedWorkMethod:number;
+  personalInformation?:IPersonalInformation;
+  _user?:string;
+  state?:number;
+  preferedWorkMethod?:number;
   
 }
 
@@ -74,7 +74,7 @@ export interface IPersonnelDoc extends mongoose.Document {
 const personnelSchema = new mongoose.Schema({
   searchKeys: {
     type: String,
-    required: true
+    // required: true
   },
   // information:{
   //   type: String,
@@ -98,11 +98,11 @@ const personnelSchema = new mongoose.Schema({
   },
   keySkills:{
     type: Array,
-    required: true
+    // required: true
   },
   keyCourses:{
     type: Array,
-    required: true
+    // required: truex`
   },
   cvUrl:{
     type: String,

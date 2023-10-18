@@ -107,7 +107,7 @@ export const AddOrganisationAndStaff = async function(_organisation: ICompanyReg
             surname:_organisation.userSurname,
             email:_organisation.userEmail,
             password:_organisation.password,
-            mobileNumber:_organisation.userNumber,
+            mobileNumber:_organisation.companyNumber,
             type:"2",
             status:0,
             otp:_otp.toString()
@@ -122,12 +122,13 @@ export const AddOrganisationAndStaff = async function(_organisation: ICompanyReg
            
        const userReq = {..._user} as IUser;       
         const user = User.build(userReq);
-        
-        const template = companyRegistrationSuccessTemplate(_organisation.userName, _organisation.userEmail, _otp.toString(), "https://viconet-dev.netlify.app/company/auth/otp"  );
-        const email = await sendMail(_user.email, `Activate your VICO net profile`, template,template );
+        console.log("USER", user)
+        // console.log("USER", user)
+        // const template = companyRegistrationSuccessTemplate(_organisation.userName, _organisation.userEmail, _otp.toString(), "https://viconet-dev.netlify.app/company/auth/otp"  );
+        // const email = await sendMail(_user.email, `Activate your VICO net profile`, template,template );
         const userResp  = await user.save();
 
-    
+        console.log("USER", userResp)
         if(!instanceOfTypeIUser(userResp)){
             return {code:500, message:"Failed to add user", object:userResp} as ICustomError
         
