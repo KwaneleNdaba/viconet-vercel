@@ -107,7 +107,7 @@ const AddOrganisationAndStaff = function (_organisation) {
                 surname: _organisation.userSurname,
                 email: _organisation.userEmail,
                 password: _organisation.password,
-                mobileNumber: _organisation.userNumber,
+                mobileNumber: _organisation.companyNumber,
                 type: "2",
                 status: 0,
                 otp: _otp.toString()
@@ -116,11 +116,16 @@ const AddOrganisationAndStaff = function (_organisation) {
                 position: _organisation.position,
                 _shortlist: ""
             };
+            const template = (0, emailService_1.activateProfile)(_user.firstName, _user.email, _otp.toString());
+            yield (0, emailService_1.sendMail)(_user.email, `Activate your Fraktional profile`, `Your otp is ${_otp.toString()}`, template);
             const userReq = Object.assign({}, _user);
             const user = user_1.User.build(userReq);
-            const template = (0, emailService_1.companyRegistrationSuccessTemplate)(_organisation.userName, _organisation.userEmail, _otp.toString(), "https://viconet-dev.netlify.app/company/auth/otp");
-            const email = yield (0, emailService_1.sendMail)(_user.email, `Activate your VICO net profile`, template, template);
+            console.log("USER", user);
+            // console.log("USER", user)
+            // const template = companyRegistrationSuccessTemplate(_organisation.userName, _organisation.userEmail, _otp.toString(), "https://viconet-dev.netlify.app/company/auth/otp"  );
+            // const email = await sendMail(_user.email, `Activate your VICO net profile`, template,template );
             const userResp = yield user.save();
+            console.log("USER", userResp);
             if (!(0, typeCheck_1.instanceOfTypeIUser)(userResp)) {
                 return { code: 500, message: "Failed to add user", object: userResp };
             }
@@ -132,7 +137,7 @@ const AddOrganisationAndStaff = function (_organisation) {
                 renewalDate: "",
                 mobilePhone: _organisation.companyNumber,
                 _staff: _staff._id,
-                _adminStaff: _staff._id
+                _adminStaff: _staff._id,
             };
             const organisation = organisations_1.Organisation.build(organisationPayload);
             const staffReq = Object.assign(Object.assign({}, _staff), { _user: _userResp._id, _organisation: organisation.id });

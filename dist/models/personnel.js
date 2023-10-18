@@ -8,7 +8,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const personnelSchema = new mongoose_1.default.Schema({
     searchKeys: {
         type: String,
-        required: true
+        // required: true
     },
     // information:{
     //   type: String,
@@ -32,11 +32,11 @@ const personnelSchema = new mongoose_1.default.Schema({
     },
     keySkills: {
         type: Array,
-        required: true
+        // required: true
     },
     keyCourses: {
         type: Array,
-        required: true
+        // required: truex`
     },
     cvUrl: {
         type: String,

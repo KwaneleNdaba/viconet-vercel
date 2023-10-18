@@ -58,6 +58,7 @@ router.post('/api/upload_cv/:id', (req, res) => __awaiter(void 0, void 0, void 0
 router.post('/api/personnel', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { information, currentJob, previousWorkExperience, yearsOfExperience, education, keySkills, keyCourses, cvUrl, personalInformation, _user, preferedWorkMethod } = req.body;
     const dbUser = { information, currentJob, previousWorkExperience, yearsOfExperience, education, keySkills, keyCourses, cvUrl, personalInformation, _user: _user, state: 0, preferedWorkMethod: preferedWorkMethod };
+    console.log("USER", dbUser);
     const user = yield (0, personnelRepository_1.AddPersonnel)(dbUser);
     return res.status(201).send(user);
 }));

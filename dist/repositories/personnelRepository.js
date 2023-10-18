@@ -96,10 +96,12 @@ exports.GetPersonnelById = GetPersonnelById;
 const AddPersonnel = function (_personnel) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const searchKeys = (0, searchService_1.GenerateSearchKeys)(_personnel);
+            const searchKeys = "";
             const populated = Object.assign(Object.assign({}, _personnel), { searchKeys: searchKeys });
+            console.log("USerRES", populated);
             const personnel = personnel_1.Personnel.build(populated);
             const res = yield personnel.save();
+            console.log("USERRES", res);
             return personnel;
         }
         catch (e) {
@@ -132,8 +134,9 @@ exports.AddPersonnelUser = AddPersonnelUser;
 const UpdatePersonnel = function (_personnel) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const searchKeys = (0, searchService_1.GenerateSearchKeys)(_personnel);
+            const searchKeys = "";
             const populated = Object.assign(Object.assign({}, _personnel), { searchKeys: searchKeys });
+            console.log("UP", populated);
             const personnel = personnel_1.Personnel.build(populated);
             yield personnel.updateOne(personnel);
             return personnel;

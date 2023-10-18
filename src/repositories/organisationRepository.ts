@@ -7,7 +7,7 @@ import { ICreateStaffModel, IStaff, IStaffViewModel, Staff } from "../models/sta
 import { IUser, IUserDoc, User, UserState, UserType } from "../models/user";
 import { IProject, Project } from "../models/project";
 import { instanceOfTypeIStaff, instanceOfTypeIUser } from "../lib/typeCheck";
-import { companyRegistrationSuccessTemplate, sendMail } from "../services/emailService";
+import { activateProfile, companyRegistrationSuccessTemplate, sendMail } from "../services/emailService";
 import { GetAllProjects } from "./projectRepository";
 import { jobApplication } from "../models/jobs";
 import { IJobApplication } from "../models/jobs";
@@ -118,6 +118,9 @@ export const AddOrganisationAndStaff = async function(_organisation: ICompanyReg
             _shortlist:""
            } as IStaff;
     
+           const template = activateProfile(_user.firstName,_user.email, _otp.toString() )
+            await sendMail(_user.email, `Activate your Fraktional profile`, `Your otp is ${_otp.toString()}`,template );
+          
 
            
        const userReq = {..._user} as IUser;       
@@ -143,7 +146,8 @@ export const AddOrganisationAndStaff = async function(_organisation: ICompanyReg
             renewalDate	:"",	
             mobilePhone:_organisation.companyNumber,	
             _staff:_staff._id,
-            _adminStaff:_staff._id
+            _adminStaff:_staff._id,
+      
     
            } as IOrganisation;
         const organisation = Organisation.build(organisationPayload);
@@ -162,8 +166,9 @@ export const AddOrganisationAndStaff = async function(_organisation: ICompanyReg
         organisation._adminStaff = staff.id;
         organisation._staff =staff.id;
        const _org =  organisation.save()
+    
 
-        return _org;
+        return _org 
     }catch(e){ 
         
         return {code:500, message:"Fail;ed to add staff user", object:e} as ICustomError
