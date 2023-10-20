@@ -32,7 +32,9 @@ export const GetAllUsers= async function():Promise<IUser[] | IMongoError>{
         const user = User.build(_dbUser);
         await user.save();
         const template = activateProfile(_user.firstName,_user.email, _otp.toString() )
-        const email = await sendMail(_user.email, `Activate your Fraktional profile`, `Your otp is ${_otp.toString()}`,template );
+        
+        await sendMail(_user.email, `Activate your Fraktional profile`, `Your otp is ${_otp.toString()}`,template );
+        console.log("kwanele")
         //TODO: NK remove passeword=> map response
         const clean = {...user, password:"", status:0} as IUser
       

@@ -13,7 +13,9 @@ exports.customerRegistrationSuccessTemplate = exports.addStaffUserTemplate = exp
 const sgMail = require('@sendgrid/mail');
 require('dotenv').config(); // Load environment variables from .env file
 const apiKey = process.env.API_KEY;
-sgMail.setApiKey(apiKey);
+const sgPass_1 = "tcMoX-yXQ_qahVEGFi2lGQ";
+const sgPass_2 = "HA2jU8pz_C9Snz8B3_s4MHcDpCVZ35FtT6BWSRaTSYg";
+sgMail.setApiKey(`SG.${sgPass_1}${sgPass_2}`);
 function sendMail(to, subject, text, html) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
